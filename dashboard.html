@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rig-Radio | Dashboard</title>
+  <style>
+    body{margin:0;background:#0b0b10;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    header{padding:28px;border-bottom:1px solid #222;background:#0f0f16}
+    h1{margin:0;font-size:20px;letter-spacing:.5px}
+    main{padding:24px;max-width:900px;margin:0 auto}
+    .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:20px}
+    .muted{opacity:.8}
+    .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    .btn{display:inline-block;border:1px solid #333;border-radius:10px;padding:10px 14px;text-decoration:none;color:#fff}
+    .btn:hover{border-color:#555}
+  </style>
+</head>
+<body>
+  <header><h1>Rig-Radio Dashboard</h1></header>
+  <main>
+    <div class="card">
+      <div class="muted">Welcome. We’ll wire this dashboard after sign-up/login is live.</div>
+      <div class="row" style="margin-top:8px">
+        <a class="btn" href="/teaser.html">Teaser</a>
+        <a class="btn" href="/submit.html">Submit</a>
+        <a class="btn" href="/library.html">Library</a>
+        <a class="btn" href="/profile.html">Profile</a>
+      </div>
+      <div style="margin-top:18px" class="muted">Dev check: open your browser console and run <code>rrTest()</code> to verify Supabase connection.</div>
+    </div>
+  </main>
+
+  <!-- Supabase client + Rig-Radio config -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="/rr-supabase.js"></script>
+</body>
+</html>
