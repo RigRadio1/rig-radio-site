@@ -1,38 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rig-Radio | Dashboard</title>
-  <style>
-    body{margin:0;background:#0b0b10;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
-    header{padding:28px;border-bottom:1px solid #222;background:#0f0f16}
-    h1{margin:0;font-size:20px;letter-spacing:.5px}
-    main{padding:24px;max-width:900px;margin:0 auto}
-    .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:20px}
-    .muted{opacity:.8}
-    .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-    .btn{display:inline-block;border:1px solid #333;border-radius:10px;padding:10px 14px;text-decoration:none;color:#fff}
-    .btn:hover{border-color:#555}
-  </style>
-</head>
-<body>
-  <header><h1>Rig-Radio Dashboard</h1></header>
-  <main>
-    <div class="card">
-      <div class="muted">Welcome. We’ll wire this dashboard after sign-up/login is live.</div>
-      <div class="row" style="margin-top:8px">
-        <a class="btn" href="/teaser.html">Teaser</a>
-        <a class="btn" href="/submit.html">Submit</a>
-        <a class="btn" href="/library.html">Library</a>
-        <a class="btn" href="/profile.html">Profile</a>
-      </div>
-      <div style="margin-top:18px" class="muted">Dev check: open your browser console and run <code>rrTest()</code> to verify Supabase connection.</div>
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Rig-Radio | Dashboard</title>
+<!-- Inline favicon to eliminate /favicon.ico 404 -->
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMBAF9XK8cAAAAASUVORK5CYII=">
+<style>
+  body{margin:0;background:#0b0b10;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  header{padding:28px;border-bottom:1px solid #222;background:#0f0f16}
+  main{padding:24px;max-width:900px;margin:0 auto}
+  .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:20px}
+  .status{margin-top:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#0f0f16}
+  .ok{border-color:#2e7d32} .err{border-color:#b71c1c}
+  a.btn{display:inline-block;margin-right:10px;border:1px solid #333;border-radius:10px;padding:10px 14px;color:#fff;text-decoration:none}
+  a.btn:hover{border-color:#555}
+</style>
+</head><body>
+<header><h1>Rig-Radio Dashboard</h1></header>
+<main>
+  <div class="card">
+    <div>Quick Links:
+      <a class="btn" href="/teaser.html">Teaser</a>
+      <a class="btn" href="/submit.html">Submit</a>
+      <a class="btn" href="/library.html">Library</a>
+      <a class="btn" href="/profile.html">Profile</a>
     </div>
-  </main>
+    <div id="sb-status" class="status">Checking Supabase…</div>
+  </div>
+</main>
 
-  <!-- Supabase client + Rig-Radio config -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="/rr-supabase.js"></script>
-</body>
-</html>
+<!-- Use CDN for Supabase -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="/rr-supabase.js"></script>
+<script>
+(function(){
+  const box=document.getElementById("sb-status");
+  const ok = m => { box.classList.remove("err"); box.classList.add("ok"); box.textContent="OK: "+m; };
+  const err= m => { box.classList.remove("ok"); box.classList.add("err"); box.textContent="ERROR: "+m; };
+  if(typeof window.supabase==="undefined"){ err("window.supabase undefined (CDN blocked?)"); return; }
+  if(typeof window.rigSupabase==="undefined"){ err("window.rigSupabase undefined (/rr-supabase.js missing?)"); return; }
+  window.rrTest().then(r => { if(r&&r.ok) ok("Connected to Supabase."); else err("Query failed (see Console)."); })
+                 .catch(e => err("Unexpected: "+(e&&e.message?e.message:e)));
+})();
+</script>
+</body></html>
