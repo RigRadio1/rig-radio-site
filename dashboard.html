@@ -1,44 +1,74 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Rig-Radio | Dashboard</title>
-<!-- Inline favicon to eliminate /favicon.ico 404 -->
-<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMBAF9XK8cAAAAASUVORK5CYII=">
-<style>
-  body{margin:0;background:#0b0b10;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
-  header{padding:28px;border-bottom:1px solid #222;background:#0f0f16}
-  main{padding:24px;max-width:900px;margin:0 auto}
-  .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:20px}
-  .status{margin-top:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#0f0f16}
-  .ok{border-color:#2e7d32} .err{border-color:#b71c1c}
-  a.btn{display:inline-block;margin-right:10px;border:1px solid #333;border-radius:10px;padding:10px 14px;color:#fff;text-decoration:none}
-  a.btn:hover{border-color:#555}
-</style>
-</head><body>
-<header><h1>Rig-Radio Dashboard</h1></header>
-<main>
-  <div class="card">
-    <div>Quick Links:
-      <a class="btn" href="/teaser.html">Teaser</a>
-      <a class="btn" href="/submit.html">Submit</a>
-      <a class="btn" href="/library.html">Library</a>
-      <a class="btn" href="/profile.html">Profile</a>
-    </div>
-    <div id="sb-status" class="status">Checking Supabase…</div>
-  </div>
-</main>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Rig-Radio | Dashboard</title>
+  <!-- Inline favicon to avoid 404 -->
+  <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMBAF9XK8cAAAAASUVORK5CYII=">
+  <style>
+    body{margin:0;background:#0b0b10;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    header{padding:28px;border-bottom:1px solid #222;background:#0f0f16}
+    main{padding:24px;max-width:900px;margin:0 auto}
+    .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:20px}
+    .status{margin-top:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#0f0f16}
+    .ok{border-color:#2e7d32}.err{border-color:#b71c1c}
+    a.btn{display:inline-block;margin-right:10px;border:1px solid #333;border-radius:10px;padding:10px 14px;color:#fff;text-decoration:none}
+    a.btn:hover{border-color:#555}
+    #auth-quick{float:right}
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="margin:0">Rig-Radio Dashboard</h1>
+    <span id="auth-quick"></span>
+  </header>
 
-<!-- Use CDN for Supabase -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="/rr-supabase.js"></script>
-<script>
-(function(){
-  const box=document.getElementById("sb-status");
-  const ok = m => { box.classList.remove("err"); box.classList.add("ok"); box.textContent="OK: "+m; };
-  const err= m => { box.classList.remove("ok"); box.classList.add("err"); box.textContent="ERROR: "+m; };
-  if(typeof window.supabase==="undefined"){ err("window.supabase undefined (CDN blocked?)"); return; }
-  if(typeof window.rigSupabase==="undefined"){ err("window.rigSupabase undefined (/rr-supabase.js missing?)"); return; }
-  window.rrTest().then(r => { if(r&&r.ok) ok("Connected to Supabase."); else err("Query failed (see Console)."); })
-                 .catch(e => err("Unexpected: "+(e&&e.message?e.message:e)));
-})();
-</script>
-</body></html>
+  <main>
+    <div class="card">
+      <div>Quick Links:
+        <a class="btn" href="/teaser.html">Teaser</a>
+        <a class="btn" href="/submit.html">Submit</a>
+        <a class="btn" href="/library.html">Library</a>
+        <a class="btn" href="/profile.html">Profile</a>
+      </div>
+      <div id="sb-status" class="status">Checking Supabase…</div>
+    </div>
+  </main>
+
+  <!-- Scripts (order matters) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="/rr-supabase.js?v=11"></script>
+  <script>
+    // rrTest that RETURNS A PROMISE
+    window.rrTest = async function rrTest(){
+      try{
+        if(!window.supabase) return {ok:false,error:'supabase SDK not loaded'};
+        const { data, error } = await supabase.auth.getUser();
+        if(error) return {ok:false,error:error.message||'auth.getUser error'};
+        return {ok:true,user:(data&&data.user)||null};
+      }catch(e){ return {ok:false,error:(e&&e.message)?e.message:String(e)}; }
+    };
+  </script>
+  <script src="/auth.js"></script>
+  <script>
+    // Require login & show quicklink
+    rrRequireAuth('/login.html');
+    rrShowAuthQuicklink();
+
+    // Status panel logic (await instead of .then to avoid errors)
+    (async function(){
+      const box = document.getElementById('sb-status');
+      const ok  = m => { box.classList.remove('err'); box.classList.add('ok');  box.textContent = 'OK: ' + m; };
+      const err = m => { box.classList.remove('ok');  box.classList.add('err'); box.textContent = 'ERROR: ' + m; };
+
+      if (typeof window.supabase === 'undefined') { err('window.supabase undefined (CDN blocked?)'); return; }
+      if (typeof window.rigSupabase === 'undefined') { err('window.rigSupabase undefined (/rr-supabase.js missing?)'); return; }
+
+      const res = await window.rrTest();
+      if (res && res.ok) ok('Connected to Supabase.');
+      else err(res && res.error ? res.error : 'rrTest failed');
+    })();
+  </script>
+</body>
+</html>

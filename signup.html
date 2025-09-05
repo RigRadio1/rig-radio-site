@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Rig-Radio | Create account</title>
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root { --bg:#0b0b0c; --panel:#121214; --border:#1e1e22; --muted:#cfd2d7; --text:#fff; --accent:#D90429; }
+    *{ box-sizing:border-box; } html,body{ height:100%; }
+    body{ margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; display:flex; flex-direction:column; }
+    header{ padding:14px 18px; border-bottom:1px solid #222; display:flex; align-items:center; }
+    header a{ color:#fff; text-decoration:none; font-weight:600; }
+    #auth-quick{ margin-left:auto; }
+    main{ flex:1; display:grid; place-items:center; padding:24px; }
+    .card{ width:100%; max-width:420px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+    h1{ font-size:1.4rem; margin:0 0 1rem; }
+    label{ display:block; font-size:.9rem; margin:.5rem 0 .35rem; color:var(--muted); }
+    input{ width:100%; padding:12px; border-radius:10px; border:1px solid #2a2a2f; background:#0f0f12; color:#fff; }
+    button{ margin-top:14px; width:100%; padding:12px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; }
+    .muted{ color:#aab; font-size:.9rem; }
+    .msg{ margin-top:.75rem; min-height:1.25em; }
+    .navlinks{ margin-top:12px; text-align:center; }
+    .error{ color:#ff6b6b; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/">Rig-Radio</a>
+    <span id="auth-quick"></span>
+  </header>
+
+  <main>
+    <div class="card">
+      <h1>Create your account</h1>
+      <form id="signup-form" autocomplete="on" novalidate>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required placeholder="you@example.com"/>
+
+        <label for="password">Password (min 8 characters)</label>
+        <input id="password" name="password" type="password" required minlength="8" placeholder="At least 8 characters"/>
+
+        <button type="submit" id="signup-btn">Create account</button>
+        <div id="signup-msg" class="msg muted" aria-live="polite"></div>
+      </form>
+
+      <div class="navlinks muted">
+        Already have an account? <a href="/login.html">Sign in</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts must be in this order -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="/rr-supabase.js?v=6"></script>
+  <!-- alias shim: ensure both globals exist even if cache/order was funky -->
+  <script>window.rigSupabase = window.rigSupabase || window.supabase;</script>
+  <script src="/auth.js"></script>
+  <script>
+    rrShowAuthQuicklink();
+
+    // Extra client-side guard for 8-char rule
+    (function enforceMin8() {
+      const form = document.getElementById('signup-form');
+      const msg = document.getElementById('signup-msg');
+      form.addEventListener('submit', function(e){
+        const pw = form.password.value || '';
+        if (pw.length < 8) {
+          e.preventDefault();
+          msg.classList.add('error');
+          msg.textContent = 'Password must be at least 8 characters.';
+        } else {
+          msg.classList.remove('error');
+          msg.textContent = '';
+        }
+      });
+    })();
+
+    rrRedirectIfAuthed('/dashboard.html');
+    rrBindSignupForm('signup-form', '/dashboard.html');
+  </script>
+</body>
+</html>
