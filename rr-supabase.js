@@ -12,7 +12,8 @@ try {
 window.rrTest = async function(){
   try{
     if(!window.supabase) throw new Error("supabase missing");
-    const { data, error } = await window.supabase.from("profiles").select("*").limit(1);
+    const { data, error } = await window.supabase.from("Profiles").select("*").limit(1);
+
     if (error) { console.error("FAILED:", error); return { ok:false, error }; }
     console.log("OK:", data); return { ok:true, data };
   }catch(e){ console.error("Unexpected:", e); return { ok:false, error:e }; }
