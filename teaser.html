@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rig-Radio — Teaser</title>
+  <link rel="stylesheet" href="/rr.css"/>
+
+  <!-- page-local styles only for teaser layout (won’t impact other pages) -->
+  <style>
+    .hero {
+      max-width: 1200px; margin: 24px auto 0; padding: 0 16px;
+    }
+    .hero-banner {
+      background: rgba(8,10,16,.75);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      backdrop-filter: blur(2px);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 12px 8px;
+    }
+    .hero-banner img { width: 100%; height: auto; display: block; }
+
+    .cta {
+      max-width: 980px; margin: 18px auto 0;
+      background: rgba(8,10,16,.82);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 0 0 2px rgba(255,42,58,.2);
+      text-align: center;
+    }
+    .cta p { margin: 0 0 12px; color: #d9d9e6; }
+    .cta .rr-btn {
+      font-weight: 800; letter-spacing: 0.3px;
+      background: #2b0f15; border-color: #45161e;
+    }
+
+    .main {
+      max-width: 1200px; margin: 18px auto; padding: 0 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    }
+    @media (max-width: 980px){ .main{ grid-template-columns: 1fr; } }
+
+    .panel {
+      background: rgba(8,10,16,.88);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 0 0 2px rgba(255,42,58,.18);
+      padding: 14px;
+    }
+    .panel h3 {
+      margin: 0 0 12px;
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 900;
+    }
+    .panel h3 .note { color: #ff2a3a; }
+    .spotlight {
+      display: grid; grid-template-columns: 108px 1fr; gap: 14px; align-items: start;
+    }
+    .spotlight .cover {
+      width: 108px; height: 108px; object-fit: cover;
+      border-radius: 12px; border: 1px solid #34171c; background: #0c0d12;
+      display: block;
+    }
+    .spotlight .meta { display:flex; flex-direction:column; gap:6px; }
+    .spotlight .title { font-weight: 800; }
+    .spotlight .sub   { color:#b9b9c8; font-size: 13px; }
+    .spotlight .player {
+      margin-top: 6px;
+      background:#0d0d12;border:2px solid #222;border-radius:12px;padding:8px 10px;
+      box-shadow: inset 0 0 0 1px rgba(255,0,0,.12);
+      display:flex;align-items:center;gap:10px;
+    }
+    .spotlight audio{
+      width:100%; outline:none;
+      filter:invert(1) hue-rotate(180deg);
+      accent-color:#ff2a3a;
+    }
+    .news-list{ display:flex; flex-direction:column; gap:10px;}
+    .news-item{
+      background:#0f0f13; border:1px solid rgba(255,255,255,.06);
+      border-radius:12px; padding:10px 12px;
+    }
+    .section {
+      max-width: 1200px; margin: 18px auto; padding: 0 16px;
+    }
+    .section h3 { margin: 0 0 10px; font-weight: 900; display:flex; gap:8px; align-items:center; }
+    .discover-grid{
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    @media (max-width: 980px){ .discover-grid{ grid-template-columns: 1fr; } }
+    .discover-card{
+      background: rgba(8,10,16,.88);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 16px; padding: 12px;
+    }
+    .discover-thumb{
+      width:100%; height: 160px; object-fit: cover; border-radius: 12px;
+      background:#0c0d12; border:1px solid #34171c;
+    }
+    .tiny { font-size: 13px; color:#b9b9c8; }
+  </style>
+</head>
+
+<body class="rr-bg">
+  <!-- topbar -->
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">RIG-RADIO // TEASER</div>
+    <nav class="rr-topbar-right">
+      <a class="rr-link" href="/">Home</a>
+      <a class="rr-link" href="/submit">Submit</a>
+      <a class="rr-link" href="/library">Library</a>
+    </nav>
+  </header>
+
+  <!-- hero banner -->
+  <div class="hero">
+    <div class="hero-banner">
+      <img src="/banner.png" alt="Rig-Radio hero banner"/>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta">
+    <p>Unlock the full Rig-Radio experience: upload your own tracks, explore the entire indie + AI music library, and connect with a community pushing sound forward.</p>
+    <a href="/create-account" class="rr-btn rr-primary">Join Rig-Radio Today</a>
+  </section>
+
+  <!-- spotlight + news -->
+  <section class="main">
+    <article class="panel">
+      <h3><span class="note">🎵</span> Spotlight Song</h3>
+      <div class="spotlight">
+        <img class="cover" src="/cover-default.png" alt="cover">
+        <div class="meta">
+          <div class="title">Artist Name — Song Title</div>
+          <div class="sub">Featured today on Rig-Radio</div>
+          <div class="player">
+            <audio id="teaserPlayer" controls preload="metadata"
+                   controlsList="nodownload noplaybackrate"
+                   disablepictureinpicture
+                   oncontextmenu="return false">
+              <source src="/teaser-sample.mp3" type="audio/mpeg">
+            </audio>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <aside class="panel">
+      <h3><span class="note">📰</span> Latest AI Music News</h3>
+      <div class="news-list">
+        <div class="news-item">
+          <div><strong>Article 1</strong></div>
+          <div class="tiny">Another placeholder news item.</div>
+        </div>
+        <div class="news-item">
+          <div><strong>Article 2</strong></div>
+          <div class="tiny">More news coming soon…</div>
+        </div>
+        <div class="news-item">
+          <div><strong>Article 3</strong></div>
+          <div class="tiny">Stay tuned for updates.</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- discover more -->
+  <section class="section">
+    <h3>✨ Discover More</h3>
+    <div class="discover-grid">
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Fresh Drops</div>
+        <div class="tiny">New tracks from the community.</div>
+      </div>
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Artist Spotlights</div>
+        <div class="tiny">Get to know featured creators.</div>
+      </div>
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Playlists</div>
+        <div class="tiny">Curated sets for every mood.</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/teaser.js"></script>
+</body>
+</html>
+

@@ -1,36 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Rig-Radio | Dashboard</title>
-  <!-- Inline favicon to avoid 404 -->
-  <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMBAF9XK8cAAAAASUVORK5CYII=">
+  <link rel="icon" href="/favicon.ico">
   <style>
-    body{margin:0;background:#0b0b10;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
-    header{padding:28px;border-bottom:1px solid #222;background:#0f0f16}
-    main{padding:24px;max-width:900px;margin:0 auto}
-    .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:20px}
-    .status{margin-top:16px;padding:12px;border-radius:10px;border:1px solid #333;background:#0f0f16}
-    .ok{border-color:#2e7d32}.err{border-color:#b71c1c}
-    a.btn{display:inline-block;margin-right:10px;border:1px solid #333;border-radius:10px;padding:10px 14px;color:#fff;text-decoration:none}
-    a.btn:hover{border-color:#555}
-    #auth-quick{float:right}
+    :root { --bg:#0b0b0c; --panel:#121214; --border:#1e1e22; --muted:#cfd2d7; --text:#fff; --accent:#D90429; }
+    *{ box-sizing:border-box } html,body{ height:100% }
+    body{ margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; display:flex; flex-direction:column }
+    header{ padding:14px 18px; border-bottom:1px solid #222; display:flex; align-items:center; gap:12px }
+    header h1{ margin:0; font-size:1.1rem }
+    #auth-quick{ margin-left:auto }
+    main{ flex:1; padding:24px; max-width:1000px; margin:0 auto; display:grid; gap:18px }
+    .card{ background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px }
+    .btn{ display:inline-block; padding:8px 12px; border-radius:10px; background:var(--accent); color:#fff; text-decoration:none; font-weight:700; margin-right:8px }
+    .status{ margin-top:10px; color:var(--muted) }
+    .status.ok{ color:#84d88a }
+    .status.err{ color:#ff6b6b }
   </style>
+    <link rel="stylesheet" href="/rr.css">
 </head>
 <body>
   <header>
-    <h1 style="margin:0">Rig-Radio Dashboard</h1>
+    <h1>Rig-Radio Dashboard</h1>
     <span id="auth-quick"></span>
   </header>
 
   <main>
     <div class="card">
       <div>Quick Links:
-        <a class="btn" href="/teaser.html">Teaser</a>
-        <a class="btn" href="/submit.html">Submit</a>
-        <a class="btn" href="/library.html">Library</a>
-        <a class="btn" href="/profile.html">Profile</a>
+        <a class="btn" href="/teaser">Teaser</a>
+        <a class="btn" href="/submit">Submit</a>
+        <a class="btn" href="/library">Library</a>
+        <a class="btn" href="/profile">Profile</a>
       </div>
       <div id="sb-status" class="status">Checking Supabase…</div>
     </div>
@@ -39,7 +42,12 @@
   <!-- Scripts (order matters) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="/rr-supabase.js?v=11"></script>
+  <script src="/auth.js"></script>
   <script>
+    // Require login & show quicklink
+    rrRequireAuth('/login.html');
+    rrShowAuthQuicklink();
+
     // rrTest that RETURNS A PROMISE
     window.rrTest = async function rrTest(){
       try{
@@ -49,14 +57,8 @@
         return {ok:true,user:(data&&data.user)||null};
       }catch(e){ return {ok:false,error:(e&&e.message)?e.message:String(e)}; }
     };
-  </script>
-  <script src="/auth.js"></script>
-  <script>
-    // Require login & show quicklink
-    rrRequireAuth('/login.html');
-    rrShowAuthQuicklink();
 
-    // Status panel logic (await instead of .then to avoid errors)
+    // Status panel logic (await to avoid race errors)
     (async function(){
       const box = document.getElementById('sb-status');
       const ok  = m => { box.classList.remove('err'); box.classList.add('ok');  box.textContent = 'OK: ' + m; };
@@ -72,3 +74,4 @@
   </script>
 </body>
 </html>
+

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Submit a Track — Rig-Radio</title>
+  <link rel="stylesheet" href="/rr.css"/>
+</head>
+<body class="rr-bg">
+  <!-- Top bar -->
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">Submit a Track</div>
+    <nav class="rr-topbar-right">
+      <a class="rr-link" href="/dashboard">Dashboard</a>
+      <a class="rr-link" href="/library">Library</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div id="signed-in-email" class="rr-muted" style="margin-bottom:12px">Signed in…</div>
+
+    <!-- LAYOUT -->
+    <div class="layout" style="display:grid;grid-template-columns:260px 1fr;gap:18px">
+      <!-- Sidebar -->
+      <aside class="sidebar card" style="padding:12px">
+        <ul class="steps">
+          <li data-step="1" class="active"><span class="num">1</span><div><strong>Upload Audio</strong><br><small class="rr-muted">MP3/WAV/FLAC</small></div></li>
+          <li data-step="2"><span class="num">2</span><div><strong>Details &amp; Tags</strong><br><small class="rr-muted">Title, artist, genre</small></div></li>
+          <li data-step="3"><span class="num">3</span><div><strong>Cover Art</strong><br><small class="rr-muted">PNG/JPG only</small></div></li>
+          <li data-step="4"><span class="num">4</span><div><strong>Rights &amp; Release</strong><br><small class="rr-muted">Usage &amp; license</small></div></li>
+          <li data-step="5"><span class="num">5</span><div><strong>Publish</strong><br><small class="rr-muted">Preview &amp; confirm</small></div></li>
+        </ul>
+      </aside>
+
+      <!-- Content -->
+      <section class="content" style="min-width:0">
+        <div class="progressbar"><div id="progress" class="bar"></div></div>
+
+        <!-- STEP 1 -->
+        <section class="stage active" data-step="1">
+          <h2>Step 1 — Upload Audio</h2>
+          <p class="rr-muted">Drag &amp; drop your MP3/WAV/FLAC here (max 20 MB), or click to choose a file.</p>
+
+          <div id="audioDrop" class="dropzone" role="button" tabindex="0" aria-label="Audio dropzone">
+            <div>
+              <strong>Drag &amp; drop</strong> your track here, or <u>click to browse</u>.<br>
+              <small class="rr-muted">Accepted: MP3, WAV, FLAC — max 20 MB</small>
+            </div>
+          </div>
+          <input id="audioFile" type="file" accept=".mp3,.wav,.flac,audio/mpeg,audio/wav,audio/flac" hidden>
+
+          <div class="rr-actions">
+            <span id="audioStatus" class="rr-muted"></span>
+            <div style="margin-left:auto;display:flex;gap:10px">
+              <button type="button" class="rr-btn rr-primary" id="toStep2" disabled>Next →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 2 -->
+        <section class="stage" data-step="2">
+          <h2>Step 2 — Details &amp; Tags</h2>
+          <div class="rr-grid-2">
+            <div>
+              <label class="rr-label" for="title">Song Title *</label>
+              <input id="title" type="text" placeholder="Song title">
+            </div>
+            <div>
+              <label class="rr-label" for="artist">Artist *</label>
+              <input id="artist" type="text" placeholder="Artist name">
+            </div>
+            <div>
+              <label class="rr-label" for="genre">Genre *</label>
+              <select id="genre">
+                <option value="">Select…</option>
+                <option>Rock</option><option>Metal</option><option>Pop</option>
+                <option>Hip-Hop</option><option>EDM</option><option>House</option>
+                <option>Techno</option><option>Drum &amp; Bass</option><option>Ambient</option>
+                <option>Jazz</option><option>Blues</option><option>Country</option>
+                <option>Folk</option><option>Classical</option><option>R&amp;B</option>
+                <option>Reggae</option><option>Indie</option><option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="rr-label" for="notes">Notes (optional)</label>
+              <textarea id="notes" maxlength="500" placeholder="Anything we should know? (max 500 chars)"></textarea>
+              <small class="rr-muted"><span id="notesCount">0/500</span></small>
+            </div>
+          </div>
+
+          <div class="rr-actions">
+            <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+            <button type="button" class="rr-btn rr-primary" id="toStep3" disabled>Next →</button>
+          </div>
+        </section>
+
+        <!-- STEP 3 -->
+        <section class="stage" data-step="3">
+          <h2>Step 3 — Cover Art</h2>
+          <p class="rr-muted">Upload a square PNG or JPG (recommended 1000×1000 or larger).</p>
+
+          <div class="rr-grid-2">
+            <div>
+              <label class="rr-label" for="coverFile">Cover image (PNG/JPG) *</label>
+              <input id="coverFile" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg"/>
+              <small class="rr-help">Max ~5–10MB recommended. No GIFs or videos.</small>
+            </div>
+            <div>
+              <label class="rr-label">Preview</label>
+              <img id="coverPreview" class="preview-img" src="/banner.png" alt="cover preview"
+                   style="width:160px;height:160px;object-fit:cover;border-radius:12px;border:1px solid #34171c;background:#0c0d12"/>
+            </div>
+          </div>
+
+          <div class="rr-actions">
+            <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+            <button type="button" class="rr-btn rr-primary" id="toStep4" disabled>Next →</button>
+          </div>
+        </section>
+
+        <!-- STEP 4 -->
+        <section class="stage" data-step="4">
+          <h2>Step 4 — Rights &amp; Release</h2>
+          <p class="rr-muted">You confirm you have the rights to upload and share this track on Rig-Radio.</p>
+          <label><input id="agree" type="checkbox"> I own (or have permission to use) the audio and artwork, and agree to the terms.</label>
+
+          <div class="rr-actions">
+            <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+            <button type="button" class="rr-btn rr-primary" id="toStep5" disabled>Next →</button>
+          </div>
+        </section>
+
+        <!-- STEP 5 -->
+        <section class="stage" data-step="5">
+          <h2>Step 5 — Publish</h2>
+          <div id="publishSummary" class="card" style="margin-bottom:12px"></div>
+
+          <div class="rr-actions">
+            <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+            <button type="button" class="rr-btn rr-primary" id="publishBtn">Publish</button>
+            <span id="publishStatus" class="rr-muted" style="margin-left:auto"></span>
+          </div>
+        </section>
+      </section><!-- END .content -->
+    </div><!-- END .layout -->
+  </main>
+
+  <!-- Scripts (no inline app code, just includes) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/rr-supabase.js"></script>
+  <script src="/submit-wizard.js"></script>
+</body>
+</html>
+

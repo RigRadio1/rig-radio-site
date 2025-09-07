@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Rig-Radio | Create account</title>
+  <title>Rig-Radio | Sign in</title>
   <link rel="icon" href="/favicon.ico">
   <style>
     :root { --bg:#0b0b0c; --panel:#121214; --border:#1e1e22; --muted:#cfd2d7; --text:#fff; --accent:#D90429; }
@@ -20,7 +20,6 @@
     button{ margin-top:14px; width:100%; padding:12px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; }
     .muted{ color:#aab; font-size:.9rem; }
     .msg{ margin-top:.75rem; min-height:1.25em; }
-    .navlinks{ margin-top:12px; text-align:center; }
     .error{ color:#ff6b6b; }
   </style>
     <link rel="stylesheet" href="/rr.css">
@@ -33,52 +32,34 @@
 
   <main>
     <div class="card">
-      <h1>Create your account</h1>
-      <form id="signup-form" autocomplete="on" novalidate>
+      <h1>Sign in</h1>
+      <form id="login-form" autocomplete="on" novalidate>
         <label for="email">Email</label>
         <input id="email" name="email" type="email" required placeholder="you@example.com"/>
 
-        <label for="password">Password (min 8 characters)</label>
-        <input id="password" name="password" type="password" required minlength="8" placeholder="At least 8 characters"/>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required minlength="8" placeholder="Your password"/>
 
-        <button type="submit" id="signup-btn">Create account</button>
-        <div id="signup-msg" class="msg muted" aria-live="polite"></div>
+        <button type="submit" id="login-btn">Sign in</button>
+        <div id="login-msg" class="msg muted" aria-live="polite"></div>
       </form>
 
-      <div class="navlinks muted">
-        Already have an account? <a href="/login.html">Sign in</a>
+      <div class="muted" style="margin-top:12px">
+        New here? <a href="/signup.html">Create account</a>
       </div>
     </div>
   </main>
 
-  <!-- Scripts must be in this order -->
+  <!-- Scripts (order matters) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="/rr-supabase.js?v=6"></script>
-  <!-- alias shim: ensure both globals exist even if cache/order was funky -->
   <script>window.rigSupabase = window.rigSupabase || window.supabase;</script>
   <script src="/auth.js"></script>
   <script>
     rrShowAuthQuicklink();
-
-    // Extra client-side guard for 8-char rule
-    (function enforceMin8() {
-      const form = document.getElementById('signup-form');
-      const msg = document.getElementById('signup-msg');
-      form.addEventListener('submit', function(e){
-        const pw = form.password.value || '';
-        if (pw.length < 8) {
-          e.preventDefault();
-          msg.classList.add('error');
-          msg.textContent = 'Password must be at least 8 characters.';
-        } else {
-          msg.classList.remove('error');
-          msg.textContent = '';
-        }
-      });
-    })();
-
-    rrRedirectIfAuthed('/dashboard.html');
-    rrBindSignupForm('signup-form', '/dashboard.html');
+    rrRedirectIfAuthed('/dashboard.html');   // already signed-in? jump to dashboard
+    rrBindLoginForm('login-form', '/dashboard.html'); // handle login
   </script>
 </body>
 </html>
+
