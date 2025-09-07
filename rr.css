@@ -182,3 +182,236 @@ textarea{ min-height:110px; resize:vertical; }
 .card{ background:var(--rr-panel); border:1px solid var(--rr-border); border-radius:16px; padding:12px; box-shadow:var(--rr-shadow); }
 .hr{ height:1px; background:rgba(255,255,255,.06); border:none; margin:12px 0; }
 
+/* === Create Account page background === */
+body.auth-page {
+  min-height: 100vh;
+  background: #000 url('/assets/studio-bg.png') center/cover no-repeat fixed;
+}
+
+/* Soft red glow + dark overlay to match the bunker vibe */
+body.auth-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255, 0, 0, 0.08), transparent 60%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.85));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === Create Account page background === */
+body.auth-page {
+  min-height: 100vh;
+  background: #000 url('/studio-bg.png') center center / cover no-repeat fixed;
+}
+
+/* Soft red glow + gentle darkening overlay */
+body.auth-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 22% 12%, rgba(255, 50, 50, 0.15), transparent 60%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.28));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep page content above overlay */
+body.auth-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* === Banner sizing for auth pages === */
+.auth-page .banner {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-page .banner img {
+  max-width: 300px;   /* adjust size */
+  height: auto;
+  display: inline-block;
+}
+
+/* === Banner sizing for auth pages (full width like rest of site) === */
+.auth-page .banner {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-page .banner img {
+  max-width: 80%;   /* wide like other pages */
+  height: auto;
+  display: inline-block;
+}
+
+/* === Auth layout: banner above form, centered, higher on page === */
+.auth-page .auth-layout {
+  display: block;            /* stack naturally */
+  text-align: center;        /* center contents */
+  margin-top: 40px;          /* move whole section ~1 inch from top */
+}
+
+.auth-page .banner {
+  margin-bottom: 30px;       /* space between banner and form */
+}
+
+.auth-page .banner img {
+  width: 60%;
+  height: auto;
+  display: inline-block;
+}
+
+.auth-page .card {
+  margin: 0 auto;            /* keep card centered */
+  max-width: 420px;
+}
+
+
+
+
+.auth-page .banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;  /* center the banner image */
+}
+
+.auth-page .banner img {
+  width: 60%;               /* banner scale */
+  height: auto;
+  display: block;
+}
+
+.auth-page .card {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  max-width: 420px;
+  width: 100%;
+  color: #fff;
+}
+
+/* === Create Account form visuals === */
+.auth-page .card h1 {
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
+  color: #ff2d2d; /* neon red title */
+  letter-spacing: 0.3px;
+}
+
+.auth-page .card .muted {
+  color: #cfcfcf;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-page .card label {
+  display: block;
+  font-size: 0.9rem;
+  color: #ddd;
+  margin: 0.6rem 0 0.35rem;
+}
+
+.auth-page .card input[type="text"],
+.auth-page .card input[type="email"],
+.auth-page .card input[type="password"] {
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: #0e0e0e;
+  color: #fff;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.08s ease;
+}
+
+.auth-page .card input[type="text"]::placeholder,
+.auth-page .card input[type="email"]::placeholder,
+.auth-page .card input[type="password"]::placeholder {
+  color: #8a8a8a;
+}
+
+.auth-page .card input[type="text"]:focus,
+.auth-page .card input[type="email"]:focus,
+.auth-page .card input[type="password"]:focus {
+  border-color: #ff2d2d;
+  box-shadow: 0 0 16px rgba(255, 45, 45, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Terms row */
+.auth-page .card .terms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0.9rem 0 0.3rem;
+  line-height: 1.2;
+}
+
+.auth-page .card .terms input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #ff2d2d; /* modern browsers */
+}
+
+/* Primary button */
+.auth-page .card .btn-primary {
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.95rem 1rem;
+  background: #ff2d2d;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.auth-page .card .btn-primary:hover {
+  background: #ff4545;
+  box-shadow: 0 0 18px rgba(255, 69, 69, 0.35);
+  transform: translateY(-1px);
+}
+
+.auth-page .card .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 0 8px rgba(255, 45, 45, 0.25);
+}
+
+/* Login link */
+.auth-page .card .auth-switch {
+  margin-top: 0.9rem;
+  font-size: 0.95rem;
+  color: #cfcfcf;
+  text-align: center;
+}
+
+.auth-page .card .auth-switch a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.35);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-page .card .auth-switch a:hover {
+  color: #ffb3b3;
+  border-bottom-color: rgba(255, 179, 179, 0.7);
+}
+
+/* Card polish: slight border + glow on hover to match site boxes */
+.auth-page .card {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-page .card:hover {
+  border-color: rgba(255, 45, 45, 0.35);
+  box-shadow: 0 0 22px rgba(255, 45, 45, 0.28);
+}
+
