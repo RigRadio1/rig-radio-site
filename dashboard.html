@@ -1,76 +1,273 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Rig-Radio | Dashboard</title>
-  <link rel="icon" href="/favicon.ico">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard • Rig-Radio</title>
   <style>
-    :root { --bg:#0b0b0c; --panel:#121214; --border:#1e1e22; --muted:#cfd2d7; --text:#fff; --accent:#D90429; }
-    *{ box-sizing:border-box } html,body{ height:100% }
-    body{ margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; display:flex; flex-direction:column }
-    header{ padding:14px 18px; border-bottom:1px solid #222; display:flex; align-items:center; gap:12px }
-    header h1{ margin:0; font-size:1.1rem }
-    #auth-quick{ margin-left:auto }
-    main{ flex:1; padding:24px; max-width:1000px; margin:0 auto; display:grid; gap:18px }
-    .card{ background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px }
-    .btn{ display:inline-block; padding:8px 12px; border-radius:10px; background:var(--accent); color:#fff; text-decoration:none; font-weight:700; margin-right:8px }
-    .status{ margin-top:10px; color:var(--muted) }
-    .status.ok{ color:#84d88a }
-    .status.err{ color:#ff6b6b }
+    :root{ --text:#e8ecf1; --muted:#aab3be; --edge:#ffffff14; --red:#ff2b2b; --glow:0 0 .6rem rgba(255,43,43,.45), 0 0 1.6rem rgba(255,43,43,.28); --radius:22px }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+      background:
+        radial-gradient(1200px 600px at 20% -20%, rgba(255,43,43,.08), transparent 50%),
+        radial-gradient(900px 600px at 115% 10%, rgba(255,43,43,.06), transparent 50%),
+        linear-gradient(180deg,#0b0f14 0%,#0a0d12 100%);
+      overflow-x:hidden;
+    }
+    #bg{position:fixed; inset:0; z-index:0; background:center/cover no-repeat; pointer-events:none}
+
+    .smoke{position:relative; z-index:1}
+    .smoke:before,.smoke:after{content:""; position:fixed; inset:0; pointer-events:none; mix-blend-mode:screen; z-index:1}
+    .smoke:before{
+      background:
+        radial-gradient(900px 700px at 15% 10%, rgba(255,255,255,.05), transparent 40%),
+        radial-gradient(1100px 800px at 85% 20%, rgba(255,255,255,.035), transparent 45%);
+      filter: blur(8px);
+    }
+    .smoke:after{background:linear-gradient(90deg, transparent 48%, rgba(255,43,43,.10) 50%, transparent 52%); opacity:.6; mask: linear-gradient(#000,transparent 70%)}
+
+    .shell{min-height:100%; display:flex; flex-direction:column}
+
+    .topbar{position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:14px 20px; backdrop-filter: blur(8px); background:linear-gradient(180deg, rgba(10,14,19,.70), rgba(10,14,19,.30)); border-bottom:1px solid var(--edge)}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em}
+    .brand .dot{width:10px;height:10px;border-radius:999px;background:var(--red);box-shadow:var(--glow)}
+    .brand a{color:var(--text); text-decoration:none}
+    .tag{margin-left:8px; font-size:.75rem; color:var(--muted); letter-spacing:.18em}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border:1px solid var(--edge); background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9)); color:var(--text); text-decoration:none; border-radius:12px; transition:.18s ease; box-shadow: inset 0 0 .2rem rgba(255,255,255,.05); cursor:pointer}
+    .btn:hover{border-color:#ff2b2b; box-shadow:var(--glow)}
+
+    main{flex:1; padding:28px 18px 44px; display:flex; flex-direction:column; gap:16px}
+
+    /* welcome banner */
+    #welcome-banner{
+      display:inline-block; text-align:center; padding:10px 14px;
+      background:linear-gradient(180deg, rgba(20,26,34,.75), rgba(15,21,29,.75));
+      border:1px solid var(--edge); border-radius:var(--radius);
+      margin:0 auto 10px auto
+    }
+    #welcome-banner h1{font-size:1.4rem; margin:0; white-space:nowrap}
+
+    /* buttons row */
+    #dashboard-buttons{display:flex; justify-content:center; align-items:center; gap:12px; margin:0 auto 6px auto; flex-wrap:nowrap}
+    .dash-btn{display:inline-block; padding:10px 16px; border-radius:12px; font-weight:700; text-decoration:none; text-align:center; border:1px solid var(--edge); background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9)); color:var(--text); transition:all .2s ease}
+    .dash-btn:hover{filter:brightness(1.06); box-shadow:var(--glow); border-color:var(--red)}
+    .dash-btn.disabled{opacity:.45; cursor:not-allowed; box-shadow:none; background:linear-gradient(180deg, rgba(60,60,60,.35), rgba(40,40,40,.35)); border-color:#555; pointer-events:none}
+/* floating Songs card */
+.card{
+  background:transparent;   /* no grey backdrop */
+  border:0;                 /* remove border */
+  box-shadow:none;          /* no shadow */
+  padding:0;                /* tighten up spacing */
+}
+
+
+    .tracks-list{display:flex; flex-direction:column; align-items:flex-start; gap:10px}
+/* floating rows — no grey pill behind */
+.track-row{
+  display:inline-flex; align-items:center; gap:12px;
+  padding:6px 0;                    /* keep a little spacing */
+  border:0;                          /* no outline */
+  background:transparent;            /* remove grey background */
+  box-shadow:none;                   /* no shadow */
+}
+
+/* artwork with no frame */
+.cover{
+  width:56px; height:56px; flex:0 0 56px;
+  border-radius:10px;
+  overflow:hidden;
+  border:0;                          /* remove thin border */
+  background:#0000;                  /* fully transparent */
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+}
+
+
+
+
+    .track-main{display:flex; flex-direction:column; min-width:0}
+    .track-title{font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60ch}
+    .track-sub{color:var(--muted); font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60ch}
+
+    footer{padding:22px; text-align:center; color:var(--muted); font-size:.85rem}
   </style>
-    <link rel="stylesheet" href="/rr.css">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <header>
-    <h1>Rig-Radio Dashboard</h1>
-    <span id="auth-quick"></span>
-  </header>
+  <div id="bg"></div>
 
-  <main>
-    <div class="card">
-      <div>Quick Links:
-        <a class="btn" href="/teaser">Teaser</a>
-        <a class="btn" href="/submit">Submit</a>
-        <a class="btn" href="/library">Library</a>
-        <a class="btn" href="/profile">Profile</a>
+  <div class="shell smoke">
+sudo nano /var/www/html/dashboard.html    <header class="topbar">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <a href="/">Outlaw Airwaves</a>
+        <span class="tag">RIG-RADIO</span>
       </div>
-      <div id="sb-status" class="status">Checking Supabase…</div>
-    </div>
-  </main>
+      <nav><button class="btn" onclick="logout()">Log Out</button></nav>
+    </header>
 
-  <!-- Scripts (order matters) -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="/rr-supabase.js?v=11"></script>
-  <script src="/auth.js"></script>
+    <main>
+      <div id="welcome-banner"><h1>Welcome, <span id="username">User</span>!</h1></div>
+
+      <div id="dashboard-buttons">
+        <a href="/submit.html" class="dash-btn">Submit Song</a>
+        <a href="/library.html" class="dash-btn">Listen Now</a>
+        <button class="dash-btn disabled" type="button" disabled>My Profile</button>
+        <button class="dash-btn disabled" type="button" disabled>Videos</button>
+        <button class="dash-btn disabled" type="button" disabled>News</button>
+        <button class="dash-btn disabled" type="button" disabled>Membership</button>
+      </div>
+
+      <section class="card" id="my-tracks">
+        <h2>Songs</h2>
+        <div id="tracks-list" class="tracks-list">
+          <div class="muted">Loading your tracks…</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>© Rig-Radio • Built for indie & AI artists • 100% to creators</footer>
+  </div>
+
   <script>
-    // Require login & show quicklink
-    rrRequireAuth('/login.html');
-    rrShowAuthQuicklink();
+    /* --- Supabase client & logout --- */
+    const supabase = window.supabase.createClient(
+      "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+    );
+    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
 
-    // rrTest that RETURNS A PROMISE
-    window.rrTest = async function rrTest(){
-      try{
-        if(!window.supabase) return {ok:false,error:'supabase SDK not loaded'};
-        const { data, error } = await supabase.auth.getUser();
-        if(error) return {ok:false,error:error.message||'auth.getUser error'};
-        return {ok:true,user:(data&&data.user)||null};
-      }catch(e){ return {ok:false,error:(e&&e.message)?e.message:String(e)}; }
-    };
-
-    // Status panel logic (await to avoid race errors)
-    (async function(){
-      const box = document.getElementById('sb-status');
-      const ok  = m => { box.classList.remove('err'); box.classList.add('ok');  box.textContent = 'OK: ' + m; };
-      const err = m => { box.classList.remove('ok');  box.classList.add('err'); box.textContent = 'ERROR: ' + m; };
-
-      if (typeof window.supabase === 'undefined') { err('window.supabase undefined (CDN blocked?)'); return; }
-      if (typeof window.rigSupabase === 'undefined') { err('window.rigSupabase undefined (/rr-supabase.js missing?)'); return; }
-
-      const res = await window.rrTest();
-      if (res && res.ok) ok('Connected to Supabase.');
-      else err(res && res.error ? res.error : 'rrTest failed');
+    (async () => {
+      const { data:{ user } } = await supabase.auth.getUser();
+      if (user) {
+        const name = user.user_metadata?.display_name || user.email;
+        document.getElementById("username").textContent = name;
+      }
     })();
+
+    /* --- background (reuse teaser) --- */
+    (async () => {
+      const bg = document.getElementById("bg");
+      const pages = ["/", "/index.html"];
+      let html = "";
+      for (const p of pages) { try { const r = await fetch(p,{cache:"no-cache"}); if (r.ok) { html = await r.text(); break; } } catch{} }
+      let path=null;
+      if (html){ const re=/url\((['"]?)(\/[^'")]+\.(?:jpg|jpeg|png|webp))\1\)/ig; const m=[...html.matchAll(re)].map(x=>x[2]); if (m.length) path=m[0]; }
+      const fallbacks=["/img/rig-radio-studio.jpg","/images/rig-radio-studio.jpg","/rig-radio-studio.jpg","/images/studio-bg.jpg","/img/studio-bg.jpg","/studio-bg.jpg"];
+      const candidates = path ? [path, ...fallbacks] : fallbacks;
+      for (const c of candidates) { try { const r=await fetch(c,{cache:"no-cache"}); if (r.ok){ bg.style.backgroundImage=`url('${c}')`; return; } } catch{} }
+    })();
+
+    /* --- helpers for signed artwork --- */
+
+    // Try to sign a known key in the 'tracks' bucket
+    async function signTracksKey(key, ttlSec=3600){
+      try {
+        const { data, error } = await supabase.storage.from('tracks').createSignedUrl(key, ttlSec);
+        if (error) return null;
+        return data?.signedUrl || null;
+      } catch { return null; }
+    }
+
+    // Extract object key from a public storage URL (if cover_path is missing)
+    function extractKeyFromPublicUrl(url){
+      if (typeof url !== 'string') return null;
+      // looks like .../storage/v1/object/public/tracks/<KEY>
+      const marker = '/storage/v1/object/public/tracks/';
+      const i = url.indexOf(marker);
+      if (i === -1) return null;
+      return url.substring(i + marker.length);
+    }
+
+    // Resolves a signed URL for the row's artwork
+    async function getSignedCover(row){
+      // 1) Best: explicit storage key
+      if (row.cover_path && typeof row.cover_path === 'string') {
+        const s = await signTracksKey(row.cover_path.replace(/^\/+/, ''));
+        if (s) return s;
+      }
+      // 2) cover_url → extract key → sign
+      if (row.cover_url && typeof row.cover_url === 'string') {
+        const key = extractKeyFromPublicUrl(row.cover_url);
+        if (key) {
+          const s = await signTracksKey(key);
+          if (s) return s;
+        }
+      }
+      // 3) artwork_url → extract key → sign
+      if (row.artwork_url && typeof row.artwork_url === 'string') {
+        const key = extractKeyFromPublicUrl(row.artwork_url);
+        if (key) {
+          const s = await signTracksKey(key);
+          if (s) return s;
+        }
+      }
+      // 4) last resort: use cover_url directly (may work if bucket is public)
+      if (row.cover_url && typeof row.cover_url === 'string') return row.cover_url;
+      if (row.artwork_url && typeof row.artwork_url === 'string') return row.artwork_url;
+      return null;
+    }
+
+    const PLACEHOLDER_IMG =
+      "data:image/svg+xml;utf8," +
+      encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>
+        <defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>
+          <stop offset='0%' stop-color='#2b3542'/><stop offset='100%' stop-color='#1a222c'/>
+        </linearGradient></defs>
+        <rect width='100%' height='100%' fill='url(#g)'/>
+        <circle cx='60' cy='60' r='22' fill='#ff2b2b' opacity='.35'/>
+      </svg>`);
+
+    /* --- load & render --- */
+    async function loadMyTracks() {
+      const list = document.getElementById("tracks-list");
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { list.innerHTML = `<div class="muted">Please sign in to see your uploads.</div>`; return; }
+
+        const { data, error } = await supabase
+          .from('tracks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (error) { list.innerHTML = `<div class="muted">Couldn't load tracks.</div>`; return; }
+        if (!data || data.length === 0) { list.innerHTML = `<div class="muted">No uploads yet. Use “Submit Song”.</div>`; return; }
+
+        list.innerHTML = '';
+        for (const row of data) {
+          const title  = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/,'') : 'Untitled track');
+          const artist = row.artist || row.artist_name || '';
+          const sub    = artist || row.genre || row.style || row.description || '';
+
+          const signedCover = await getSignedCover(row);
+          console.log('cover for', title, '→', signedCover || '(placeholder)');
+
+          const div = document.createElement('div');
+          div.className = 'track-row';
+          div.innerHTML = `
+            <div class="cover"></div>
+            <div class="track-main">
+              <div class="track-title" title="${title}">${title}</div>
+              <div class="track-sub" title="${sub}">${sub || '&nbsp;'}</div>
+            </div>
+          `;
+          const cover = div.querySelector('.cover');
+          cover.style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;
+
+          list.appendChild(div);
+        }
+      } catch {
+        list.innerHTML = `<div class="muted">Unexpected error loading your tracks.</div>`;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadMyTracks);
+
+    /* --- logout duplicate (safety) --- */
+    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
   </script>
 </body>
 </html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Signed Cover Test</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body style="background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:40px;">
+
+  <h1>Signed Cover Test</h1>
+  <div id="output">Loading…</div>
+  <img id="cover" alt="Signed Cover" style="margin-top:20px; width:300px; border:2px solid red; border-radius:12px;">
+
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+    );
+
+    async function loadSigned() {
+      // Your cover path (from the row.cover_path in Supabase, not the full URL)
+      const path = "covers/ba752d7a-02b7-4b98-9e8a-12a866e8f5a7-deadmanstrolin_a_album_cover_for_the_band_Naughty_Nation_with_a_cd23f666-434e-4248-8244-d11ec019cd8b.png";
+
+
+      const { data, error } = await supabase
+        .storage
+        .from('tracks')
+        .createSignedUrl(path, 60); // 60 seconds
+
+      if (error) {
+        document.getElementById('output').textContent = "Error: " + error.message;
+        return;
+      }
+
+      document.getElementById('output').textContent = "Signed URL: " + data.signedUrl;
+      document.getElementById('cover').src = data.signedUrl;
+    }
+
+    loadSigned();
+  </script>
+</body>
+</html>
+
