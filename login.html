@@ -1,76 +1,108 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Rig-Radio | Sign in</title>
-  <link rel="icon" href="/favicon.ico">
-  <style>
-    :root { --bg:#0b0b0c; --panel:#121214; --border:#1e1e22; --muted:#cfd2d7; --text:#fff; --accent:#D90429; }
-    *{ box-sizing:border-box; } html,body{ height:100%; }
-    body{ margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; display:flex; flex-direction:column; }
-    header{ padding:14px 18px; border-bottom:1px solid #222; display:flex; align-items:center; }
-    header a{ color:#fff; text-decoration:none; font-weight:600; }
-    #auth-quick{ margin-left:auto; }
-    main{ flex:1; display:grid; place-items:center; padding:24px; }
-    .card{ width:100%; max-width:420px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
-    h1{ font-size:1.4rem; margin:0 0 1rem; }
-    label{ display:block; font-size:.9rem; margin:.5rem 0 .35rem; color:var(--muted); }
-    input{ width:100%; padding:12px; border-radius:10px; border:1px solid #2a2a2f; background:#0f0f12; color:#fff; }
-    button{ margin-top:14px; width:100%; padding:12px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; }
-    .muted{ color:#aab; font-size:.9rem; }
-    .msg{ margin-top:.75rem; min-height:1.25em; }
-    .error{ color:#ff6b6b; }
-  </style>
-    <link rel="stylesheet" href="/rr.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rig-Radio — Sign In</title>
+  <link rel="stylesheet" href="/rr.css" />
 </head>
-<body class="auth-page">
 
+<body class="auth-page">
+  <!-- Header (auth.js fills #auth-quick with Display Name, never email) -->
   <header>
     <a href="/">Rig-Radio</a>
     <span id="auth-quick"></span>
   </header>
 
   <main>
-  <div class="auth-layout">
-    <!-- Banner -->
-    <div class="banner">
-      <img src="/banner.png" alt="Rig-Radio Banner">
+    <div class="auth-layout">
+      <!-- Banner -->
+      <div class="banner">
+        <img src="/banner.png" alt="Rig-Radio Banner" />
+      </div>
+
+      <!-- Sign-in Card -->
+      <div class="card">
+        <h1>Sign in to your account</h1>
+
+        <form id="login-form" autocomplete="on" novalidate>
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" placeholder="you@example.com" required />
+
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" placeholder="Your password" required />
+
+          <button type="submit" class="btn-primary">Sign In</button>
+
+          <p class="auth-switch">Don’t have an account? <a href="/create-account">Create one</a></p>
+        </form>
+      </div>
     </div>
+  </main>
 
-    <!-- Sign In card -->
-    <div class="card">
-      <h1>Sign in to your account</h1>
-      <form id="login-form" autocomplete="on" novalidate>
-        <!-- Email -->
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" placeholder="you@example.com" required>
+  <!-- 1) Load Supabase UMD FIRST (gives window.supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
-        <!-- Password -->
-        <label for="password">Password</label>
-        <input id="password" type="password" name="password" placeholder="Your password" required>
-
-        <!-- Submit -->
-        <button type="submit" class="btn-primary">Sign In</button>
-
-        <!-- Switch -->
-        <p class="auth-switch">Don’t have an account? <a href="/create-account">Create one</a></p>
-      </form>
-    </div>
-  </div>
-</main>
-
-
-  <!-- Scripts (order matters) -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="/rr-supabase.js?v=6"></script>
-  <script>window.rigSupabase = window.rigSupabase || window.supabase;</script>
-  <script src="/auth.js"></script>
+  <!-- 2) Login handler: redirect on SIGNED_IN; fallback check + spinner reset -->
   <script>
-    rrShowAuthQuicklink();
-    rrRedirectIfAuthed('/dashboard.html');   // already signed-in? jump to dashboard
-    rrBindLoginForm('login-form', '/dashboard.html'); // handle login
+    (function () {
+      const SUPABASE_URL  = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+      const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+
+      // Create client with session persistence
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+      });
+
+      const form = document.getElementById('login-form');
+      const btn  = form?.querySelector('.btn-primary');
+
+      // Redirect as soon as Supabase confirms a signed-in session
+      const { data: sub } = sb.auth.onAuthStateChange(async (event) => {
+        if (event === 'SIGNED_IN') {
+          window.location.href = '/dashboard';
+        }
+      });
+
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email    = document.getElementById('email')?.value?.trim() || "";
+        const password = document.getElementById('password')?.value || "";
+        if (!email || !password) { form.reportValidity(); return; }
+
+        if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+          alert('Sign-in failed: ' + error.message);
+          return;
+        }
+
+        // Safety net: if SIGNED_IN event doesn’t arrive quickly, verify session and proceed
+        setTimeout(async () => {
+          try {
+            const u = (await sb.auth.getUser())?.data?.user || null;
+            if (u) {
+              window.location.href = '/dashboard';
+              return;
+            }
+          } catch (_) {}
+          // Session still not available; reset UI so user isn’t stuck
+          if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+          alert('Login succeeded but session is slow. Please press Sign In again.');
+        }, 3000);
+      });
+
+      // Clean up subscription on unload (not strictly required for a simple page)
+      window.addEventListener('beforeunload', () => { try { sub.subscription?.unsubscribe(); } catch(_){} });
+    })();
   </script>
+
+  <!-- 3) Header / Auth quicklink renderer (uses display_name or “Account”, never email) -->
+  <script src="/auth.js" defer></script>
 </body>
 </html>
 

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rig-Radio — Teaser</title>
+
+  <!-- Keep your existing site CSS references if you have them -->
+  <!-- <link rel="stylesheet" href="/assets/teaser.css"> -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+  <style>
+    html, body { margin:0; padding:0; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+  </style>
+</head>
+<body>
+
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">Outlaw Airwaves</div>
+  </header>
+
+  <main class="rr-main">
+    <section class="rr-hero">
+      <h1 class="sr-only">Rig-Radio Teaser</h1>
+    </section>
+
+    <section class="rr-grid">
+      <article class="rr-card rr-spotlight">
+        <div class="header">Spotlight Song</div>
+        <div class="title">Artist Name — Song Title</div>
+        <div class="sub">Featured today on Rig-Radio</div>
+        <div class="player">
+          <audio id="teaserPlayer" controls preload="metadata"
+                 controlsList="nodownload noplaybackrate"
+                 disablepictureinpicture
+                 oncontextmenu="return false">
+            <source id="teaserSource" src="" type="audio/mpeg">
+          </audio>
+        </div>
+      </article>
+
+      <article class="rr-card rr-news">
+        <div class="header">Latest AI Music News</div>
+        <ul class="rr-news-list">
+          <li>Sign up to unlock today’s top AI-music headlines and stories.</li>
+          <li>Members get 4+ curated sources, updated continuously.</li>
+          <li>No fluff. Just the news that matters to indie & AI artists.</li>
+        </ul>
+      </article>
+
+      <aside class="rr-card rr-sponsor-left">
+        <div class="header">Sponsor</div>
+        <div class="body">
+          <div class="rr-ad-headline">SIGN UP TODAY — FREE</div>
+          <div class="rr-ad-sub">“Indie. AI. Outlaw Airwaves.”</div>
+          <div class="rr-ad-copy">Join the bunker. Get full tracks, news, playlists, & more.</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    (async () => {
+      try {
+        window._rr = window._rr || {};
+        _rr.db = _rr.db || supabase.createClient(
+          "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+        );
+
+        const db = _rr.db;
+        const { data: files, error } = await db.storage.from("tracks").list("audio", { limit: 100 });
+        if (error || !files || files.length === 0) {
+          console.warn("No files in tracks/audio/");
+          return;
+        }
+
+        const pool = files.filter(f => /\.(mp3|wav|ogg|m4a)$/i.test(f.name));
+        const list = pool.length ? pool : files;
+        const chosen = list[Math.floor(Math.random() * list.length)];
+        const path = `audio/${chosen.name}`;
+
+        const { data: signed, error: sErr } = await db.storage.from("tracks").createSignedUrl(path, 600);
+        if (sErr || !signed?.signedUrl) {
+          console.error("Signed URL error:", sErr);
+          return;
+        }
+
+        const player = document.getElementById("teaserPlayer");
+        const source = document.getElementById("teaserSource");
+        source.src = signed.signedUrl;
+        player.load();
+      } catch (e) {
+        console.error("Unexpected teaser player error:", e);
+      }
+    })();
+  </script>
+</body>
+</html>

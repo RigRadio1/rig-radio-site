@@ -1,172 +1,106 @@
-// ---------- Tiny utils ----------
-function rrQS(sel) { return document.querySelector(sel); }
-function rrText(el, html) { if (el) el.innerHTML = html; }
+/* Rig-Radio auth helper: single Supabase client, header renderer, and rrRequireAuth() */
+(function () {
+  var SUPABASE_URL  = 'https://tpzpeoqdpfwqumlsyhpx.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E';
 
-// ---------- Auth quicklink (top-right) ----------
-async function rrShowAuthQuicklink() {
-  const target = rrQS('#auth-quick');
-  if (!target) return;
+  function ensureSupabase(cb) {
+    if (window.supabase && window.supabase.createClient) return cb();
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const label = user.email || 'Account';
-    rrText(target, `
-      <span style="opacity:.8;margin-right:.5rem;">${label}</span>
-      <a href="#" id="rr-signout">Sign out</a>
-    `);
-    const signout = rrQS('#rr-signout');
-    if (signout) {
-      signout.addEventListener('click', async (e) => {
+  function getClient() {
+    if (!window._sb && window.supabase && window.supabase.createClient) {
+      window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    }
+    return window._sb;
+  }
+
+  function safeName(user) {
+    var dn = user && user.user_metadata && user.user_metadata.display_name;
+    if (dn && ('' + dn).trim()) return ('' + dn).trim();
+    return 'Account'; // NEVER show email by default
+  }
+
+  async function rrShowAuthQuicklink() {
+    var el = document.getElementById('auth-quick');
+    if (!el) return;
+    var sb = getClient(); if (!sb) return;
+
+    try {
+      var { data } = await sb.auth.getUser();
+      var user = data && data.user;
+
+      if (!user) { el.innerHTML = '<a href="/login">Sign in</a>'; return; }
+
+      el.innerHTML =
+        '<a href="/dashboard" aria-label="Your account">' + safeName(user) + '</a>' +
+        '<span class="sep"> | </span>' +
+        '<a href="#" id="logout-link">Log out</a>';
+
+      var out = document.getElementById('logout-link');
+      if (out) out.addEventListener('click', async function (e) {
         e.preventDefault();
-        await supabase.auth.signOut();
-        window.location.replace('/login.html');
+        try { await sb.auth.signOut(); } catch(e){}
+        window.location.href = '/login';
       });
+    } catch (e) {
+      el.innerHTML = '<a href="/login">Sign in</a>';
     }
-  } else {
-    rrText(target, `<a href="/login.html">Sign in</a> &nbsp;|&nbsp; <a href="/signup.html">Create account</a>`);
   }
-}
 
-// Keep quicklink in sync as auth state changes
-if (window.supabase) {
-  supabase.auth.onAuthStateChange((_event, _session) => {
+  // Optional: one-time backfill from localStorage if signup stored pending_display_name
+  async function backfillDisplayNameIfPending() {
+    var sb = getClient(); if (!sb) return;
+    var pending = null;
+    try { pending = localStorage.getItem('pending_display_name'); } catch(e){}
+    if (!pending) return;
+
+    try {
+      var { data } = await sb.auth.getUser();
+      var user = data && data.user; if (!user) return;
+      var current = user.user_metadata && user.user_metadata.display_name;
+      if (current && (''+current).trim()) { localStorage.removeItem('pending_display_name'); return; }
+      await sb.auth.updateUser({ data: { display_name: (''+pending).trim() } });
+      localStorage.removeItem('pending_display_name');
+    } catch (e) { /* ignore */ }
+  }
+
+  // Gate for pages that require auth
+  async function rrRequireAuth(opts) {
+    opts = opts || {};
+    var redirect = opts.redirect !== false;       // default true
+    var to = opts.to || '/login';
+
+    var sb = getClient(); if (!sb) return null;
+
+    var { data } = await sb.auth.getSession();
+    var user = data && data.session && data.session.user;
+    if (!user) {
+      if (redirect) window.location.href = to;
+      return null;
+    }
+
+    // try one-time display_name backfill (non-blocking)
+    backfillDisplayNameIfPending().then(rrShowAuthQuicklink);
+
+    return user;
+  }
+
+  function init() {
+    getClient();
     rrShowAuthQuicklink();
-  });
-}
-
-// ---------- Signup handler ----------
-function rrBindSignupForm(formId = 'signup-form', next = '/dashboard.html') {
-  const form = rrQS(`#${formId}`);
-  const msg = rrQS('#signup-msg');
-  if (!form) return;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    rrText(msg, 'Creating your account...');
-
-    const email = form.email.value.trim();
-    const password = form.password.value;
-
-    const { data, error } = await supabase.auth.signUp({ email, password });
-
-    if (error) {
-      rrText(msg, `<span style="color:#c0392b;">${error.message}</span>`);
-      return;
-    }
-
-    const hasSession = !!data.session;
-    if (!hasSession) {
-      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInErr) {
-        rrText(msg, `<span style="color:#c0392b;">${signInErr.message}</span>`);
-        return;
-      }
-    }
-
-    rrText(msg, 'Success! Redirecting...');
-    window.location.assign(next);
-  });
-}
-
-// ---------- Login handler ----------
-function rrBindLoginForm(formId = 'login-form', next = '/dashboard.html') {
-  const form = rrQS(`#${formId}`);
-  const msg = rrQS('#login-msg');
-  if (!form) return;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    rrText(msg, 'Signing you in...');
-
-    const email = form.email.value.trim();
-    const password = form.password.value;
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      rrText(msg, `<span style="color:#c0392b;">${error.message}</span>`);
-      return;
-    }
-
-    rrText(msg, 'Success! Redirecting...');
-    window.location.assign(next);
-  });
-}
-
-// ---------- Redirect if already authed ----------
-async function rrRedirectIfAuthed(next = '/dashboard.html') {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) window.location.replace(next);
-}
-
-// ---------- Export ----------
-window.rrShowAuthQuicklink = rrShowAuthQuicklink;
-window.rrBindSignupForm = rrBindSignupForm;
-window.rrBindLoginForm = rrBindLoginForm;
-window.rrRedirectIfAuthed = rrRedirectIfAuthed;
-window.rrTest = window.rrTest || function(){};
-
-// ---------- Require auth on protected pages ----------
-async function rrRequireAuth(redirectTo = '/login.html') {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) window.location.replace(redirectTo);
-}
-window.rrRequireAuth = rrRequireAuth;
-
-// ---------- rrRequireAuth (robust) ----------
-window.rrRequireAuth = async function rrRequireAuth(redirectTo = '/login.html') {
-  const hasUser = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      return !!(session && session.user);
-    } catch (_) { return false; }
-  };
-
-  // Fast path
-  if (await hasUser()) return;
-
-  // Wait briefly for session to hydrate (race-safe)
-  for (let i = 0; i < 10; i++) {
-    await new Promise(r => setTimeout(r, 100)); // 1s total
-    if (await hasUser()) return;
+    try { window._sb.auth.onAuthStateChange(rrShowAuthQuicklink); } catch(e){}
+    setTimeout(rrShowAuthQuicklink, 400);
+    setTimeout(rrShowAuthQuicklink, 1200);
   }
 
-  // Still no user → go to login
-  window.location.replace(redirectTo);
-};
+  window.addEventListener('load', function () { ensureSupabase(init); });
 
-// ---------- Robust auth gate (waits for session) ----------
-window.rrRequireAuth = async function rrRequireAuth(redirectTo = '/login.html') {
-  const box = document.getElementById('sb-status');
-  const note = (m) => { if (box) box.textContent = 'AUTH: ' + m; try { console.log('[auth]', m); } catch(_){} };
+  // expose helpers for pages
+  window.rrShowAuthQuicklink = rrShowAuthQuicklink;
+  window.rrRequireAuth = rrRequireAuth;
+})();
 
-  // quick check
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) { note('session OK'); return; }
-  } catch(_) { /* ignore */ }
-
-  note('no session yet; waiting briefly…');
-
-  // wait up to ~2s for hydration or auth event
-  let got = false;
-  const unsub = supabase.auth.onAuthStateChange((_e, sess) => {
-    if (sess && sess.user) { got = true; note('session became OK'); }
-  });
-
-  // poll a few times in parallel with the event
-  for (let i = 0; i < 10 && !got; i++) {
-    await new Promise(r => setTimeout(r, 200)); // 2s total
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user) { got = true; note('session OK after wait'); break; }
-    } catch(_) { /* ignore */ }
-  }
-
-  try { unsub?.data?.subscription?.unsubscribe?.(); } catch(_) {}
-
-  if (got) return;
-
-  note('still no session → redirecting to login');
-  window.location.replace(redirectTo);
-};

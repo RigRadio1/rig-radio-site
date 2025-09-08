@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Rig-Radio — Submit a Track</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; background:#0b0b12; color:#e6e6f0; margin:0; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:#11131a; border-bottom:1px solid #1d2130; }
+    a,.btn { color:#e6e6f0; text-decoration:none; }
+    .btn { display:inline-block; padding:10px 14px; border:1px solid #2a2f44; border-radius:10px; }
+    main { max-width:720px; margin:24px auto; padding:0 16px; }
+    form { background:#11131a; border:1px solid #1d2130; border-radius:16px; padding:18px; }
+    label { display:block; margin:12px 0 6px; opacity:.9; }
+    input[type="text"] { width:100%; padding:10px; border-radius:10px; border:1px solid #2a2f44; background:#0b0b12; color:#e6e6f0; }
+    input[type="file"] { width:100%; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .muted { opacity:.75; font-size:.9rem; }
+    .status { margin-top:12px; padding:10px; border-radius:10px; display:none; white-space:pre-wrap; }
+    .ok { background:#0f3320; border:1px solid #1e7a3a; }
+    .err { background:#2f1212; border:1px solid #7a1e1e; }
+  </style>
+    <link rel="stylesheet" href="/rr.css">
+</head>
+<body>
+  <header>
+    <h1 style="margin:0;font-size:18px;">Submit a Track</h1>
+    <nav>
+      <a class="btn" href="/dashboard">Dashboard</a>
+      <a class="btn" href="/library">Library</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="muted" id="user-slot">Checking session…</p>
+
+    <form id="submit-form">
+      <div class="row">
+        <div>
+          <label for="title">Song Title *</label>
+          <input id="title" name="title" type="text" required />
+        </div>
+        <div>
+          <label for="artist">Artist *</label>
+          <input id="artist" name="artist" type="text" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="genre">Genre</label>
+          <input id="genre" name="genre" type="text" placeholder="rock, pop, metal…" />
+        </div>
+        <div></div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="mp3">MP3 File *</label>
+          <input id="mp3" name="mp3" type="file" accept="audio/mpeg" required />
+        </div>
+        <div>
+          <label for="cover">Cover Image (jpg/png)</label>
+          <input id="cover" name="cover" type="file" accept="image/*" />
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn" type="submit">Upload</button>
+      </div>
+
+      <div id="ok" class="status ok"></div>
+      <div id="err" class="status err"></div>
+    </form>
+  </main>
+
+  <!-- Supabase + site scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/rr-supabase.js"></script>
+  <script src="/auth.js"></script>
+  <script src="/submit.js"></script>
+  <script>
+    if (typeof rrRequireAuth === 'function') rrRequireAuth('/login');
+  </script>
+</body>
+</html>

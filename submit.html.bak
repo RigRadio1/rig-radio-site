@@ -4,7 +4,34 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Submit a Track — Rig-Radio</title>
+
+  <!-- Global theme -->
   <link rel="stylesheet" href="/rr.css"/>
+
+  <style>
+    /* page-local touches only */
+    .layout{display:grid;grid-template-columns:260px 1fr;gap:18px}
+    @media (max-width:900px){ .layout{grid-template-columns:1fr} }
+    .sidebar{background:rgba(8,10,16,.72);border:1px solid #2a1a1e;border-radius:16px;padding:12px}
+    .content{min-width:0}
+    .signed{margin:6px 0 14px;opacity:.85}
+    .steps{list-style:none;margin:0;padding:0}
+    .steps li{display:flex;align-items:center;gap:10px;margin:8px 0;padding:10px 12px;background:rgba(8,10,16,.72);border:1px solid #2a1a1e;border-radius:12px;color:#b9b9c8}
+    .steps li .num{width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:#13131a;border:1px solid #2a1a1e;font-weight:700}
+    .steps li.active{color:#fff;box-shadow:0 0 0 2px rgba(255,42,58,.25) inset, 0 18px 50px rgba(0,0,0,.35)}
+    .steps li.done{opacity:.75}
+    .stage{display:none;background:rgba(8,10,16,.88);padding:16px;border-radius:16px;box-shadow:0 0 0 2px rgba(255,42,58,.25)}
+    .stage.active{display:block}
+    .progressbar{width:100%;height:6px;border-radius:8px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);margin:6px 0 16px}
+    .progressbar>.bar{height:100%;width:0%;background:linear-gradient(90deg, rgba(255,42,58,.6), rgba(255,89,100,.95));box-shadow:0 0 14px rgba(255,42,58,.25), 0 0 3px rgba(255,42,58,.45) inset;border-radius:8px;transition:width .25s ease}
+    .rr-label{display:block;margin:4px 0 6px;font-weight:700;color:#cfcfe5}
+    .rr-actions{margin-top:14px;display:flex;gap:10px}
+    /* ensure the dropzone looks good here too */
+    .dropzone{display:flex;align-items:center;justify-content:center;height:160px;border-radius:12px;border:2px dashed rgba(255,42,58,.35);background:rgba(15,10,12,.7);color:#f0f0f5;text-align:center;transition:.15s ease box-shadow,.15s ease transform,.15s ease border-color}
+    .dropzone strong{color:#fff}
+    .dropzone.hover{border-color:#ff2a3a;box-shadow:0 0 22px rgba(255,42,58,.35), inset 0 0 0 1px rgba(255,42,58,.35);transform:scale(1.01)}
+    .preview-img{width:160px;height:160px;object-fit:cover;border-radius:12px;border:1px solid #34171c;background:#0c0d12}
+  </style>
 </head>
 <body class="rr-bg">
   <!-- Top bar -->
@@ -17,12 +44,11 @@
   </header>
 
   <main class="wrap">
-    <div id="signed-in-email" class="rr-muted" style="margin-bottom:12px">Signed in…</div>
+    <div class="signed" id="signed-in-email">Signed in…</div>
 
-    <!-- LAYOUT -->
-    <div class="layout" style="display:grid;grid-template-columns:260px 1fr;gap:18px">
-      <!-- Sidebar -->
-      <aside class="sidebar card" style="padding:12px">
+    <div class="layout">
+      <!-- Left rail -->
+      <aside class="sidebar">
         <ul class="steps">
           <li data-step="1" class="active"><span class="num">1</span><div><strong>Upload Audio</strong><br><small class="rr-muted">MP3/WAV/FLAC</small></div></li>
           <li data-step="2"><span class="num">2</span><div><strong>Details &amp; Tags</strong><br><small class="rr-muted">Title, artist, genre</small></div></li>
@@ -32,9 +58,10 @@
         </ul>
       </aside>
 
-      <!-- Content -->
-      <section class="content" style="min-width:0">
-        <div class="progressbar"><div id="progress" class="bar"></div></div>
+      <!-- Right content -->
+      <section class="content">
+
+        <div class="progressbar"><div class="bar" id="progress"></div></div>
 
         <!-- STEP 1 -->
         <section class="stage active" data-step="1">
@@ -47,6 +74,7 @@
               <small class="rr-muted">Accepted: MP3, WAV, FLAC — max 20 MB</small>
             </div>
           </div>
+
           <input id="audioFile" type="file" accept=".mp3,.wav,.flac,audio/mpeg,audio/wav,audio/flac" hidden>
 
           <div class="rr-actions">
@@ -60,17 +88,18 @@
         <!-- STEP 2 -->
         <section class="stage" data-step="2">
           <h2>Step 2 — Details &amp; Tags</h2>
+
           <div class="rr-grid-2">
             <div>
-              <label class="rr-label" for="title">Song Title *</label>
+              <label for="title" class="rr-label">Song Title *</label>
               <input id="title" type="text" placeholder="Song title">
             </div>
             <div>
-              <label class="rr-label" for="artist">Artist *</label>
+              <label for="artist" class="rr-label">Artist *</label>
               <input id="artist" type="text" placeholder="Artist name">
             </div>
             <div>
-              <label class="rr-label" for="genre">Genre *</label>
+              <label for="genre" class="rr-label">Genre *</label>
               <select id="genre">
                 <option value="">Select…</option>
                 <option>Rock</option><option>Metal</option><option>Pop</option>
@@ -82,7 +111,7 @@
               </select>
             </div>
             <div>
-              <label class="rr-label" for="notes">Notes (optional)</label>
+              <label for="notes" class="rr-label">Notes (optional)</label>
               <textarea id="notes" maxlength="500" placeholder="Anything we should know? (max 500 chars)"></textarea>
               <small class="rr-muted"><span id="notesCount">0/500</span></small>
             </div>
@@ -101,14 +130,14 @@
 
           <div class="rr-grid-2">
             <div>
-              <label class="rr-label" for="coverFile">Cover image (PNG/JPG) *</label>
+              <label for="coverFile" class="rr-label">Cover image (PNG/JPG) *</label>
               <input id="coverFile" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg"/>
               <small class="rr-help">Max ~5–10MB recommended. No GIFs or videos.</small>
             </div>
+
             <div>
               <label class="rr-label">Preview</label>
-              <img id="coverPreview" class="preview-img" src="/banner.png" alt="cover preview"
-                   style="width:160px;height:160px;object-fit:cover;border-radius:12px;border:1px solid #34171c;background:#0c0d12"/>
+              <img id="coverPreview" class="preview-img" src="/banner.png" alt="cover preview"/>
             </div>
           </div>
 
@@ -122,7 +151,7 @@
         <section class="stage" data-step="4">
           <h2>Step 4 — Rights &amp; Release</h2>
           <p class="rr-muted">You confirm you have the rights to upload and share this track on Rig-Radio.</p>
-          <label><input id="agree" type="checkbox"> I own (or have permission to use) the audio and artwork, and agree to the terms.</label>
+          <label><input type="checkbox" id="agree"> I own (or have permission to use) the audio and artwork, and agree to the terms.</label>
 
           <div class="rr-actions">
             <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
@@ -141,15 +170,15 @@
             <span id="publishStatus" class="rr-muted" style="margin-left:auto"></span>
           </div>
         </section>
-      </section><!-- END .content -->
-    </div><!-- END .layout -->
+
+      </section>
+    </div>
   </main>
 
-  <!-- Scripts (no inline app code, just includes) -->
+  <!-- Supabase SDK + your client + wizard -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/rr-supabase.js"></script>
   <script src="/submit-wizard.js"></script>
-<script src="/auth.js" defer></script>
 </body>
 </html>
 

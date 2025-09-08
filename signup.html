@@ -70,34 +70,52 @@
     
   </main>
 
-  <!-- Scripts must be in this order -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="/rr-supabase.js?v=6"></script>
-  <!-- alias shim: ensure both globals exist even if cache/order was funky -->
-  <script>window.rigSupabase = window.rigSupabase || window.supabase;</script>
-  <script src="/auth.js"></script>
-  <script>
-    rrShowAuthQuicklink();
+  <!-- Supabase Auth (Create Account) -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL  = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+  const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // Extra client-side guard for 8-char rule
-    (function enforceMin8() {
-      const form = document.getElementById('signup-form');
-      const msg = document.getElementById('signup-msg');
-      form.addEventListener('submit', function(e){
-        const pw = form.password.value || '';
-        if (pw.length < 8) {
-          e.preventDefault();
-          msg.classList.add('error');
-          msg.textContent = 'Password must be at least 8 characters.';
-        } else {
-          msg.classList.remove('error');
-          msg.textContent = '';
-        }
-      });
-    })();
+  const form = document.getElementById('signup-form');
+  const btn  = document.querySelector('.btn-primary');
 
-    rrRedirectIfAuthed('/dashboard.html');
-    rrBindSignupForm('signup-form', '/dashboard.html');
-  </script>
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const displayName = document.getElementById('display_name')?.value?.trim() || "";
+    const email       = document.getElementById('email')?.value?.trim() || "";
+    const password    = document.getElementById('password')?.value || "";
+
+    const agree = document.getElementById('agree');
+    if (!agree?.checked) { alert('Please agree to the Terms to continue.'); return; }
+
+    // Stash intended display name to backfill after first login if needed
+    try { localStorage.setItem('pending_display_name', displayName); } catch(e) {}
+
+    btn.disabled = true; btn.textContent = 'Creating…';
+
+    // IMPORTANT: send display_name in user metadata
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { display_name: displayName }
+      }
+    });
+
+    if (error) {
+      btn.disabled = false; btn.textContent = 'Create Account';
+      alert('Sign-up failed: ' + error.message);
+      return;
+    }
+
+    // Send them to sign-in; login script will backfill metadata if needed
+    window.location.href = '/login?welcome=1';
+  });
+</script>
+
+<script src="/auth.js" defer></script>
 </body>
 </html>
