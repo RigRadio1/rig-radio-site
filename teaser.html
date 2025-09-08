@@ -115,7 +115,6 @@
       <a class="rr-link" href="/library">Library</a>
     </nav> -->
     <nav class="rr-topbar-right">
-      <a class="rr-btn rr-primary" style="padding:8px 18px; font-size:1.1em; margin-left:12px;" href="/login">Sign In</a>
     </nav>
   </header>
 
@@ -129,7 +128,6 @@
   <!-- CTA -->
   <section class="cta">
     <p>Unlock the full Rig-Radio experience: upload your own tracks, explore the entire indie + AI music library, and connect with a community pushing sound forward.</p>
-    <a href="/create-account" class="rr-btn rr-primary">Join Rig-Radio Today</a>
   </section>
 
   <!-- spotlight + news -->
@@ -154,7 +152,6 @@
         </div>
       </div>
     </article>
-
     <aside class="panel">
       <h3><span class="note">📰</span> Latest AI Music News</h3>
       <div class="news-list">
@@ -197,6 +194,29 @@
   </section>
 
   <script src="/teaser.js"></script>
+<style>
+  @media (max-width: 1000px){ .rr-billboard{ display:none !important; } }
+  .rr-billboard{
+    position: fixed;
+    left: 80px;
+    top: 18vh;
+    width: 160px;
+    height: 50vh;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    padding: 14px;
+  }
+</style>
+<div class="panel rr-billboard">
+  <div>
+    <div class="ad-copy">
+      <div class="rr-ad-headline" style="font-size:1.35em; font-weight:800; letter-spacing:.5px; text-transform:uppercase;">SIGN UP TODAY — FREE</div>
+      <div class="rr-ad-sub tiny" style="margin-top:6px; opacity:.9;">“Indie. AI. Outlaw Airwaves.”</div>
+      <div class="rr-ad-copy" style="margin-top:10px;">Unlock full tracks, playlists, news & uploads.</div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 
@@ -555,3 +575,116 @@
   document.addEventListener('DOMContentLoaded', setArtistAndTitle);
 })();
 </script>
+<script>
+/* ==== Teaser: AI Music News (non-clickable) ==== */
+(function () {
+  const BOX = document.querySelector('.news-list');
+  if (!BOX) return;
+
+  // Show a tiny loading state
+  BOX.innerHTML = '<div class="news-item"><div class="tiny">Loading AI music headlines…</div></div>';
+
+  // Use an open CORS proxy to retrieve RSS as raw XML
+  const proxy = (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`;
+
+  // Feeds (4+ sources). We’ll keyword-filter to AI/music.
+  const FEEDS = [
+    // Google News query: "AI music"
+    'https://news.google.com/rss/search?q=%22AI%20music%22&hl=en-US&gl=US&ceid=US:en',
+    // MusicTech (general feed; we’ll filter for AI/music)
+    'https://musictech.com/feed/',
+    // The Verge (general feed; filter)
+    'https://www.theverge.com/rss/index.xml',
+    // TechCrunch AI (filter to music keywords)
+    'https://techcrunch.com/tag/ai/feed/',
+    // Billboard News (filter to AI/music)
+    'https://www.billboard.com/feed/',
+  ];
+
+  const KEYWORDS = [
+    /(^|\b)ai(\b|$)/i,
+    /artificial intelligence/i,
+    /gen(erative)?\s*ai/i,
+    /\bmusic\b/i,
+    /\baudio\b/i,
+    /\bsong\b/i
+  ];
+
+  // Helper: basic keyword check requiring both AI-ish and music-ish presence
+  function isRelevant(title) {
+    const t = (title || '').toLowerCase();
+    const hasAI = /(^|\b)ai(\b|$)|artificial intelligence|generative ai/.test(t);
+    const hasMusic = /\bmusic\b|\baudio\b|\bsong\b|\bartist\b/.test(t);
+    return hasAI && hasMusic;
+  }
+
+  async function fetchFeed(url) {
+    try {
+      const res = await fetch(proxy(url), { credentials: 'omit' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const xml = await res.text();
+      const doc = new DOMParser().parseFromString(xml, 'text/xml');
+      // RSS: <item>, Atom: <entry>
+      const items = [...doc.querySelectorAll('item, entry')].slice(0, 20).map(node => {
+        const title = (node.querySelector('title')?.textContent || '').trim();
+        const source = (doc.querySelector('channel > title, feed > title')?.textContent || '').trim();
+        const date = node.querySelector('pubDate, updated, published')?.textContent || '';
+        return { title, source, date };
+      });
+      return items;
+    } catch (e) {
+      console.warn('Feed fetch failed:', url, e);
+      return [];
+    }
+  }
+
+  function dedupe(items) {
+    const seen = new Set();
+    const out = [];
+    for (const it of items) {
+      const key = (it.title || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push(it);
+    }
+    return out;
+  }
+
+  (async () => {
+    const results = (await Promise.all(FEEDS.map(fetchFeed))).flat();
+    // Filter to relevant AI+music headlines
+    const filtered = results.filter(it => isRelevant(it.title));
+    // Dedupe & sort by recency if a date exists
+    const deduped = dedupe(filtered);
+    deduped.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+    // Keep 6–8 items for the teaser box
+    const pick = deduped.slice(0, 4);
+
+    if (pick.length === 0) {
+      BOX.innerHTML = '<div class="news-item"><div class="tiny">No AI music headlines found right now. Check back soon.</div></div>';
+      return;
+    }
+
+    // Render as NON-CLICKABLE list items (teaser only)
+    BOX.innerHTML = pick.map(it => {
+      const src = it.source ? ` <span class="tiny">— ${it.source}</span>` : '';
+      return `<div class="news-item"><div><strong>${it.title}</strong>${src}</div></div>`;
+    }).join('');
+  })();
+})();
+</script>
+<style>
+/* Flashy billboard text */
+.rr-billboard .rr-ad-headline{
+  background: linear-gradient(90deg,#ff3b3b,#ffd43b,#34d399);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: rr-glow 1.6s ease-in-out infinite alternate;
+}
+.rr-billboard .rr-ad-sub,.rr-billboard .rr-ad-copy{ opacity:0.95 }
+@keyframes rr-glow{
+  from { text-shadow: 0 0 6px rgba(255,59,59,.55), 0 0 12px rgba(255,212,59,.35); filter: saturate(1); }
+  to   { text-shadow: 0 0 10px rgba(52,211,153,.65), 0 0 18px rgba(255,212,59,.55); filter: saturate(1.3); }
+}
+</style>
