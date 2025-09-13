@@ -34,8 +34,6 @@
   </style>
 </head>
 <body class="rr-bg">
-<div id="bg"></div>
-
   <!-- Top bar -->
   <header class="rr-topbar">
     <div class="rr-topbar-left">Submit a Track</div>
@@ -94,20 +92,11 @@
           <div class="rr-grid-2">
             <div>
               <label for="title" class="rr-label">Song Title *</label>
-
-<input id="title" type="text" maxlength="25" placeholder="Song title (max 25)"
-       oninput="this.value=this.value.replace(/[^A-Za-z0-9 ]+/g,'').slice(0,25)">
-
-
+              <input id="title" type="text" placeholder="Song title">
             </div>
             <div>
               <label for="artist" class="rr-label">Artist *</label>
-
-<input id="artist" type="text" maxlength="25" placeholder="Artist name (max 25)"
-       oninput="this.value=this.value.replace(/[^A-Za-z0-9 ]+/g,'').slice(0,25)">
-
-
-
+              <input id="artist" type="text" placeholder="Artist name">
             </div>
             <div>
               <label for="genre" class="rr-label">Genre *</label>
@@ -123,12 +112,8 @@
             </div>
             <div>
               <label for="notes" class="rr-label">Notes (optional)</label>
-
-<textarea id="notes" maxlength="50" placeholder="Anything we should know? (max 50)"
-          oninput="this.value=this.value.replace(/[^A-Za-z0-9 ]+/g,'').slice(0,50)"></textarea>
-
-
-
+              <textarea id="notes" maxlength="500" placeholder="Anything we should know? (max 500 chars)"></textarea>
+              <small class="rr-muted"><span id="notesCount">0/500</span></small>
             </div>
           </div>
 
@@ -188,88 +173,12 @@
 
       </section>
     </div>
-
-<div class="upload-warning">
-  ⚠️ <strong>TEXT-ONLY:</strong> Please title your files clearly:
-  <br>• Use only the song name (example: <code>MySong.mp3</code>)
-  <br>• No special characters (❌ %, $, #, @)
-  <br>• No images/emotes (❌ 😊 🎵)
-  <br>• Do not use ALL CAPITAL LETTERS
-</div>
-
-
-
   </main>
 
   <!-- Supabase SDK + your client + wizard -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/rr-supabase.js"></script>
   <script src="/submit-wizard.js"></script>
-  <!-- Background loader (same as teaser/dashboard) -->
-  <script>
-    (async () => {
-      const bg = document.getElementById("bg");
-      const pages = ["/", "/index.html"];
-      let html = "";
-      for (const p of pages) {
-        try {
-          const r = await fetch(p,{cache:"no-cache"});
-          if (r.ok) { html = await r.text(); break; }
-        } catch {}
-      }
-      let path = null;
-      if (html){
-        const re=/url\((['"]?)(\/[^'")]+\.(?:jpg|jpeg|png|webp))\1\)/ig;
-        const m=[...html.matchAll(re)].map(x=>x[2]);
-        if (m.length) path=m[0];
-      }
-      const fallbacks=[
-        "/img/rig-radio-studio.jpg","/images/rig-radio-studio.jpg","/rig-radio-studio.jpg",
-        "/images/studio-bg.jpg","/img/studio-bg.jpg","/studio-bg.jpg","/studio-bg.png"
-      ];
-      const candidates = path ? [path, ...fallbacks] : fallbacks;
-      for (const c of candidates) {
-        try {
-          const r=await fetch(c,{cache:"no-cache"});
-          if (r.ok){ bg.style.backgroundImage=`url('${c}')`; return; }
-        } catch {}
-      }
-    })();
-
-<script>
-  // Allow only letters, numbers, and spaces. Block emojis/symbols/markup.
-  (function(){
-    const onlyTextNums = /[^A-Za-z0-9 ]+/g; // remove anything NOT A-Z a-z 0-9 or space
-
-    function enforce(el, max){
-      if (!el) return;
-      const v = el.value || "";
-      // strip disallowed chars, trim to max length
-      const cleaned = v.replace(onlyTextNums, "").slice(0, max);
-      if (cleaned !== v) el.value = cleaned;
-    }
-
-    function wire(id, max){
-      const el = document.getElementById(id);
-      if (!el) return;
-      // enforce on input & blur
-      el.addEventListener("input", () => enforce(el, max));
-      el.addEventListener("blur",  () => enforce(el, max));
-      // one initial scrub in case browser restored values
-      enforce(el, max);
-    }
-
-    // Title (25), Artist (25), Notes (100)
-    wire("title",  25);
-    wire("artist", 25);
-    wire("notes",  100);
-  })();
-</script>
-
-
-  </script>
-
-
 </body>
 </html>
 

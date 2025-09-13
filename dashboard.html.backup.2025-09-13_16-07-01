@@ -44,259 +44,18 @@
     .track-item.active { outline:2px solid #ff2b2b; box-shadow: 0 0 16px rgba(255,43,43,.25); }
 
     .muted { opacity:.8; }
-/* --- Player control buttons --- */
-.controls button {
-  color: #fff !important;
-  font-weight: 700;
-  margin-right: 6px;           /* space between buttons */
-  padding: 4px 10px;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 6px;
-  text-shadow: 0 1px 2px rgba(0,0,0,.6);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.controls button:hover {
-  border-color: #ff2b2b;
-  color: #ff2b2b !important;
-  text-shadow: 0 0 6px #ff2b2b;
-}
-<style>
-  /* existing CSS … */
-/* --- Custom seek bar style (cross-browser red fill) --- */
-#seek{
-  -webkit-appearance:none;
-  appearance:none;
-  width:100%;
-  height:6px;
-  border-radius:3px;
-  outline:none;
-  cursor:pointer;
-  /* layered background: red fill width = --val, gray remainder */
-  background:
-    linear-gradient(#ff2b2b, #ff2b2b) 0 / var(--val, 0%) 100% no-repeat,
-    #222;
-}
-
-/* Chrome/Edge (WebKit) */
-#seek::-webkit-slider-runnable-track{
-  height:6px;
-  border-radius:3px;
-  background: transparent; /* let #seek background show */
-}
-#seek::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:12px;height:12px;border-radius:50%;
-  background:#ff2b2b;border:none;
-  box-shadow:0 0 6px #ff2b2b;
-  margin-top:-3px; /* center on 6px track */
-}
-
-/* Firefox */
-#seek::-moz-range-track{
-  height:6px;border-radius:3px;background:#222;
-}
-#seek::-moz-range-progress{
-  height:6px;border-radius:3px;background:#ff2b2b;
-}
-#seek::-moz-range-thumb{
-  width:12px;height:12px;border-radius:50%;
-  background:#ff2b2b;border:none;
-  box-shadow:0 0 6px #ff2b2b;
-}
-/* Header action buttons */
-.actions .btn {
-  display:inline-block;
-  color:#fff;
-  font-weight:700;
-  padding:8px 12px;
-  margin-left:8px;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:10px;
-  background:rgba(255,255,255,.04);
-  text-decoration:none;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-.actions .btn:hover {
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-/* Dashboard banner */
-.dash-banner {
-  text-align:center;
-  margin:12px 0 20px;
-}
-.dash-banner img {
-  display:block;
-  margin:0 auto;
-  width:60%;
-  height:auto;
-  border-radius:12px;
-  box-shadow:0 0 12px rgba(255,43,43,.6);
-}
-/* Welcome message */
-.welcome {
-  text-align:center;
-  font-size:1.4rem;
-  font-weight:700;
-  margin:10px 0 20px;
-  color:#fff;
-  text-shadow:0 0 6px #ff2b2b;
-}
-/* Action button row under banner/welcome */
-.dash-actions{
-  margin: 8px auto 18px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-.dash-actions .btn{
-  display:inline-block;
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.05);
-  color:#fff; text-decoration:none; font-weight:800;
-  letter-spacing:.3px;
-  transition:all .2s ease;
-}
-.dash-actions .btn:hover{
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-.dash-actions .btn.primary{
-  border-color:#ff2b2b;
-  box-shadow:0 0 12px rgba(255,43,43,.35);
-}
-.dash-actions .btn.disabled{
-  opacity:.45;
-  pointer-events:none;
-  filter: grayscale(60%);
-}
-/* Logout button aligned with actions */
-.logout-wrap{
-  text-align: center;
-  margin-top: 10px;
-}
-.logout-wrap .logout{
-  background: rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:12px;
-  padding:8px 14px;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-.logout-wrap .logout:hover{
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-/* Logout button aligned under actions */
-.logout-wrap{
-  text-align: center;
-  margin-top: 12px;
-}
-.logout-wrap .logout{
-  background: rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:12px;
-  padding:8px 14px;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-.logout-wrap .logout:hover{
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-
-
-/* --- Your Uploads: grid card layout --- */
-#tracks-list{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  align-items: stretch;
-}
-
-/* turn each row into a card */
-#tracks-list .track-row{
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.04);
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-}
-
-#tracks-list .cover{
-  width: 56px; height: 56px; border-radius: 10px;
-  background: #111 center/cover no-repeat;
-}
-
-#tracks-list .track-main{
-  min-width: 0; display: flex; flex-direction: column;
-}
-
-#tracks-list .track-title{
-  font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-#tracks-list .track-sub{
-  opacity: .8; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-
-
-
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="rr-bg">
-<header class="dash-banner">
-  <img src="/banner.png" alt="Rig-Radio Banner">
-</header>
-<div id="welcomeUser" class="welcome"></div>
-<!-- Action button row -->
-<nav class="dash-actions">
-  <a class="btn primary" href="/submit.html">Submit Song</a>
-  <a class="btn" href="/library.html">Library</a>
-  <span class="btn disabled" title="Coming soon">My Profile</span>
-  <span class="btn disabled" title="Coming soon">Videos</span>
-  <span class="btn disabled" title="Coming soon">News</span>
-  <span class="btn disabled" title="Coming soon">Memberships</span>
-  <a class="btn logout" href="javascript:void(0)" onclick="logout()">Log out</a>
-</nav>
-
-
-
-
-
-
-
-<div class="logout-wrap">
-</div>
-
-
-
-
   <div class="wrap">
     <header>
       <div class="brand">
         Rig-Radio <span class="tag">Outlaw Airwaves</span>
       </div>
-
-
+      <div>
+        <button onclick="logout()">Log out</button>
+      </div>
     </header>
 
     <div class="grid">
@@ -318,9 +77,10 @@
         </div>
 
         <!-- Single, global audio element -->
-<audio id="audio" preload="none" style="display:none" oncontextmenu="return false"></audio>
-
-
+        <audio id="audio" preload="none" controls
+               controlsList="nodownload noplaybackrate"
+               disablepictureinpicture
+               oncontextmenu="return false"></audio>
 
         <!-- Progress / seek -->
         <div id="progressBar" class="progress-wrap">
@@ -493,26 +253,18 @@
         return m + ':' + String(s).padStart(2, '0');
       }
 
-function reflectProgress(){
-  const d = audio.duration || 0;
-  const t = audio.currentTime || 0;
-
-  if (isFinite(d) && d > 0) {
-    seek.value = Math.round((t / d) * 1000);
-    seek.style.setProperty('--val', (t / d * 100) + '%');
-    durT.textContent = mmss(d);
-  } else {
-    seek.value = 0;
-    seek.style.setProperty('--val', '0%');
-    durT.textContent = '0:00';
-  }
-
-  curT.textContent = mmss(t);
-}
-
-
-
-
+      function reflectProgress(){
+        const d = audio.duration || 0;
+        const t = audio.currentTime || 0;
+        if (isFinite(d) && d > 0) {
+          seek.value = Math.round((t / d) * 1000);
+          durT.textContent = mmss(d);
+        } else {
+          seek.value = 0;
+          durT.textContent = '0:00';
+        }
+        curT.textContent = mmss(t);
+      }
 
       function load(){
         if (!items[i]) return;
@@ -615,21 +367,6 @@ function reflectProgress(){
 
     /* --- logout (safety) --- */
     async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
-
-
-
-// Welcome text from Auth metadata display_name
-(async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  const el = document.getElementById('welcomeUser');
-  if (!el) return;
-  const name = user?.user_metadata?.display_name
-            || (user?.email ? user.email.split('@')[0] : null)
-            || 'User';
-  el.textContent = `Welcome, ${name}`;
-})();
-
-
   </script>
 </body>
 </html>

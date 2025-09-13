@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Account • Rig-Radio</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#0f151d;
+      --text:#e6e9ee;
+      --muted:#a6b0be;
+      --red:#ff2b2b;
+      --red-glow:0 0 0.5rem rgba(255,43,43,.6), 0 0 1.1rem rgba(255,43,43,.35), inset 0 0 .2rem rgba(255,43,43,.25);
+      --card-glow:0 0 .8rem rgba(255,43,43,.35), 0 0 2rem rgba(255,43,43,.25);
+      --ring: 0 0 0 3px rgba(255,43,43,.55);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+background:
+  url("studio-bg.png") center/cover no-repeat fixed,
+  radial-gradient(1200px 600px at 20% -20%, rgba(255,43,43,.06), transparent 50%),
+  radial-gradient(900px 600px at 120% 10%, rgba(255,43,43,.05), transparent 50%),
+  linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+
+
+
+
+
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      letter-spacing:.2px;
+    }
+
+    /* subtle smoke */
+    .smoke:before{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        radial-gradient(1200px 800px at 70% -10%, rgba(255,255,255,.03), transparent 40%),
+        radial-gradient(900px 700px at -10% 110%, rgba(255,255,255,.025), transparent 40%);
+      pointer-events:none;
+      mix-blend-mode:screen;
+      filter: blur(8px);
+    }
+
+    .shell{min-height:100%; display:flex; flex-direction:column}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px;
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(10,14,19,.65), rgba(10,14,19,.25));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; text-transform:uppercase; letter-spacing:.12em}
+    .brand .dot{width:10px; height:10px; border-radius:999px; background:var(--red); box-shadow:var(--red-glow)}
+    .brand a{color:var(--text); text-decoration:none}
+    .tag{margin-left:10px; font-size:.75rem; color:var(--muted); letter-spacing:.18em}
+
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 16px; border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9));
+      color:var(--text); text-decoration:none; border-radius:12px; transition:.2s ease;
+      box-shadow: 0 0 .6rem rgba(0,0,0,.35), inset 0 0 .2rem rgba(255,255,255,.05);
+    }
+    .btn:hover{border-color:var(--red); box-shadow: var(--card-glow)}
+    .btn--primary{border-color:rgba(255,43,43,.55); box-shadow:var(--red-glow);}
+
+    main{flex:1; display:grid; place-items:center; padding:40px 18px;}
+    .card{
+      width:min(820px, 96vw);
+      background:linear-gradient(180deg, rgba(18,24,32,.9), rgba(12,17,24,.9));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      padding:28px;
+      box-shadow: 0 12px 50px rgba(0,0,0,.45);
+      position:relative;
+    }
+    .card:hover{border-color:var(--red); box-shadow: var(--card-glow)}
+    .card-header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px}
+    .card-title{font-size:1.4rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+    .card-sub{color:var(--muted); font-size:.95rem}
+
+    .grid{
+      margin-top:18px;
+      display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    }
+    @media (max-width: 800px){ .grid{grid-template-columns:1fr} }
+
+    .field{
+      background: var(--panel);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px; padding:14px 14px 10px;
+      transition:.2s ease; position:relative;
+    }
+    .field:hover{border-color:var(--red); box-shadow: var(--card-glow)}
+    .label{font-size:.8rem; color:var(--muted); letter-spacing:.12em; text-transform:uppercase}
+    .input{
+      width:100%; background:transparent; border:0; outline:0; color:var(--text);
+      font-size:1.05rem; padding-top:6px;
+    }
+    .input:focus{box-shadow:var(--ring); border-radius:10px}
+
+    .actions{display:flex; align-items:center; gap:12px; margin-top:18px; flex-wrap:wrap}
+    .cta{
+      cursor:pointer;
+      border:1px solid rgba(255,43,43,.6);
+      background:linear-gradient(180deg, rgba(255,43,43,.1), rgba(255,43,43,.05));
+      padding:12px 18px; border-radius:14px; font-weight:700; letter-spacing:.06em;
+      box-shadow:var(--red-glow);
+    }
+    .cta:hover{filter:brightness(1.1)}
+
+    .fine{color:var(--muted); font-size:.85rem}
+    .helper{
+      margin-top:8px; color:var(--muted); font-size:.9rem;
+    }
+
+    /* 3px red border + neon glow for whole card on hover (explicit) */
+    .card:hover, .field:hover { outline: 0; }
+    .field:hover{ border-width:3px; padding:12px 12px 8px; }
+
+    footer{
+      text-align:center; padding:22px; color:var(--muted); font-size:.85rem;
+    }
+  </style>
+<style>
+  .input.is-danger {
+    border: 1px solid #ff4d4d !important;
+    box-shadow: 0 0 8px rgba(255,0,0,.35);
+    outline: none;
+  }
+  .help.is-danger { color: #ff4d4d; }
+</style>
+
+
+
+
+</head>
+<body>
+  <div class="shell smoke">
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <a href="/">Outlaw Airwaves</a>
+        <span class="tag">RIG-RADIO</span>
+      </div>
+      <nav>
+        <a class="btn" href="/login.html">Sign In</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="title">
+        <div class="card-header">
+          <h1 id="title" class="card-title">Create Your Account</h1>
+          <div class="card-sub">Indie. AI. Outlaw Airwaves.</div>
+        </div>
+
+        <div class="grid">
+          <label class="field">
+            <div class="label">Display Name</div>
+            <input class="input" type="text" placeholder="Your handle" />
+          </label>
+
+          <label class="field">
+            <div class="label">Email</div>
+            <input class="input" type="email" placeholder="you@rig-radio.ai" />
+          </label>
+
+<!-- Confirm Email -->
+<div class="field">
+  <label for="confirmEmail">Confirm Email</label>
+  <div class="control">
+    <input
+      class="input"
+      type="email"
+      id="confirmEmail"
+      name="confirmEmail"
+      placeholder="Confirm your email"
+      required
+      aria-describedby="confirmEmailError"
+    />
+  </div>
+  <p id="confirmEmailError" class="help is-danger"></p>
+</div>
+
+
+
+          <label class="field">
+            <div class="label">Password</div>
+            <input class="input" type="password" placeholder="••••••••" />
+          </label>
+
+          <label class="field">
+            <div class="label">Confirm Password</div>
+            <input class="input" type="password" placeholder="••••••••" />
+          </label>
+
+          <label class="field">
+            <div class="label">Artist or Listener?</div>
+            <input class="input" type="text" placeholder="e.g., Artist" />
+          </label>
+
+          <label class="field">
+            <div class="label">Referral (Optional)</div>
+            <input class="input" type="text" placeholder="@who sent you" />
+          </label>
+        </div>
+
+        <div class="helper">🎧 Enjoy all the music here for free — no limits, no cost, just vibes.</div>
+
+        <div class="actions">
+          <button class="cta" type="button">Create Account</button>
+          <a class="btn btn--primary" href="/login.html">I already have an account</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>© Rig-Radio • Built for indie & AI artists • 90% to creators</footer>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // fields
+  const confirmEmail = document.getElementById("confirmEmail");
+  const email = document.querySelector('input.input[type="email"]:not(#confirmEmail)');
+  if (!confirmEmail || !email) return;
+
+  // inline error element (already in your markup)
+  let err = document.getElementById("confirmEmailError");
+  if (!err) {
+    err = document.createElement("p");
+    err.id = "confirmEmailError";
+    err.className = "help is-danger";
+    (confirmEmail.parentElement || document.body).appendChild(err);
+  }
+
+  // form (may not exist in your layout) + submit button (fallback to document)
+  const form = confirmEmail.closest("form") || null;
+  const submitBtn = (form
+    ? form.querySelector('button[type="submit"], input[type="submit"]')
+    : document.querySelector('button[type="submit"], input[type="submit"]')) || null;
+
+  function normalize(v){ return (v || "").trim().toLowerCase(); }
+
+  function showError(msg){
+    err.textContent = msg || "";
+    confirmEmail.classList.toggle("is-danger", !!msg);
+    if (submitBtn) submitBtn.disabled = !!msg;
+  }
+
+  function validate(){
+    const a = normalize(email.value);
+    const b = normalize(confirmEmail.value);
+    if (!b) { showError(""); return true; }
+    if (a !== b) { showError("Email addresses do not match."); return false; }
+    showError(""); return true;
+  }
+
+  email.addEventListener("input", validate);
+  confirmEmail.addEventListener("input", validate);
+
+  if (form) {
+    form.addEventListener("submit", function(e){
+      if (!validate()) { e.preventDefault(); confirmEmail.focus(); }
+    });
+  } else if (submitBtn) {
+    // If no <form>, prevent accidental click while invalid
+    submitBtn.addEventListener("click", function(e){
+      if (!validate()) { e.preventDefault(); confirmEmail.focus(); }
+    });
+  }
+
+  // initial state
+  validate();
+});
+</script>
+
+<!-- Supabase init (same as login.html) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL  = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+  const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+    auth: { persistSession: true, autoRefreshToken: true }
+  });
+</script>
+
+
+
+
+
+</body>
+</html>
+

@@ -220,44 +220,6 @@
 }
 
 
-/* --- Your Uploads: grid card layout --- */
-#tracks-list{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  align-items: stretch;
-}
-
-/* turn each row into a card */
-#tracks-list .track-row{
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.04);
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-}
-
-#tracks-list .cover{
-  width: 56px; height: 56px; border-radius: 10px;
-  background: #111 center/cover no-repeat;
-}
-
-#tracks-list .track-main{
-  min-width: 0; display: flex; flex-direction: column;
-}
-
-#tracks-list .track-title{
-  font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-#tracks-list .track-sub{
-  opacity: .8; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-
-
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

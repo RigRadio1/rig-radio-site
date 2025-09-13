@@ -69,27 +69,13 @@ const getPL = () => {
 };
 const setPL = (arr) => localStorage.setItem(PL_KEY, JSON.stringify(arr));
 const inPL  = (id) => getPL().includes(id);
-
 const togglePL = (id) => {
-  let arr = getPL();
+  const arr = getPL();
   const i = arr.indexOf(id);
-
-  if (i > -1) {
-    // If already in playlist → remove
-    arr.splice(i, 1);
-  } else {
-    // Add new, but cap at 10
-    if (arr.length >= 10) {
-      alert("Free accounts can only have 10 songs in their playlist.");
-      return arr;
-    }
-    arr.push(id);
-  }
-
+  if (i > -1) { arr.splice(i,1); } else { arr.push(id); }
   setPL(arr);
   return arr;
 };
-
 
 // Initialize buttons
 for (const r of data){

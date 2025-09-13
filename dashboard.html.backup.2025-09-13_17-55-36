@@ -146,116 +146,6 @@
   color:#fff;
   text-shadow:0 0 6px #ff2b2b;
 }
-/* Action button row under banner/welcome */
-.dash-actions{
-  margin: 8px auto 18px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-.dash-actions .btn{
-  display:inline-block;
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.05);
-  color:#fff; text-decoration:none; font-weight:800;
-  letter-spacing:.3px;
-  transition:all .2s ease;
-}
-.dash-actions .btn:hover{
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-.dash-actions .btn.primary{
-  border-color:#ff2b2b;
-  box-shadow:0 0 12px rgba(255,43,43,.35);
-}
-.dash-actions .btn.disabled{
-  opacity:.45;
-  pointer-events:none;
-  filter: grayscale(60%);
-}
-/* Logout button aligned with actions */
-.logout-wrap{
-  text-align: center;
-  margin-top: 10px;
-}
-.logout-wrap .logout{
-  background: rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:12px;
-  padding:8px 14px;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-.logout-wrap .logout:hover{
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-/* Logout button aligned under actions */
-.logout-wrap{
-  text-align: center;
-  margin-top: 12px;
-}
-.logout-wrap .logout{
-  background: rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:12px;
-  padding:8px 14px;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-.logout-wrap .logout:hover{
-  border-color:#ff2b2b;
-  color:#ff2b2b;
-  text-shadow:0 0 6px #ff2b2b;
-}
-
-
-/* --- Your Uploads: grid card layout --- */
-#tracks-list{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  align-items: stretch;
-}
-
-/* turn each row into a card */
-#tracks-list .track-row{
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.04);
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-}
-
-#tracks-list .cover{
-  width: 56px; height: 56px; border-radius: 10px;
-  background: #111 center/cover no-repeat;
-}
-
-#tracks-list .track-main{
-  min-width: 0; display: flex; flex-direction: column;
-}
-
-#tracks-list .track-title{
-  font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-#tracks-list .track-sub{
-  opacity: .8; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
 
 
 
@@ -267,26 +157,6 @@
   <img src="/banner.png" alt="Rig-Radio Banner">
 </header>
 <div id="welcomeUser" class="welcome"></div>
-<!-- Action button row -->
-<nav class="dash-actions">
-  <a class="btn primary" href="/submit.html">Submit Song</a>
-  <a class="btn" href="/library.html">Library</a>
-  <span class="btn disabled" title="Coming soon">My Profile</span>
-  <span class="btn disabled" title="Coming soon">Videos</span>
-  <span class="btn disabled" title="Coming soon">News</span>
-  <span class="btn disabled" title="Coming soon">Memberships</span>
-  <a class="btn logout" href="javascript:void(0)" onclick="logout()">Log out</a>
-</nav>
-
-
-
-
-
-
-
-<div class="logout-wrap">
-</div>
-
 
 
 
@@ -295,6 +165,10 @@
       <div class="brand">
         Rig-Radio <span class="tag">Outlaw Airwaves</span>
       </div>
+<nav class="actions">
+  <a class="btn" href="/library.html">Library</a>
+  <button class="btn" onclick="logout()">Log out</button>
+</nav>
 
 
     </header>

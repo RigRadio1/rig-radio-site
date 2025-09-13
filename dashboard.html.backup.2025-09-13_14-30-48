@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard • Rig-Radio</title>
+  <style>
+    :root{ --text:#e8ecf1; --muted:#aab3be; --edge:#ffffff14; --red:#ff2b2b; --glow:0 0 .6rem rgba(255,43,43,.45), 0 0 1.6rem rgba(255,43,43,.28); --radius:22px }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0}
+    body{
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+      background:
+        radial-gradient(1200px 600px at 20% -20%, rgba(255,43,43,.08), transparent 50%),
+        radial-gradient(900px 600px at 115% 10%, rgba(255,43,43,.06), transparent 50%),
+        linear-gradient(180deg,#0b0f14 0%,#0a0d12 100%);
+      overflow-x:hidden;
+    }
+    #bg{position:fixed; inset:0; z-index:0; background:center/cover no-repeat; pointer-events:none}
+
+    .smoke{position:relative; z-index:1}
+    .smoke:before,.smoke:after{content:""; position:fixed; inset:0; pointer-events:none; mix-blend-mode:screen; z-index:1}
+    .smoke:before{
+      background:
+        radial-gradient(900px 700px at 15% 10%, rgba(255,255,255,.05), transparent 40%),
+        radial-gradient(1100px 800px at 85% 20%, rgba(255,255,255,.035), transparent 45%);
+      filter: blur(8px);
+    }
+    .smoke:after{background:linear-gradient(90deg, transparent 48%, rgba(255,43,43,.10) 50%, transparent 52%); opacity:.6; mask: linear-gradient(#000,transparent 70%)}
+
+    .shell{min-height:100%; display:flex; flex-direction:column}
+    .topbar{position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:14px 20px; backdrop-filter: blur(8px); background:linear-gradient(180deg, rgba(10,14,19,.70), rgba(10,14,19,.30)); border-bottom:1px solid var(--edge)}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em}
+    .brand .dot{width:10px;height:10px;border-radius:999px;background:var(--red);box-shadow:var(--glow)}
+    .brand a{color:var(--text); text-decoration:none}
+    .tag{margin-left:8px; font-size:.75rem; color:var(--muted); letter-spacing:.18em}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border:1px solid var(--edge); background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9)); color:var(--text); text-decoration:none; border-radius:12px; transition:.18s ease; box-shadow: inset 0 0 .2rem rgba(255,255,255,.05); cursor:pointer}
+    .btn:hover{border-color:#ff2b2b; box-shadow:var(--glow)}
+
+    main{flex:1; padding:28px 18px 44px; display:flex; flex-direction:column; gap:16px}
+
+    /* welcome banner */
+    #welcome-banner{
+      display:inline-block; text-align:center; padding:10px 14px;
+      background:linear-gradient(180deg, rgba(20,26,34,.75), rgba(15,21,29,.75));
+      border:1px solid var(--edge); border-radius:var(--radius);
+      margin:0 auto 10px auto
+    }
+    #welcome-banner h1{font-size:1.4rem; margin:0; white-space:nowrap}
+
+    /* buttons row */
+    #dashboard-buttons{display:flex; justify-content:center; align-items:center; gap:12px; margin:0 auto 6px auto; flex-wrap:nowrap}
+    .dash-btn{display:inline-block; padding:10px 16px; border-radius:12px; font-weight:700; text-decoration:none; text-align:center; border:1px solid var(--edge); background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9)); color:var(--text); transition:all .2s ease}
+    .dash-btn:hover{filter:brightness(1.06); box-shadow:var(--glow); border-color:var(--red)}
+    .dash-btn.disabled{opacity:.45; cursor:not-allowed; box-shadow:none; background:linear-gradient(180deg, rgba(60,60,60,.35), rgba(40,40,40,.35)); border-color:#555; pointer-events:none}
+
+    /* floating Songs (no container bg) */
+    .card{background:transparent; border:0; box-shadow:none; padding:0}
+    .tracks-list{display:flex; flex-direction:column; align-items:flex-start; gap:10px}
+    .track-row{
+      display:inline-flex; align-items:center; gap:12px;
+      padding:6px 0; border:0; background:transparent; box-shadow:none;
+    }
+    .cover{
+      width:56px; height:56px; flex:0 0 56px;
+      border-radius:10px; overflow:hidden; border:0; background:#0000;
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+    }
+    .track-main{display:flex; flex-direction:column; min-width:0}
+    .track-title{font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60ch}
+    .track-sub{color:var(--muted); font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60ch}
+
+    /* === Basic Playlist (free) === */
+    #my-playlist{margin-top:8px}
+    .player{ margin-top:8px; }
+    .player-controls{
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 0;
+    }
+    .pbtn{
+      padding:8px 14px; border-radius:12px; font-weight:700; border:1px solid var(--edge);
+      background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9));
+      color:var(--text); cursor:pointer; transition:.18s ease;
+    }
+    .pbtn:hover{ box-shadow:var(--glow); border-color:var(--red); }
+    .track-list{ display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+    .track-item{
+      display:flex; align-items:center; gap:10px;
+      padding:6px 0; cursor:pointer;
+    }
+    .track-item .thumb{
+      width:40px; height:40px; border-radius:8px; background-size:cover; background-position:center; flex:0 0 40px;
+    }
+    .track-item .meta{ display:flex; flex-direction:column; min-width:0; }
+    .track-item .t{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .track-item .a{ color:var(--muted); font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .track-item.active .t{ text-decoration:underline; }
+
+    footer{padding:22px; text-align:center; color:var(--muted); font-size:.85rem}
+  </style>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div id="bg"></div>
+
+  <div class="shell smoke">
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <a href="/">Outlaw Airwaves</a>
+        <span class="tag">RIG-RADIO</span>
+      </div>
+      <nav><button class="btn" onclick="logout()">Log Out</button></nav>
+    </header>
+
+    <main>
+      <div id="welcome-banner"><h1>Welcome, <span id="username">User</span>!</h1></div>
+
+      <div id="dashboard-buttons">
+        <a href="/submit.html" class="dash-btn">Submit Song</a>
+        <a href="/library.html" class="dash-btn">Listen Now</a>
+        <button class="dash-btn disabled" type="button" disabled>My Profile</button>
+        <button class="dash-btn disabled" type="button" disabled>Videos</button>
+        <button class="dash-btn disabled" type="button" disabled>News</button>
+        <button class="dash-btn disabled" type="button" disabled>Membership</button>
+      </div>
+
+      <!-- Songs (floating) -->
+      <section class="card" id="my-tracks">
+        <h2>Songs</h2>
+        <div id="tracks-list" class="tracks-list">
+          <div class="muted">Loading your tracks…</div>
+        </div>
+      </section>
+
+      <!-- Basic Playlist (free) -->
+      <section class="card" id="my-playlist">
+        <h2>My Playlist</h2>
+        <div class="player">
+          <div class="player-controls">
+            <button class="pbtn" id="prevBtn">⏮ Prev</button>
+            <button class="pbtn" id="playPauseBtn">▶ Play</button>
+            <button class="pbtn" id="nextBtn">⏭ Next</button>
+            <span id="nowPlaying" style="margin-left:10px; color:var(--muted);"></span>
+          </div>
+          <div class="track-list" id="playlistList"></div>
+          <audio id="audio" preload="none"></audio>
+        </div>
+      </section>
+    </main>
+
+    <footer>© Rig-Radio • Built for indie & AI artists • 90% to creators</footer>
+  </div>
+
+  <script>
+    /* --- Supabase client & logout --- */
+    const supabase = window.supabase.createClient(
+      "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+    );
+    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
+
+    (async () => {
+      const { data:{ user } } = await supabase.auth.getUser();
+      if (user) {
+        const name = user.user_metadata?.display_name || user.email;
+        document.getElementById("username").textContent = name;
+      }
+    })();
+
+    /* --- background (reuse teaser) --- */
+    (async () => {
+      const bg = document.getElementById("bg");
+      const pages = ["/", "/index.html"];
+      let html = "";
+      for (const p of pages) { try { const r = await fetch(p,{cache:"no-cache"}); if (r.ok) { html = await r.text(); break; } } catch{} }
+      let path=null;
+      if (html){ const re=/url\((['"]?)(\/[^'")]+\.(?:jpg|jpeg|png|webp))\1\)/ig; const m=[...html.matchAll(re)].map(x=>x[2]); if (m.length) path=m[0]; }
+      const fallbacks=["/img/rig-radio-studio.jpg","/images/rig-radio-studio.jpg","/rig-radio-studio.jpg","/images/studio-bg.jpg","/img/studio-bg.jpg","/studio-bg.jpg","/studio-bg.png"];
+      const candidates = path ? [path, ...fallbacks] : fallbacks;
+      for (const c of candidates) { try { const r=await fetch(c,{cache:"no-cache"}); if (r.ok){ bg.style.backgroundImage=`url('${c}')`; return; } } catch{} }
+    })();
+
+    /* --- helpers for signed artwork & audio --- */
+    function extractKeyFromPublicUrl(url){
+      if (typeof url !== 'string') return null;
+      const marker = '/storage/v1/object/public/tracks/';
+      const i = url.indexOf(marker);
+      if (i === -1) return null;
+      return url.substring(i + marker.length);
+    }
+    async function signTracksKey(key, ttlSec=3600){
+      try {
+        const { data, error } = await supabase.storage.from('tracks').createSignedUrl(String(key).replace(/^\/+/, ''), ttlSec);
+        if (error) return null;
+        return data?.signedUrl || null;
+      } catch { return null; }
+    }
+    async function getSignedCover(row){
+      if (row.cover_path && typeof row.cover_path === 'string') {
+        const s = await signTracksKey(row.cover_path); if (s) return s;
+      }
+      if (row.cover_url && typeof row.cover_url === 'string') {
+        const k = extractKeyFromPublicUrl(row.cover_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.artwork_url && typeof row.artwork_url === 'string') {
+        const k = extractKeyFromPublicUrl(row.artwork_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.cover_url && typeof row.cover_url === 'string') return row.cover_url;
+      if (row.artwork_url && typeof row.artwork_url === 'string') return row.artwork_url;
+      return null;
+    }
+    async function getSignedAudio(row){
+      if (row.track_path && typeof row.track_path === 'string'){
+        const s = await signTracksKey(row.track_path); if (s) return s;
+      }
+      if (row.audio_url && typeof row.audio_url === 'string'){
+        const k = extractKeyFromPublicUrl(row.audio_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.audio_url && typeof row.audio_url === 'string') return row.audio_url;
+      return null;
+    }
+
+    const PLACEHOLDER_IMG =
+      "data:image/svg+xml;utf8," +
+      encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>
+        <defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>
+          <stop offset='0%' stop-color='#2b3542'/><stop offset='100%' stop-color='#1a222c'/>
+        </linearGradient></defs>
+        <rect width='100%' height='100%' fill='url(#g)'/>
+        <circle cx='60' cy='60' r='22' fill='#ff2b2b' opacity='.35'/>
+      </svg>`);
+
+    /* --- Songs list (floating) --- */
+    async function loadMyTracks() {
+      const list = document.getElementById("tracks-list");
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { list.innerHTML = `<div class="muted">Please sign in to see your uploads.</div>`; return; }
+
+        const { data, error } = await supabase
+          .from('tracks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (error) { list.innerHTML = `<div class="muted">Couldn't load tracks.</div>`; return; }
+        if (!data || data.length === 0) { list.innerHTML = `<div class="muted">No uploads yet. Use “Submit Song”.</div>`; return; }
+
+        list.innerHTML = '';
+        for (const row of data) {
+          const title  = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/,'') : 'Untitled track');
+          const artist = row.artist || row.artist_name || '';
+          const sub    = artist || row.genre || row.style || row.description || '';
+
+          const signedCover = await getSignedCover(row);
+          const div = document.createElement('div');
+          div.className = 'track-row';
+          div.innerHTML = `
+            <div class="cover"></div>
+            <div class="track-main">
+              <div class="track-title" title="${title}">${title}</div>
+              <div class="track-sub" title="${sub}">${sub || '&nbsp;'}</div>
+            </div>
+          `;
+          div.querySelector('.cover').style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;
+          list.appendChild(div);
+        }
+      } catch {
+        list.innerHTML = `<div class="muted">Unexpected error loading your tracks.</div>`;
+      }
+    }
+
+    /* --- Basic Playlist (free) --- */
+    async function buildBasicPlaylist(rows){
+      const items = [];
+      for (const r of rows){
+        const title  = r.title || r.name || (r.audio_filename ? r.audio_filename.replace(/\.[^/.]+$/,'') : 'Untitled');
+        const artist = r.artist || r.artist_name || '';
+        const coverKey = (r.cover_path && typeof r.cover_path === 'string') ? r.cover_path : extractKeyFromPublicUrl(r.cover_url || r.artwork_url || '');
+        const coverUrl = coverKey ? await signTracksKey(coverKey) : (r.cover_url || r.artwork_url || null);
+        const audioUrl = await getSignedAudio(r);
+        if (!audioUrl) continue;
+        items.push({ id: r.id, title, artist, cover: coverUrl, audio: audioUrl });
+      }
+
+      const listEl = document.getElementById('playlistList');
+      const nowEl  = document.getElementById('nowPlaying');
+      const audio  = document.getElementById('audio');
+      const playBtn= document.getElementById('playPauseBtn');
+      const prevBtn= document.getElementById('prevBtn');
+      const nextBtn= document.getElementById('nextBtn');
+
+      listEl.innerHTML = '';
+      items.forEach((it, idx) => {
+        const row = document.createElement('div');
+        row.className = 'track-item';
+        row.innerHTML = `
+          <div class="thumb" style="background-image:url('${it.cover || ''}')"></div>
+          <div class="meta">
+            <div class="t" title="${it.title}">${it.title}</div>
+            <div class="a" title="${it.artist}">${it.artist || '&nbsp;'}</div>
+          </div>
+        `;
+        row.addEventListener('click', () => startAt(idx));
+        listEl.appendChild(row);
+      });
+
+      let i = 0;
+      function markActive(){
+        [...listEl.children].forEach((el, idx) => el.classList.toggle('active', idx === i));
+      }
+      function load(){
+        if (!items[i]) return;
+        audio.src = items[i].audio;
+        nowEl.textContent = `Now playing: ${items[i].title}${items[i].artist ? ' — ' + items[i].artist : ''}`;
+        markActive();
+      }
+      function play(){ audio.play().catch(()=>{}); playBtn.textContent = '⏸ Pause'; }
+      function pause(){ audio.pause(); playBtn.textContent = '▶ Play'; }
+      function toggle(){ audio.paused ? play() : pause(); }
+      function next(){ i = (i + 1) % items.length; load(); play(); }
+      function prev(){ i = (i - 1 + items.length) % items.length; load(); play(); }
+      function startAt(idx){ i = idx; load(); play(); }
+
+      audio.addEventListener('ended', next);
+      playBtn.addEventListener('click', toggle);
+      nextBtn.addEventListener('click', next);
+      prevBtn.addEventListener('click', prev);
+
+      if (items.length){ load(); } else { nowEl.textContent = 'No playable tracks yet.'; }
+    }
+
+    // --- Shared local playlist helpers (Library & Dashboard) ---
+    const PL_KEY = "rr_playlist_ids";
+    const getPL = () => {
+      try { return JSON.parse(localStorage.getItem(PL_KEY) || "[]"); }
+      catch { return []; }
+    };
+
+    // Load songs, then build playlist (filtered by Library selection if present)
+    async function initDashboard(){
+      await loadMyTracks();
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('tracks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!data) return;
+
+      // Filter by Library’s local playlist ids if any exist
+      const plIdsRaw = getPL(); // could be numbers or strings
+      const plIdSet = new Set((Array.isArray(plIdsRaw) ? plIdsRaw : []).map(String));
+      const rows = (plIdSet.size > 0)
+        ? data.filter(r => plIdSet.has(String(r.id)))
+        : data;
+
+      if (rows && rows.length) await buildBasicPlaylist(rows);
+      else if (data && data.length) await buildBasicPlaylist(data); // fallback
+    }
+
+    document.addEventListener('DOMContentLoaded', initDashboard);
+
+    /* --- logout duplicate (safety) --- */
+    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
+  </script>
+</body>
+</html>
+

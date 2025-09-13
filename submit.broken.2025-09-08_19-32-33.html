@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Submit a Track — Rig-Radio</title>
+  <link rel="stylesheet" href="/rr.css"/>
+  <style>
+    /* Page-only visuals to match teaser/dashboard (no functional changes) */
+    :root{
+      --smoke1: rgba(255,255,255,.05);
+      --smoke2: rgba(255,43,43,.10);
+    }
+    html,body{ height:100% }
+    #bg{ position:fixed; inset:0; z-index:0; background:center/cover no-repeat; pointer-events:none }
+    .smoke{ position:relative; z-index:1 }
+    .smoke:before, .smoke:after{
+      content:""; position:fixed; inset:0; pointer-events:none; mix-blend-mode:screen; z-index:1
+    }
+    .smoke:before{
+      background:
+        radial-gradient(900px 700px at 15% 10%, var(--smoke1), transparent 40%),
+        radial-gradient(1100px 800px at 85% 20%, rgba(255,255,255,.035), transparent 45%);
+      filter: blur(8px);
+    }
+    .smoke:after{
+      background:linear-gradient(90deg, transparent 48%, var(--smoke2) 50%, transparent 52%);
+      opacity:.6; -webkit-mask:linear-gradient(#000,transparent 70%); mask:linear-gradient(#000,transparent 70%);
+    }
+
+    /* Slightly stronger card + outline to match teaser vibe */
+    .card{ box-shadow: var(--rr-shadow); border-color: var(--rr-border-strong) }
+    .progressbar{ box-shadow: inset 0 0 0 1px var(--rr-border); }
+    .dropzone{ outline:2px dashed rgba(255,42,58,.35); }
+    .dropzone.hover{ outline-color: rgba(255,42,58,.7); }
+  </style>
+</head>
+<body>
+  <!-- background image (set at runtime) -->
+  <div id="bg"></div>
+
+  <div class="smoke">
+    <!-- Top bar -->
+    <header class="rr-topbar">
+      <div class="rr-topbar-left">Submit a Track</div>
+      <nav class="rr-topbar-right">
+        <a class="rr-link" href="/dashboard">Dashboard</a>
+        <a class="rr-link" href="/library">Library</a>
+      </nav>
+    </header>
+
+    <main class="wrap">
+      <div id="signed-in-email" class="rr-muted" style="margin-bottom:12px">Signed in…</div>
+
+      <!-- LAYOUT -->
+      <div class="layout" style="display:grid;grid-template-columns:260px 1fr;gap:18px">
+        <!-- Sidebar -->
+        <aside class="sidebar card" style="padding:12px">
+          <ul class="steps">
+            <li data-step="1" class="active">
+              <span class="num">1</span>
+              <div><strong>Upload Audio</strong><br><small class="rr-muted">MP3/WAV/FLAC</small></div>
+            </li>
+            <li data-step="2">
+              <span class="num">2</span>
+              <div><strong>Details &amp; Tags</strong><br><small class="rr-muted">Title, artist, genre</small></div>
+            </li>
+            <li data-step="3">
+              <span class="num">3</span>
+              <div><strong>Cover Art</strong><br><small class="rr-muted">PNG/JPG only</small></div>
+            </li>
+            <li data-step="4">
+              <span class="num">4</span>
+              <div><strong>Rights &amp; Release</strong><br><small class="rr-muted">Usage &amp; license</small></div>
+            </li>
+            <li data-step="5">
+              <span class="num">5</span>
+              <div><strong>Publish</strong><br><small class="rr-muted">Preview &amp; confirm</small></div>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Content -->
+        <section class="content" style="min-width:0">
+          <div class="progressbar"><div id="progress" class="bar"></div></div>
+
+          <!-- STEP 1 -->
+          <section class="stage active" data-step="1">
+            <h2>Step 1 — Upload Audio</h2>
+            <p class="rr-muted">Drag &amp; drop your MP3/WAV/FLAC here (max 20 MB), or click to choose a file.</p>
+
+            <div id="audioDrop" class="dropzone" role="button" tabindex="0" aria-label="Audio dropzone">
+              <div>
+                <strong>Drag &amp; drop</strong> your track here, or <u>click to browse</u>.<br>
+                <small class="rr-muted">Accepted: MP3, WAV, FLAC — max 20 MB</small>
+              </div>
+            </div>
+            <input id="audioFile" type="file" accept=".mp3,.wav,.flac,audio/mpeg,audio/wav,audio/flac" hidden>
+
+            <div class="rr-actions">
+              <span id="audioStatus" class="rr-muted"></span>
+              <div style="margin-left:auto;display:flex;gap:10px">
+                <button type="button" class="rr-btn rr-primary" id="toStep2" disabled>Next →</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- STEP 2 -->
+          <section class="stage" data-step="2">
+            <h2>Step 2 — Details &amp; Tags</h2>
+            <div class="rr-grid-2">
+              <div>
+                <label class="rr-label" for="title">Song Title *</label>
+                <input id="title" type="text" placeholder="Song title">
+              </div>
+              <div>
+                <label class="rr-label" for="artist">Artist *</label>
+                <input id="artist" type="text" placeholder="Artist name">
+              </div>
+              <div>
+                <label class="rr-label" for="genre">Genre *</label>
+                <select id="genre">
+                  <option value="">Select…</option>
+                  <option>Rock</option><option>Metal</option><option>Pop</option>
+                  <option>Hip-Hop</option><option>EDM</option><option>House</option>
+                  <option>Techno</option><option>Drum &amp; Bass</option><option>Ambient</option>
+                  <option>Jazz</option><option>Blues</option><option>Country</option>
+                  <option>Folk</option><option>Classical</option><option>R&amp;B</option>
+                  <option>Reggae</option><option>Indie</option><option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="rr-label" for="notes">Notes (optional)</label>
+                <textarea id="notes" maxlength="500" placeholder="Anything we should know? (max 500 chars)"></textarea>
+                <small class="rr-muted"><span id="notesCount">0/500</span></small>
+              </div>
+            </div>
+
+            <div class="rr-actions">
+              <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+              <button type="button" class="rr-btn rr-primary" id="toStep3" disabled>Next →</button>
+            </div>
+          </section>
+
+          <!-- STEP 3 -->
+          <section class="stage" data-step="3">
+            <h2>Step 3 — Cover Art</h2>
+            <p class="rr-muted">Upload a square PNG or JPG (recommended 1000×1000 or larger).</p>
+
+            <div id="coverDrop" class="dropzone" role="button" tabindex="0" aria-label="Cover dropzone">
+              <div>
+                <strong>Drag &amp; drop</strong> cover art, or <u>click to browse</u>.<br>
+                <small class="rr-muted">Accepted: PNG, JPG</small>
+              </div>
+            </div>
+            <input id="coverFile" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" hidden>
+
+            <div class="rr-actions">
+              <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+              <button type="button" class="rr-btn rr-primary" id="toStep4" disabled>Next →</button>
+            </div>
+          </section>
+
+          <!-- STEP 4 -->
+          <section class="stage" data-step="4">
+            <h2>Step 4 — Rights &amp; Release</h2>
+            <p class="rr-muted">Confirm usage, licensing, and release preferences.</p>
+            <!-- leave your existing fields/checkboxes/controls here -->
+            <div class="rr-actions">
+              <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+              <button type="button" class="rr-btn rr-primary" id="toStep5" disabled>Next →</button>
+            </div>
+          </section>
+
+          <!-- STEP 5 -->
+          <section class="stage" data-step="5">
+            <h2>Step 5 — Publish</h2>
+            <p class="rr-muted">Preview your submission and confirm.</p>
+            <!-- leave your existing preview/submit controls here -->
+            <div class="rr-actions">
+              <button type="button" class="rr-btn rr-ghost" data-back>Back</button>
+              <button type="button" class="rr-btn rr-primary" id="submitAll" disabled>Publish →</button>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Background loader: same logic as teaser/dashboard -->
+  <script>
+    (async () => {
+      const bg = document.getElementById("bg");
+      const pages = ["/", "/index.html"];
+      let html = "";
+      for (const p of pages) {
+        try {
+          const r = await fetch(p,{cache:"no-cache"});
+          if (r.ok) { html = await r.text(); break; }
+        } catch {}
+      }
+      let path = null;
+      if (html){
+        const re=/url\\((['"]?)(\\/[^'")]+\\.(?:jpg|jpeg|png|webp))\\1\\)/ig;
+        const m=[...html.matchAll(re)].map(x=>x[2]);
+        if (m.length) path=m[0];
+      }
+      const fallbacks=[
+        "/img/rig-radio-studio.jpg","/images/rig-radio-studio.jpg","/rig-radio-studio.jpg",
+        "/images/studio-bg.jpg","/img/studio-bg.jpg","/studio-bg.jpg","/studio-bg.png"
+      ];
+      const candidates = path ? [path, ...fallbacks] : fallbacks;
+      for (const c of candidates) {
+        try {
+          const r=await fetch(c,{cache:"no-cache"});
+          if (r.ok){ bg.style.backgroundImage=`url('${c}')`; return; }
+        } catch {}
+      }
+    })();
+  </script>
+</body>
+</html>
+

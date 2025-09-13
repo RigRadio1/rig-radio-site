@@ -33,77 +33,23 @@
         list.innerHTML = '<div class="status">No tracks yet. <a class="rr-link" href="/submit">Submit one</a>.</div>';
         step.textContent = "Done"; return;
       }
-function rowHTML(r){
-  return `
-    <article class="row" data-id="${r.id}">
-      <div class="t"><img class="thumb" src="/banner.png" alt="cover"/></div>
-      <div class="meta">
-        <div class="title">${esc(r.title)||"(untitled)"}</div>
-        <div>${esc(r.artist)||"(unknown)"} — <span class="pill">${esc(r.genre)||"—"}</span></div>
-        ${r.notes ? `<div style="opacity:.75">${esc(r.notes)}</div>` : ``}
 
-        <!-- Add/Remove from My Playlist (local only) -->
-        <div class="plwrap">
-          <button class="plbtn" data-pl="${r.id}">+ Add to My Playlist</button>
-        </div>
-      </div>
-      <div class="p">
-        <div class="live" aria-hidden="true"></div>
-        <div class="msg">Preparing…</div>
-      </div>
-    </article>`;
-}
-
-
-
-
-
-
-
+      function rowHTML(r){
+        return `
+          <article class="row" data-id="${r.id}">
+            <div class="t"><img class="thumb" src="/banner.png" alt="cover"/></div>
+            <div class="meta">
+              <div class="title">${esc(r.title)||"(untitled)"}</div>
+              <div>${esc(r.artist)||"(unknown)"} — <span class="pill">${esc(r.genre)||"—"}</span></div>
+              ${r.notes ? `<div style="opacity:.75">${esc(r.notes)}</div>` : ``}
+            </div>
+            <div class="p">
+              <div class="live" aria-hidden="true"></div>
+              <div class="msg">Preparing…</div>
+            </div>
+          </article>`;
+      }
       list.innerHTML = data.map(rowHTML).join("");
-// --- Local playlist (safe, no backend changes) ---
-const PL_KEY = "rr_playlist_ids";
-const getPL = () => {
-  try { return JSON.parse(localStorage.getItem(PL_KEY) || "[]"); }
-  catch { return []; }
-};
-const setPL = (arr) => localStorage.setItem(PL_KEY, JSON.stringify(arr));
-const inPL  = (id) => getPL().includes(id);
-
-const togglePL = (id) => {
-  let arr = getPL();
-  const i = arr.indexOf(id);
-
-  if (i > -1) {
-    // If already in playlist → remove
-    arr.splice(i, 1);
-  } else {
-    // Add new, but cap at 10
-    if (arr.length >= 10) {
-      alert("Free accounts can only have 10 songs in their playlist.");
-      return arr;
-    }
-    arr.push(id);
-  }
-
-  setPL(arr);
-  return arr;
-};
-
-
-// Initialize buttons
-for (const r of data){
-  const btn = document.querySelector(`button.plbtn[data-pl="${r.id}"]`);
-  if (!btn) continue;
-  const render = () => {
-    const on = inPL(r.id);
-    btn.classList.toggle("in", on);
-    btn.textContent = on ? "✓ In My Playlist — Remove" : "+ Add to My Playlist";
-  };
-  render();
-  btn.addEventListener("click", () => { togglePL(r.id); render(); });
-}
-
 
       async function sign(path, seconds=3600){
         try{
@@ -142,23 +88,14 @@ for (const r of data){
                   controlsList="nodownload noplaybackrate"
                   disablepictureinpicture
                   oncontextmenu="return false"></audio>`;
-const audio = pane.querySelector('audio');
-const live  = pane.querySelector('.live');
-const setLive = (on)=> live.classList.toggle('on', !!on);
-setLive(false); // ensure OFF initially
 
-// When this audio starts, pause all other players on the page
-audio.addEventListener('play', () => {
-  document.querySelectorAll('audio').forEach(a => {
-    if (a !== audio && !a.paused) a.pause();
-  });
-  setLive(true);
-});
-
-audio.addEventListener('pause', () => setLive(false));
-audio.addEventListener('ended', () => setLive(false));
-
-
+        const audio = pane.querySelector('audio');
+        const live  = pane.querySelector('.live');
+        const setLive = (on)=> live.classList.toggle('on', !!on);
+        setLive(false);                       // ensure OFF initially
+        audio.addEventListener('play',  ()=> setLive(true));
+        audio.addEventListener('pause', ()=> setLive(false));
+        audio.addEventListener('ended', ()=> setLive(false));
 
         // Refresh once if signed URL expires
         let refreshed=false;

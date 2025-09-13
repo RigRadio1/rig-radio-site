@@ -18,13 +18,6 @@
 
 html,body{
   margin:0; padding:0;
-html,body{
-  margin:0; padding:0;
-  min-height:100vh;               /* <-- add this line */
-  background:#000; color:var(--rr-text);
-  font: 14px/1.45 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-}
-
   background:#000; color:var(--rr-text);
   font: 14px/1.45 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
 }
@@ -420,45 +413,5 @@ body.auth-page > * {
 .auth-page .card:hover {
   border-color: rgba(255, 45, 45, 0.35);
   box-shadow: 0 0 22px rgba(255, 45, 45, 0.28);
-}
-
-.upload-warning {
-  margin: 28px auto;
-  width: 100%;
-  max-width: 100%;              /* span full content column */
-  padding: 16px 20px;
-  font-weight: 700;
-  color: #ff2b2b;
-  background: rgba(15, 15, 20, 0.9);
-  border: 2px solid #ff2b2b;
-  border-radius: 14px;
-  text-align: center;
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-.upload-warning code {
-  background: rgba(255,255,255,0.08);
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-weight: 600;
-}
-
-/* Library: Add/Remove playlist pill */
-.plbtn{
-  margin-top:6px;
-  font-size:12px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid #34171c;
-  background:#1a1012;
-  color:#ffd7dc;
-  cursor:pointer;
-  transition:.15s ease;
-}
-.plbtn:hover{ box-shadow:0 0 10px rgba(255,42,58,.25) }
-.plbtn.in{
-  background:#112616;
-  border-color:#1e6a3a;
-  color:#a9f0b7;
 }
 
