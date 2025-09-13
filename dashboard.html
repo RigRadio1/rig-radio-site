@@ -7,9 +7,9 @@
   <style>
     :root{ --text:#e8ecf1; --muted:#aab3be; --edge:#ffffff14; --red:#ff2b2b; --glow:0 0 .6rem rgba(255,43,43,.45), 0 0 1.6rem rgba(255,43,43,.28); --radius:22px }
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{height:100%; margin:0}
     body{
-      margin:0; color:var(--text);
+      color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
       background:
         radial-gradient(1200px 600px at 20% -20%, rgba(255,43,43,.08), transparent 50%),
@@ -30,7 +30,6 @@
     .smoke:after{background:linear-gradient(90deg, transparent 48%, rgba(255,43,43,.10) 50%, transparent 52%); opacity:.6; mask: linear-gradient(#000,transparent 70%)}
 
     .shell{min-height:100%; display:flex; flex-direction:column}
-
     .topbar{position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:14px 20px; backdrop-filter: blur(8px); background:linear-gradient(180deg, rgba(10,14,19,.70), rgba(10,14,19,.30)); border-bottom:1px solid var(--edge)}
     .brand{display:flex; align-items:center; gap:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em}
     .brand .dot{width:10px;height:10px;border-radius:999px;background:var(--red);box-shadow:var(--glow)}
@@ -55,41 +54,48 @@
     .dash-btn{display:inline-block; padding:10px 16px; border-radius:12px; font-weight:700; text-decoration:none; text-align:center; border:1px solid var(--edge); background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9)); color:var(--text); transition:all .2s ease}
     .dash-btn:hover{filter:brightness(1.06); box-shadow:var(--glow); border-color:var(--red)}
     .dash-btn.disabled{opacity:.45; cursor:not-allowed; box-shadow:none; background:linear-gradient(180deg, rgba(60,60,60,.35), rgba(40,40,40,.35)); border-color:#555; pointer-events:none}
-/* floating Songs card */
-.card{
-  background:transparent;   /* no grey backdrop */
-  border:0;                 /* remove border */
-  box-shadow:none;          /* no shadow */
-  padding:0;                /* tighten up spacing */
-}
 
-
+    /* floating Songs (no container bg) */
+    .card{background:transparent; border:0; box-shadow:none; padding:0}
     .tracks-list{display:flex; flex-direction:column; align-items:flex-start; gap:10px}
-/* floating rows — no grey pill behind */
-.track-row{
-  display:inline-flex; align-items:center; gap:12px;
-  padding:6px 0;                    /* keep a little spacing */
-  border:0;                          /* no outline */
-  background:transparent;            /* remove grey background */
-  box-shadow:none;                   /* no shadow */
-}
-
-/* artwork with no frame */
-.cover{
-  width:56px; height:56px; flex:0 0 56px;
-  border-radius:10px;
-  overflow:hidden;
-  border:0;                          /* remove thin border */
-  background:#0000;                  /* fully transparent */
-  background-size:cover; background-position:center; background-repeat:no-repeat;
-}
-
-
-
-
+    .track-row{
+      display:inline-flex; align-items:center; gap:12px;
+      padding:6px 0; border:0; background:transparent; box-shadow:none;
+    }
+    .cover{
+      width:56px; height:56px; flex:0 0 56px;
+      border-radius:10px; overflow:hidden; border:0; background:#0000;
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+    }
     .track-main{display:flex; flex-direction:column; min-width:0}
     .track-title{font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60ch}
     .track-sub{color:var(--muted); font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60ch}
+
+    /* === Basic Playlist (free) === */
+    #my-playlist{margin-top:8px}
+    .player{ margin-top:8px; }
+    .player-controls{
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 0;
+    }
+    .pbtn{
+      padding:8px 14px; border-radius:12px; font-weight:700; border:1px solid var(--edge);
+      background:linear-gradient(180deg, rgba(25,33,44,.9), rgba(16,23,31,.9));
+      color:var(--text); cursor:pointer; transition:.18s ease;
+    }
+    .pbtn:hover{ box-shadow:var(--glow); border-color:var(--red); }
+    .track-list{ display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+    .track-item{
+      display:flex; align-items:center; gap:10px;
+      padding:6px 0; cursor:pointer;
+    }
+    .track-item .thumb{
+      width:40px; height:40px; border-radius:8px; background-size:cover; background-position:center; flex:0 0 40px;
+    }
+    .track-item .meta{ display:flex; flex-direction:column; min-width:0; }
+    .track-item .t{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .track-item .a{ color:var(--muted); font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .track-item.active .t{ text-decoration:underline; }
 
     footer{padding:22px; text-align:center; color:var(--muted); font-size:.85rem}
   </style>
@@ -99,7 +105,7 @@
   <div id="bg"></div>
 
   <div class="shell smoke">
-sudo nano /var/www/html/dashboard.html    <header class="topbar">
+    <header class="topbar">
       <div class="brand">
         <span class="dot" aria-hidden="true"></span>
         <a href="/">Outlaw Airwaves</a>
@@ -120,15 +126,31 @@ sudo nano /var/www/html/dashboard.html    <header class="topbar">
         <button class="dash-btn disabled" type="button" disabled>Membership</button>
       </div>
 
+      <!-- Songs (floating) -->
       <section class="card" id="my-tracks">
         <h2>Songs</h2>
         <div id="tracks-list" class="tracks-list">
           <div class="muted">Loading your tracks…</div>
         </div>
       </section>
+
+      <!-- Basic Playlist (free) -->
+      <section class="card" id="my-playlist">
+        <h2>My Playlist</h2>
+        <div class="player">
+          <div class="player-controls">
+            <button class="pbtn" id="prevBtn">⏮ Prev</button>
+            <button class="pbtn" id="playPauseBtn">▶ Play</button>
+            <button class="pbtn" id="nextBtn">⏭ Next</button>
+            <span id="nowPlaying" style="margin-left:10px; color:var(--muted);"></span>
+          </div>
+          <div class="track-list" id="playlistList"></div>
+          <audio id="audio" preload="none"></audio>
+        </div>
+      </section>
     </main>
 
-    <footer>© Rig-Radio • Built for indie & AI artists • 100% to creators</footer>
+    <footer>© Rig-Radio • Built for indie & AI artists • 90% to creators</footer>
   </div>
 
   <script>
@@ -155,58 +177,48 @@ sudo nano /var/www/html/dashboard.html    <header class="topbar">
       for (const p of pages) { try { const r = await fetch(p,{cache:"no-cache"}); if (r.ok) { html = await r.text(); break; } } catch{} }
       let path=null;
       if (html){ const re=/url\((['"]?)(\/[^'")]+\.(?:jpg|jpeg|png|webp))\1\)/ig; const m=[...html.matchAll(re)].map(x=>x[2]); if (m.length) path=m[0]; }
-      const fallbacks=["/img/rig-radio-studio.jpg","/images/rig-radio-studio.jpg","/rig-radio-studio.jpg","/images/studio-bg.jpg","/img/studio-bg.jpg","/studio-bg.jpg"];
+      const fallbacks=["/img/rig-radio-studio.jpg","/images/rig-radio-studio.jpg","/rig-radio-studio.jpg","/images/studio-bg.jpg","/img/studio-bg.jpg","/studio-bg.jpg","/studio-bg.png"];
       const candidates = path ? [path, ...fallbacks] : fallbacks;
       for (const c of candidates) { try { const r=await fetch(c,{cache:"no-cache"}); if (r.ok){ bg.style.backgroundImage=`url('${c}')`; return; } } catch{} }
     })();
 
-    /* --- helpers for signed artwork --- */
-
-    // Try to sign a known key in the 'tracks' bucket
-    async function signTracksKey(key, ttlSec=3600){
-      try {
-        const { data, error } = await supabase.storage.from('tracks').createSignedUrl(key, ttlSec);
-        if (error) return null;
-        return data?.signedUrl || null;
-      } catch { return null; }
-    }
-
-    // Extract object key from a public storage URL (if cover_path is missing)
+    /* --- helpers for signed artwork & audio --- */
     function extractKeyFromPublicUrl(url){
       if (typeof url !== 'string') return null;
-      // looks like .../storage/v1/object/public/tracks/<KEY>
       const marker = '/storage/v1/object/public/tracks/';
       const i = url.indexOf(marker);
       if (i === -1) return null;
       return url.substring(i + marker.length);
     }
-
-    // Resolves a signed URL for the row's artwork
+    async function signTracksKey(key, ttlSec=3600){
+      try {
+        const { data, error } = await supabase.storage.from('tracks').createSignedUrl(String(key).replace(/^\/+/, ''), ttlSec);
+        if (error) return null;
+        return data?.signedUrl || null;
+      } catch { return null; }
+    }
     async function getSignedCover(row){
-      // 1) Best: explicit storage key
       if (row.cover_path && typeof row.cover_path === 'string') {
-        const s = await signTracksKey(row.cover_path.replace(/^\/+/, ''));
-        if (s) return s;
+        const s = await signTracksKey(row.cover_path); if (s) return s;
       }
-      // 2) cover_url → extract key → sign
       if (row.cover_url && typeof row.cover_url === 'string') {
-        const key = extractKeyFromPublicUrl(row.cover_url);
-        if (key) {
-          const s = await signTracksKey(key);
-          if (s) return s;
-        }
+        const k = extractKeyFromPublicUrl(row.cover_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
       }
-      // 3) artwork_url → extract key → sign
       if (row.artwork_url && typeof row.artwork_url === 'string') {
-        const key = extractKeyFromPublicUrl(row.artwork_url);
-        if (key) {
-          const s = await signTracksKey(key);
-          if (s) return s;
-        }
+        const k = extractKeyFromPublicUrl(row.artwork_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
       }
-      // 4) last resort: use cover_url directly (may work if bucket is public)
       if (row.cover_url && typeof row.cover_url === 'string') return row.cover_url;
       if (row.artwork_url && typeof row.artwork_url === 'string') return row.artwork_url;
+      return null;
+    }
+    async function getSignedAudio(row){
+      if (row.track_path && typeof row.track_path === 'string'){
+        const s = await signTracksKey(row.track_path); if (s) return s;
+      }
+      if (row.audio_url && typeof row.audio_url === 'string'){
+        const k = extractKeyFromPublicUrl(row.audio_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.audio_url && typeof row.audio_url === 'string') return row.audio_url;
       return null;
     }
 
@@ -220,7 +232,7 @@ sudo nano /var/www/html/dashboard.html    <header class="topbar">
         <circle cx='60' cy='60' r='22' fill='#ff2b2b' opacity='.35'/>
       </svg>`);
 
-    /* --- load & render --- */
+    /* --- Songs list (floating) --- */
     async function loadMyTracks() {
       const list = document.getElementById("tracks-list");
       try {
@@ -244,8 +256,6 @@ sudo nano /var/www/html/dashboard.html    <header class="topbar">
           const sub    = artist || row.genre || row.style || row.description || '';
 
           const signedCover = await getSignedCover(row);
-          console.log('cover for', title, '→', signedCover || '(placeholder)');
-
           const div = document.createElement('div');
           div.className = 'track-row';
           div.innerHTML = `
@@ -255,19 +265,147 @@ sudo nano /var/www/html/dashboard.html    <header class="topbar">
               <div class="track-sub" title="${sub}">${sub || '&nbsp;'}</div>
             </div>
           `;
-          const cover = div.querySelector('.cover');
-          cover.style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;
-
+          div.querySelector('.cover').style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;
           list.appendChild(div);
         }
       } catch {
         list.innerHTML = `<div class="muted">Unexpected error loading your tracks.</div>`;
       }
     }
-    document.addEventListener('DOMContentLoaded', loadMyTracks);
 
-    /* --- logout duplicate (safety) --- */
-    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
+    /* --- Basic Playlist (free) --- */
+    async function buildBasicPlaylist(rows){
+      const items = [];
+      for (const r of rows){
+        const title  = r.title || r.name || (r.audio_filename ? r.audio_filename.replace(/\.[^/.]+$/,'') : 'Untitled');
+        const artist = r.artist || r.artist_name || '';
+        const coverKey = (r.cover_path && typeof r.cover_path === 'string') ? r.cover_path : extractKeyFromPublicUrl(r.cover_url || r.artwork_url || '');
+        const coverUrl = coverKey ? await signTracksKey(coverKey) : (r.cover_url || r.artwork_url || null);
+        const audioUrl = await getSignedAudio(r);
+        if (!audioUrl) continue;
+        items.push({ id: r.id, title, artist, cover: coverUrl, audio: audioUrl });
+      }
+
+      const listEl = document.getElementById('playlistList');
+      const nowEl  = document.getElementById('nowPlaying');
+      const audio  = document.getElementById('audio');
+      const playBtn= document.getElementById('playPauseBtn');
+      const prevBtn= document.getElementById('prevBtn');
+      const nextBtn= document.getElementById('nextBtn');
+
+      listEl.innerHTML = '';
+      items.forEach((it, idx) => {
+        const row = document.createElement('div');
+        row.className = 'track-item';
+        row.innerHTML = `
+          <div class="thumb" style="background-image:url('${it.cover || ''}')"></div>
+          <div class="meta">
+            <div class="t" title="${it.title}">${it.title}</div>
+            <div class="a" title="${it.artist}">${it.artist || '&nbsp;'}</div>
+          </div>
+        `;
+        row.addEventListener('click', () => startAt(idx));
+        listEl.appendChild(row);
+      });
+
+      let i = 0;
+      function markActive(){
+        [...listEl.children].forEach((el, idx) => el.classList.toggle('active', idx === i));
+      }
+      function load(){
+        if (!items[i]) return;
+        audio.src = items[i].audio;
+        nowEl.textContent = `Now playing: ${items[i].title}${items[i].artist ? ' — ' + items[i].artist : ''}`;
+        markActive();
+      }
+      function play(){ audio.play().catch(()=>{}); playBtn.textContent = '⏸ Pause'; }
+      function pause(){ audio.pause(); playBtn.textContent = '▶ Play'; }
+      function toggle(){ audio.paused ? play() : pause(); }
+      function next(){ i = (i + 1) % items.length; load(); play(); }
+      function prev(){ i = (i - 1 + items.length) % items.length; load(); play(); }
+      function startAt(idx){ i = idx; load(); play(); }
+
+      audio.addEventListener('ended', next);
+      playBtn.addEventListener('click', toggle);
+      nextBtn.addEventListener('click', next);
+      prevBtn.addEventListener('click', prev);
+
+      if (items.length){ load(); } else { nowEl.textContent = 'No playable tracks yet.'; }
+    }
+
+    // --- Shared local playlist helpers (Library & Dashboard) ---
+    const PL_KEY = "rr_playlist_ids";
+    const getPL = () => {
+      try { return JSON.parse(localStorage.getItem(PL_KEY) || "[]"); }
+      catch { return []; }
+    };
+      // Load songs, then build playlist (prefer Library’s local playlist if present)
+      async function initDashboard(){
+        await loadMyTracks();
+
+        // 1) Read playlist IDs from Library (localStorage)
+        const plIdsRaw = (function(){
+          try { return JSON.parse(localStorage.getItem("rr_playlist_ids") || "[]"); }
+          catch { return []; }
+        })();
+        const plIds = Array.isArray(plIdsRaw) ? plIdsRaw.map(String).filter(Boolean) : [];
+        const hasPL = plIds.length > 0;
+
+        let rows = [];
+        if (hasPL){
+          // 2) If we have a playlist, fetch those tracks directly (any owner; RLS still applies)
+          const { data: byIds, error: byIdsErr } = await supabase
+            .from('tracks')
+            .select('*')
+            .in('id', plIds)
+            .order('created_at', { ascending: false })
+            .limit(100);
+
+          if (!byIdsErr && Array.isArray(byIds)) {
+            // keep original order of the playlist as much as possible
+            const map = new Map(byIds.map(r => [String(r.id), r]));
+            rows = plIds.map(id => map.get(String(id))).filter(Boolean);
+          }
+        }
+
+        // 3) Fallback: if no playlist or nothing came back, show the user’s uploads
+        if (!rows.length){
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) { 
+            document.getElementById('nowPlaying').textContent = 'Sign in to see your uploads or add tracks from the Library.';
+            return; 
+          }
+
+          const { data, error } = await supabase
+            .from('tracks')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(50);
+
+          if (error || !data) {
+            document.getElementById('nowPlaying').textContent = 'Could not load tracks.';
+            return;
+          }
+          rows = data;
+        }
+
+        if (rows && rows.length) {
+          await buildBasicPlaylist(rows);
+        } else {
+          document.getElementById('nowPlaying').textContent = 'No playable tracks yet.';
+        }
+      }
+
+
+
+
+
+
+
+
+
+
   </script>
 </body>
 </html>
