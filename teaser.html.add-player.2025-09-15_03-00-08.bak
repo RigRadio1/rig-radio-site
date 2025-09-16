@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rig-Radio — Teaser</title>
+  <link rel="stylesheet" href="/rr.css"/>
+
+  <!-- Supabase singleton (one place only) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+    window._rr = window._rr || {};
+    if (window.supabase && window.supabase.createClient) {
+      window._rr.db = window._rr.db || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      window._client = window._client || window._rr.db;
+    }
+    // Priority setter: DB (10) wins over any heuristic/random (1)
+    window.RR = window.RR || {};
+    RR.setSpotlightCover = function(url, priority=0){
+      const img = document.querySelector('.spotlight img.cover');
+      if (!img || !url) return;
+      const cur = Number(img.dataset.priority || '0');
+      if (priority < cur) return;
+      img.src = url;
+      img.dataset.priority = String(priority);
+      img.style.display = 'block';
+      img.style.visibility = 'visible';
+    };
+  </script>
+
+  <!-- Page-local styles (unchanged layout/graphics) -->
+  <style>
+    .hero { max-width:1200px; margin:24px auto 0; padding:0 16px; }
+    .hero-banner { background:rgba(8,10,16,.75); border:1px solid rgba(255,255,255,.08); border-radius:14px; backdrop-filter:blur(2px); overflow:hidden; display:grid; place-items:center; padding:12px 8px; }
+    .hero-banner img { width:100%; height:auto; display:block; }
+
+    .cta { max-width:980px; margin:18px auto 0; background:rgba(8,10,16,.82); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:18px; box-shadow:0 0 0 2px rgba(255,42,58,.2); text-align:center; }
+    .cta p { margin:0 0 12px; color:#d9d9e6; }
+    .cta .rr-btn { font-weight:800; letter-spacing:.3px; background:#2b0f15; border-color:#45161e; }
+
+    .main { max-width:1200px; margin:18px auto; padding:0 16px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    @media (max-width:980px){ .main{ grid-template-columns:1fr; } }
+
+    .panel { background:rgba(8,10,16,.88); border-radius:16px; border:1px solid rgba(255,255,255,.08); box-shadow:0 0 0 2px rgba(255,42,58,.18); padding:14px; }
+    .panel h3 { margin:0 0 12px; display:flex; align-items:center; gap:8px; font-weight:900; }
+    .panel h3 .note { color:#ff2a3a; }
+
+    .spotlight { display:grid; grid-template-columns:108px 1fr; gap:14px; align-items:start; }
+    .spotlight .cover { width:108px; height:108px; object-fit:cover; border-radius:12px; border:1px solid #34171c; background:#0c0d12; display:block; }
+    .spotlight .meta { display:flex; flex-direction:column; gap:6px; }
+    .spotlight .title { font-weight:800; }
+    .spotlight .sub { color:#b9b9c8; font-size:13px; }
+    .spotlight .player { margin-top:6px; background:#0d0d12; border:2px solid #222; border-radius:12px; padding:8px 10px; box-shadow:inset 0 0 0 1px rgba(255,0,0,.12); display:flex; align-items:center; gap:10px; }
+    .spotlight audio { width:100%; outline:none; filter:invert(1) hue-rotate(180deg); accent-color:#ff2a3a; }
+
+    .news-list{ display:flex; flex-direction:column; gap:10px; }
+    .news-item{ background:#0f0f13; border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:10px 12px; }
+
+    .section { max-width:1200px; margin:18px auto; padding:0 16px; }
+    .section h3 { margin:0 0 10px; font-weight:900; display:flex; gap:8px; align-items:center; }
+    .discover-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    @media (max-width:980px){ .discover-grid{ grid-template-columns:1fr; } }
+    .discover-card{ background:rgba(8,10,16,.88); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:12px; }
+    .discover-thumb{ width:100%; height:160px; object-fit:cover; border-radius:12px; background:#0c0d12; border:1px solid #34171c; }
+
+    .tiny { font-size:13px; color:#b9b9c8; }
+
+    /* Billboard extras kept as-is */
+    @media (max-width: 1000px){ .rr-billboard{ display:none !important; } }
+    .rr-billboard{ position:fixed; left:80px; top:18vh; width:160px; height:50vh; z-index:2000; display:flex; align-items:center; padding:14px; }
+  </style>
+</head>
+
+<body class="rr-bg">
+  <!-- topbar -->
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">Outlaw Airwaves</div>
+    <nav class="rr-topbar-right">
+      <a class="rr-btn rr-primary" style="padding:8px 18px; font-size:1.05rem; margin-left:12px;" href="/login">Sign In</a>
+    </nav>
+  </header>
+
+  <!-- hero banner -->
+  <div class="hero">
+    <div class="hero-banner">
+      <img src="/banner.png" alt="Rig-Radio hero banner"/>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta">
+    <p>Unlock the full Rig-Radio experience: upload your own tracks, explore the entire indie + AI music library, and connect with a community pushing sound forward.</p>
+    <a href="/create-account" class="rr-btn rr-primary" style="margin-top:10px;padding:10px 18px;font-size:1.05rem;">Join Rig-Radio Today</a>
+  </section>
+
+  <!-- spotlight + news -->
+  <section class="main">
+    <article class="panel">
+      <h3><span class="note">🎵</span> Spotlight Song</h3>
+      <div class="spotlight">
+        <img class="cover" src="/cover-default.png" alt="cover">
+        <div class="meta">
+          <div class="title">Artist Name — Song Title</div>
+          <div class="sub">Featured today on Rig-Radio</div>
+          <div class="player">
+            <audio id="teaserPlayer" controls preload="metadata"
+                   controlsList="nodownload noplaybackrate"
+                   disablepictureinpicture
+                   oncontextmenu="return false">
+              <source id="teaserSource" src="" type="audio/mpeg">
+            </audio>
+          </div>
+          <div class="extra-note">🎧 Enjoy all the music here for free — no limits, no cost, just vibes.</div>
+        </div>
+      </div>
+    </article>
+    <aside class="panel">
+      <h3><span class="note">📰</span> Latest AI Music News</h3>
+      <div class="news-list">
+        <div class="news-item"><div><strong>Article 1</strong></div><div class="tiny">Another placeholder news item.</div></div>
+        <div class="news-item"><div><strong>Article 2</strong></div><div class="tiny">More news coming soon…</div></div>
+        <div class="news-item"><div><strong>Article 3</strong></div><div class="tiny">Stay tuned for updates.</div></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- discover more -->
+  <section class="section">
+    <h3>✨ Discover More</h3>
+    <div class="discover-grid">
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Fresh Drops</div>
+        <div class="tiny">New tracks from the community.</div>
+      </div>
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Artist Spotlights</div>
+        <div class="tiny">Get to know featured creators.</div>
+      </div>
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Playlists</div>
+        <div class="tiny">Curated sets for every mood.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- (optional) external teaser JS; kept if you already rely on it -->
+  <script src="/teaser.js"></script>
+
+  <!-- Billboard kept -->
+  <div class="panel rr-billboard">
+    <div>
+      <div class="ad-copy">
+        <div class="rr-ad-headline" style="font-size:1.35em; font-weight:800; letter-spacing:.5px; text-transform:uppercase;">SIGN UP TODAY — FREE</div>
+        <div class="rr-ad-sub tiny" style="margin-top:6px; opacity:.9;">“Indie. AI. Outlaw Airwaves.”</div>
+        <div class="rr-ad-copy" style="margin-top:10px;">Unlock full tracks, playlists, news & uploads.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ************ FUNCTIONALITY (clean, single-source) ************ -->
+
+  <script>
+    // Utility: read filename (with extension) from the actual player src
+    function rrPlayerFilename(){
+      const p = document.getElementById('teaserPlayer');
+      if (!p) return null;
+      const u = p.currentSrc || (p.querySelector('source') && p.querySelector('source').src) || '';
+      const m = u.match(/tracks\/audio\/([^?]+)/i);
+      return m ? m[1].toLowerCase() : null;
+    }
+
+    // Controller: set cover from DB for the CURRENT audio
+    async function rrApplyDbCover(){
+      const c = window._client || (window._rr && window._rr.db);
+      if (!c) return;
+      const file = rrPlayerFilename();
+      if (!file) return;
+
+      const { data, error } = await c
+        .from('tracks')
+        .select('cover_url,audio_url,status')
+        .eq('status','public')
+        .ilike('audio_url', `%${file}%`)
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data && data.cover_url) {
+        RR.setSpotlightCover(data.cover_url, 10); // DB wins
+      }
+    }
+
+    // Low-priority fallback: try storage covers by filename heuristics
+    async function rrApplyHeuristicCover(){
+      const c = window._client || (window._rr && window._rr.db);
+      if (!c) return;
+      const file = rrPlayerFilename();
+      if (!file) return;
+      const base = file.replace(/\.[^.]+$/,'').toLowerCase();
+
+      const { data: files, error } = await c.storage.from('tracks').list('covers', { limit: 500 });
+      if (error || !files || !files.length) return;
+      const imgs = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+      if (!imgs.length) return;
+
+      const norm = s => s.replace(/\.[^.]+$/,'').toLowerCase();
+      let match = imgs.find(f => norm(f.name) === base) || imgs.find(f => norm(f.name).includes(base)) || imgs[0];
+      if (!match) return;
+
+      const { data: signed, error: e2 } = await c.storage.from('tracks').createSignedUrl(`covers/${match.name}`, 600);
+      if (!e2 && signed && signed.signedUrl) {
+        RR.setSpotlightCover(signed.signedUrl, 1); // heuristic is low priority
+      }
+    }
+
+    // Title from filename until you wire real metadata
+    function rrSetTitleFromFilename(){
+      const p = document.getElementById('teaserPlayer');
+      const titleEl = document.querySelector('.spotlight .meta .title');
+      if (!p || !titleEl) return;
+      const f = rrPlayerFilename();
+      if (!f) return;
+      let base = f.replace(/\.[^.]+$/,'');
+      base = base.replace(/^[0-9a-f-]{20,}-/i, ''); // drop GUID-like prefixes
+      base = base.replace(/_/g, ' ').trim();
+      const m = base.match(/^\s*(.+?)\s*-\s*(.+)\s*$/);
+      titleEl.textContent = m ? `${m[1]} — ${m[2]}` : base;
+    }
+
+    // Wire events: whenever the audio source is set/loaded, sync cover/title
+    (function(){
+      function schedule(){
+        // run DB first, then heuristic shortly after
+        rrApplyDbCover();
+        setTimeout(rrApplyHeuristicCover, 300);
+        rrSetTitleFromFilename();
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const p = document.getElementById('teaserPlayer');
+        const s = document.getElementById('teaserSource');
+
+        if (p){
+          ['loadstart','loadedmetadata','play','emptied'].forEach(ev =>
+            p.addEventListener(ev, schedule, {passive:true})
+          );
+        }
+        if (s){
+          new MutationObserver(schedule).observe(s, { attributes:true, attributeFilter:['src'] });
+        }
+
+        // First pass + delayed retry (handle late loaders/teaser.js)
+        schedule();
+        setTimeout(schedule, 800);
+        setTimeout(schedule, 1600);
+      });
+    })();
+  </script>
+
+  <!-- ************ END FUNCTIONALITY ************ -->
+</body>
+</html>
+

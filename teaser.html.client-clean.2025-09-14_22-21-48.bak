@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+const SUPABASE_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....";
+window._rr=window._rr||{};
+if(window.supabase && window.supabase.createClient){ 
+  window._rr.db = window._rr.db || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON); 
+  window._client = window._client || window._rr.db;   // 👈 ADD THIS LINE
+}
+</script>
+
+
+
+
+
+
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rig-Radio — Teaser</title>
+  <link rel="stylesheet" href="/rr.css"/>
+
+  <!-- page-local styles only for teaser layout (won’t impact other pages) -->
+  <style>
+    .hero {
+      max-width: 1200px; margin: 24px auto 0; padding: 0 16px;
+    }
+    .hero-banner {
+      background: rgba(8,10,16,.75);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      backdrop-filter: blur(2px);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 12px 8px;
+    }
+    .hero-banner img { width: 100%; height: auto; display: block; }
+
+    .cta {
+      max-width: 980px; margin: 18px auto 0;
+      background: rgba(8,10,16,.82);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 0 0 2px rgba(255,42,58,.2);
+      text-align: center;
+    }
+    .cta p { margin: 0 0 12px; color: #d9d9e6; }
+    .cta .rr-btn {
+      font-weight: 800; letter-spacing: 0.3px;
+      background: #2b0f15; border-color: #45161e;
+    }
+
+    .main {
+      max-width: 1200px; margin: 18px auto; padding: 0 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    }
+    @media (max-width: 980px){ .main{ grid-template-columns: 1fr; } }
+
+    .panel {
+      background: rgba(8,10,16,.88);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 0 0 2px rgba(255,42,58,.18);
+      padding: 14px;
+    }
+    .panel h3 {
+      margin: 0 0 12px;
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 900;
+    }
+    .panel h3 .note { color: #ff2a3a; }
+    .spotlight {
+      display: grid; grid-template-columns: 108px 1fr; gap: 14px; align-items: start;
+    }
+    .spotlight .cover {
+      width: 108px; height: 108px; object-fit: cover;
+      border-radius: 12px; border: 1px solid #34171c; background: #0c0d12;
+      display: block;
+    }
+    .spotlight .meta { display:flex; flex-direction:column; gap:6px; }
+    .spotlight .title { font-weight: 800; }
+    .spotlight .sub   { color:#b9b9c8; font-size: 13px; }
+    .spotlight .player {
+      margin-top: 6px;
+      background:#0d0d12;border:2px solid #222;border-radius:12px;padding:8px 10px;
+      box-shadow: inset 0 0 0 1px rgba(255,0,0,.12);
+      display:flex;align-items:center;gap:10px;
+    }
+    .spotlight audio{
+      width:100%; outline:none;
+      filter:invert(1) hue-rotate(180deg);
+      accent-color:#ff2a3a;
+    }
+    .news-list{ display:flex; flex-direction:column; gap:10px;}
+    .news-item{
+      background:#0f0f13; border:1px solid rgba(255,255,255,.06);
+      border-radius:12px; padding:10px 12px;
+    }
+    .section {
+      max-width: 1200px; margin: 18px auto; padding: 0 16px;
+    }
+    .section h3 { margin: 0 0 10px; font-weight: 900; display:flex; gap:8px; align-items:center; }
+    .discover-grid{
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    @media (max-width: 980px){ .discover-grid{ grid-template-columns: 1fr; } }
+    .discover-card{
+      background: rgba(8,10,16,.88);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 16px; padding: 12px;
+    }
+    .discover-thumb{
+      width:100%; height: 160px; object-fit: cover; border-radius: 12px;
+      background:#0c0d12; border:1px solid #34171c;
+    }
+    .tiny { font-size: 13px; color:#b9b9c8; }
+  </style>
+</head>
+
+<body class="rr-bg">
+  <!-- topbar -->
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">Outlaw Airwaves</div>
+    
+    
+    <nav class="rr-topbar-right">
+      <a class="rr-btn rr-primary" style="padding:8px 18px; font-size:1.05rem; margin-left:12px;" href="/login">Sign In</a>
+    </nav>
+  </header>
+
+  <!-- hero banner -->
+  <div class="hero">
+    <div class="hero-banner">
+      <img src="/banner.png" alt="Rig-Radio hero banner"/>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta">
+    <p>Unlock the full Rig-Radio experience: upload your own tracks, explore the entire indie + AI music library, and connect with a community pushing sound forward.</p>
+    <a href="/create-account" class="rr-btn rr-primary" style="margin-top:10px;padding:10px 18px;font-size:1.05rem;">Join Rig-Radio Today</a>
+  </section>
+
+  <!-- spotlight + news -->
+  <section class="main">
+    <article class="panel">
+      <h3><span class="note">🎵</span> Spotlight Song</h3>
+      <div class="spotlight">
+        <img class="cover" src="/cover-default.png" alt="cover">
+        <div class="meta">
+          <div class="title">Artist Name — Song Title</div>
+          <div class="sub">Featured today on Rig-Radio</div>
+          <div class="player">
+            <audio id="teaserPlayer" controls preload="metadata"
+                   controlsList="nodownload noplaybackrate"
+                   disablepictureinpicture
+                   oncontextmenu="return false">
+              <source id="teaserSource" src="" type="audio/mpeg">
+            </audio>
+            </div>
+            <div class="extra-note">🎧 Enjoy all the music here for free — no limits, no cost, just vibes.</div>
+          </div>
+        </div>
+      </div>
+    </article>
+    <aside class="panel">
+      <h3><span class="note">📰</span> Latest AI Music News</h3>
+      <div class="news-list">
+        <div class="news-item">
+          <div><strong>Article 1</strong></div>
+          <div class="tiny">Another placeholder news item.</div>
+        </div>
+        <div class="news-item">
+          <div><strong>Article 2</strong></div>
+          <div class="tiny">More news coming soon…</div>
+        </div>
+        <div class="news-item">
+          <div><strong>Article 3</strong></div>
+          <div class="tiny">Stay tuned for updates.</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- discover more -->
+  <section class="section">
+    <h3>✨ Discover More</h3>
+    <div class="discover-grid">
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Fresh Drops</div>
+        <div class="tiny">New tracks from the community.</div>
+      </div>
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Artist Spotlights</div>
+        <div class="tiny">Get to know featured creators.</div>
+      </div>
+      <div class="discover-card">
+        <img class="discover-thumb" src="/banner.png" alt="">
+        <div style="margin-top:8px;font-weight:700">Playlists</div>
+        <div class="tiny">Curated sets for every mood.</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/teaser.js"></script>
+<style>
+  @media (max-width: 1000px){ .rr-billboard{ display:none !important; } }
+  .rr-billboard{
+    position: fixed;
+    left: 80px;
+    top: 18vh;
+    width: 160px;
+    height: 50vh;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    padding: 14px;
+  }
+</style>
+<div class="panel rr-billboard">
+  <div>
+    <div class="ad-copy">
+      <div class="rr-ad-headline" style="font-size:1.35em; font-weight:800; letter-spacing:.5px; text-transform:uppercase;">SIGN UP TODAY — FREE</div>
+      <div class="rr-ad-sub tiny" style="margin-top:6px; opacity:.9;">“Indie. AI. Outlaw Airwaves.”</div>
+      <div class="rr-ad-copy" style="margin-top:10px;">Unlock full tracks, playlists, news & uploads.</div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const player = document.getElementById("teaserPlayer");
+  const img = document.querySelector(".spotlight img.cover");
+
+  if (!player || !img || !window.supabase) return;
+
+  player.addEventListener("loadedmetadata", async () => {
+      const db = (window._rr && _rr.db) ? _rr.db : null;
+      if (!db) return;
+    try {
+      const url = player.currentSrc || player.querySelector("source")?.src || "";
+      const m = url.match(/tracks\/audio\/([^?]+)/i);
+      if (!m) return;
+
+      const audioBase = m[1].replace(/\.[^.]+$/, "").toLowerCase(); // e.g. black_sheep
+
+      // list covers
+      const { data: covers, error } = await supabase.storage.from("tracks").list("covers", { limit: 500 });
+      if (error || !covers) return;
+
+      // filter image files only
+      const imgs = covers.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+
+      // look for exact base match
+      let match = imgs.find(f => f.name.replace(/\.[^.]+$/, "").toLowerCase() === audioBase);
+
+      // fallback: partial match
+      if (!match) {
+        match = imgs.find(f => f.name.toLowerCase().includes(audioBase));
+      }
+
+      // fallback: just grab first available
+      if (!match && imgs.length) match = imgs[0];
+
+      if (!match) return;
+
+      // signed URL for the matched cover
+      const { data: signed, error: e2 } = await supabase.storage.from("tracks").createSignedUrl(`covers/${match.name}`, 600);
+      if (!e2 && signed?.signedUrl) {
+        img.src = signed.signedUrl;
+        console.log("Matched cover:", match.name, "→", signed.signedUrl);
+      }
+    } catch (e) {
+      console.error("cover sync error", e);
+    }
+  });
+});
+</script>
+
+
+
+
+
+<script>
+(function(){
+  // 1) INIT: mirror library.js pattern
+  const URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+  const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+  if (window.supabase && window.supabase.createClient) {
+    window._client = window._client || window.supabase.createClient(URL, KEY);
+  }
+
+  // 2) COVER SYNC: use only _client (no _rr, no raw supabase)
+  function audioFileBase(){
+    const p = document.getElementById("teaserPlayer");
+    const url = p?.currentSrc || p?.querySelector("source")?.src || "";
+    const m = url.match(/tracks\/audio\/([^?]+)/i);
+    return m ? m[1].replace(/\.[^.]+$/, "").toLowerCase() : null;
+  }
+
+  async function setCover(){
+    try{
+      if (!window._client) return;                         // bail if client not ready
+      const img = document.querySelector(".spotlight img.cover");
+      if (!img) return;
+
+      const base = audioFileBase();
+      if (!base) return;
+
+      // list images in tracks/covers
+      const { data: files, error } = await window._client.storage.from("tracks").list("covers", { limit: 500 });
+      if (error || !files) return;
+const imgs = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+
+
+      if (!imgs.length) return;
+
+
+
+const norm = s => s.replace(/\.[^.]+$/, "").toLowerCase();
+
+
+      const match = imgs.find(f => norm(f.name) === base)
+                 || imgs.find(f => norm(f.name).includes(base))
+                 || imgs[0];
+
+      if (!match) return;
+      const { data: signed, error: e2 } = await window._client.storage.from("tracks").createSignedUrl("covers/" + match.name, 600);
+      if (!e2 && signed?.signedUrl) { img.src = signed.signedUrl; }
+    } catch(e){ console.error("cover-sync error", e); }
+  }
+
+  // Run after metadata (player has currentSrc) + one delayed fallback
+  document.addEventListener("DOMContentLoaded", () => {
+    const p = document.getElementById("teaserPlayer");
+    if (p) p.addEventListener("loadedmetadata", () => setCover(), { once: true });
+    setTimeout(() => setCover(), 700);
+  });
+})();
+</script>
+<script>
+(function(){
+  // 1) INIT: mirror library.js pattern
+  const URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+  const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+  if (window.supabase && window.supabase.createClient) {
+    window._client = window._client || window.supabase.createClient(URL, KEY);
+  }
+
+  // 2) COVER SYNC: use only _client (no _rr, no raw supabase)
+  function audioFileBase(){
+    const p = document.getElementById("teaserPlayer");
+    const url = p?.currentSrc || p?.querySelector("source")?.src || "";
+    const m = url.match(/tracks\/audio\/([^?]+)/i);
+return m ? m[1].replace(/\.[^.]+$/, "").toLowerCase() : null;
+
+  }
+
+  async function setCover(){
+    try{
+      if (!window._client) return;                         // bail if client not ready
+      const img = document.querySelector(".spotlight img.cover");
+      if (!img) return;
+
+      const base = audioFileBase();
+      if (!base) return;
+
+      // list images in tracks/covers
+      const { data: files, error } = await window._client.storage.from("tracks").list("covers", { limit: 500 });
+      if (error || !files) return;
+const imgs = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+
+
+      if (!imgs.length) return;
+
+const norm = s => s.replace(/\.[^.]+$/, "").toLowerCase();
+
+
+      const match = imgs.find(f => norm(f.name) === base)
+                 || imgs.find(f => norm(f.name).includes(base))
+                 || imgs[0];
+
+      if (!match) return;
+      const { data: signed, error: e2 } = await window._client.storage.from("tracks").createSignedUrl("covers/" + match.name, 600);
+      if (!e2 && signed?.signedUrl) { img.src = signed.signedUrl; }
+    } catch(e){ console.error("cover-sync error", e); }
+  }
+
+  // Run after metadata (player has currentSrc) + one delayed fallback
+  document.addEventListener("DOMContentLoaded", () => {
+    const p = document.getElementById("teaserPlayer");
+    if (p) p.addEventListener("loadedmetadata", () => setCover(), { once: true });
+    setTimeout(() => setCover(), 700);
+  });
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const p = document.getElementById('teaserPlayer');
+  const img = document.querySelector('.spotlight img.cover');
+  const c = window._client; if (!p || !img || !c) return;
+
+  p.addEventListener('loadedmetadata', async () => {
+    try {
+      const u = p.currentSrc || p.querySelector('source')?.src || "";
+      const m = u.match(/tracks\/audio\/([^?]+)/i); if (!m) return;
+      const file = m[1].toLowerCase();
+
+      const { data, error } = await c
+        .from('tracks')
+        .select('cover_url,audio_url,status')
+        .eq('status','public')
+        .ilike('audio_url', `%${file}%`)
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data?.cover_url) { img.src = data.cover_url; }
+    } catch (e) { console.error('teaser cover by DB', e); }
+  }, { once:true });
+});
+</script>
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+<script>
+(function () {
+  function onReady(fn){ if (document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded", fn); }
+  async function ensureSupabase() {
+    if (window.supabase) return window.supabase;
+    await new Promise((res, rej) => {
+      const s=document.createElement("script");
+      s.src="https://unpkg.com/@supabase/supabase-js@2";
+      s.onload=res; s.onerror=rej;
+      document.head.appendChild(s);
+    });
+    return window.supabase;
+  }
+  onReady(async () => {
+    try {
+      const supa = await ensureSupabase();
+      window._rr = window._rr || {};
+      _rr.db = _rr.db || supa.createClient(
+        "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+      );
+      const db = _rr.db;
+
+      const player = document.getElementById("teaserPlayer");
+      const source = document.getElementById("teaserSource");
+      if (!player || !source) return;
+
+      const { data: files, error } = await db.storage.from("tracks").list("audio", { limit: 100 });
+      if (error || !files || files.length===0) { console.warn("No files in tracks/audio", error); return; }
+
+      const pool = files.filter(f => /\.(mp3|wav|ogg|m4a)$/i.test(f.name));
+      const list = pool.length ? pool : files;
+      const chosen = list[Math.floor(Math.random()*list.length)];
+      const path = `audio/${chosen.name}`;
+
+      const { data: signed, error: sErr } = await db.storage.from("tracks").createSignedUrl(path, 600);
+      if (sErr || !signed?.signedUrl) { console.error("Signed URL error", sErr); return; }
+
+      console.log("Loading signed URL:", signed.signedUrl);
+      source.src = signed.signedUrl;
+      player.load();
+    } catch (e) { console.error("Teaser player init error:", e); }
+  });
+})();
+</script>
+<script>
+(function () {
+  async function ensureSupabase() {
+    if (window.supabase) return window.supabase;
+    await new Promise((res, rej) => {
+      const s=document.createElement("script");
+      s.src="https://unpkg.com/@supabase/supabase-js@2";
+      s.onload=res; s.onerror=rej;
+      document.head.appendChild(s);
+    });
+    return window.supabase;
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const supa = await ensureSupabase();
+      // reuse the singleton client created earlier or make one if missing
+      window._rr = window._rr || {};
+      _rr.db = _rr.db || supa.createClient(
+        "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+      );
+      const db = _rr.db;
+
+      const coverEl = document.getElementById('teaserCover');
+      if (!coverEl) return; // nothing to set
+
+      // List images in tracks/covers (private)
+      const { data: files, error } = await db.storage.from('tracks').list('covers', { limit: 200 });
+      if (error || !files || files.length === 0) {
+        console.warn('No covers found in tracks/covers');
+        return;
+      }
+
+      // Use only common image extensions
+      const imgs = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+      const pool = imgs.length ? imgs : files;
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      const path = `covers/${chosen.name}`;
+
+      // Signed URL (10 minutes)
+      const { data: signed, error: sErr } = await db.storage.from('tracks').createSignedUrl(path, 600);
+      if (sErr || !signed?.signedUrl) {
+        console.error('Cover signed URL error:', sErr);
+        return;
+      }
+
+      coverEl.src = signed.signedUrl;
+    } catch (e) {
+      console.error('Cover loader error:', e);
+    }
+  });
+})();
+</script>
+<script>
+(function () {
+  // helper: best-guess element inside spotlight card that represents the small cover box
+  function findCoverBox(){
+    const root = document.querySelector('.rr-spotlight') || document;
+    return root.querySelector('.rr-cover, .cover, .cover-art, .thumb, [data-cover], img[alt="cover"]') || null;
+  }
+  // helper: set image (works for <img> or any element)
+  function setCover(el, url){
+    if (!el) return;
+    if (el.tagName && el.tagName.toLowerCase()==='img') {
+      el.src = url;
+      el.removeAttribute('width'); el.removeAttribute('height');
+      el.style.display = 'block';
+    } else {
+      el.style.backgroundImage = `url("${url}")`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.style.backgroundRepeat = 'no-repeat';
+    }
+  }
+  // helper: derive a readable title from filename until we have metadata
+  function deriveTitle(filename){
+    // drop extension
+    let base = filename.replace(/\.[^.]+$/, '');
+    // drop GUID prefix if present (up to first '-')
+    base = base.replace(/^[0-9a-f-]{20,}-/i, '');
+    // underscores/spaces
+    base = base.replace(/_/g, ' ').trim();
+    // split "Artist - Title" if present
+    const m = base.match(/^\s*(.+?)\s*-\s*(.+)\s*$/);
+    if (m) return { artist: m[1], title: m[2] };
+    return { artist: '', title: base };
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // reuse the Supabase client from the player script
+      const db = (window._rr && _rr.db) ? _rr.db : null;
+      if (!db) return;
+
+      // 1) pick an audio file we already chose (if our player logged it) OR choose one now to match cover
+      // We’ll list once and use the same chosen audio name to set the title/cover heuristically.
+      const { data: files, error } = await db.storage.from('tracks').list('audio', { limit: 100 });
+      if (error || !files || !files.length) return;
+
+      const audioPick = files[Math.floor(Math.random()*files.length)];
+      const { artist, title } = deriveTitle(audioPick.name);
+
+      // Update the visible title text
+      const titleEl = document.querySelector('.rr-spotlight .title');
+      if (titleEl) {
+        titleEl.textContent = artist ? `${artist} — ${title}` : title;
+      }
+
+      // Try to find a matching cover name (same base name, common image extensions)
+      const base = audioPick.name.replace(/\.[^.]+$/, '');
+      const { data: coverList, error: coverErr } = await db.storage.from('tracks').list('covers', { limit: 250 });
+      let coverName = null;
+      if (!coverErr && coverList && coverList.length) {
+        // prefer exact base match; else just take a random cover
+        const exts = ['jpg','jpeg','png','webp'];
+        for (const ext of exts) {
+          const candidate = `${base}.${ext}`;
+          if (coverList.find(f => f.name.toLowerCase() === candidate.toLowerCase())) { coverName = candidate; break; }
+        }
+        if (!coverName) {
+          // fallback: first image in covers
+          const imgs = coverList.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+          if (imgs.length) coverName = imgs[Math.floor(Math.random()*imgs.length)].name;
+        }
+      }
+
+      if (coverName) {
+        const { data: signed, error: sErr } = await db.storage.from('tracks').createSignedUrl(`covers/${coverName}`, 600);
+        if (!sErr && signed?.signedUrl) {
+          // Put the cover into the existing small box
+          const box = findCoverBox();
+          setCover(box, signed.signedUrl);
+        }
+      }
+
+      const stray = document.getElementById('teaserCover');
+      if (stray) { stray.style.display = 'none'; }
+    } catch(e) {
+      console.error('Spotlight cover/title patch error:', e);
+    }
+  });
+})();
+</script>
+<script>
+(function () {
+  if (window._rr && _rr._teaserInit) return;
+  document.addEventListener('DOMContentLoaded', initTeaser);
+
+  async function ensureSupabase() {
+    if (window.supabase) return window.supabase;
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/@supabase/supabase-js@2';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+    return window.supabase;
+  }
+
+  function deriveTitle(filename) {
+    let base = filename.replace(/\.[^.]+$/, '');
+    base = base.replace(/^[0-9a-f-]{20,}-/i, ''); // drop GUID-ish prefixes
+    base = base.replace(/_/g, ' ').trim();
+    const m = base.match(/^\s*(.+?)\s*-\s*(.+)\s*$/);
+    if (m) return { artist: m[1], title: m[2] };
+    return { artist: '', title: base };
+  }
+
+  async function initTeaser() {
+    try {
+      const supa = await ensureSupabase();
+      window._rr = window._rr || {};
+      _rr.db = _rr.db || supa.createClient(
+        "https://tpzpeoqdpfwqumlsyhpx.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9zZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E"
+      );
+      const db = _rr.db;
+
+      const player = document.getElementById('teaserPlayer');
+      const source = document.getElementById('teaserSource');
+      if (!player || !source) return;
+
+      // 1) List audio files
+      const { data: audioFiles, error: listErr } = await db.storage.from('tracks').list('audio', { limit: 200 });
+      if (listErr || !audioFiles || !audioFiles.length) { console.warn('No audio files in tracks/audio'); return; }
+
+      // 2) Choose one and sign URL
+      const audio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+      const audioPath = `audio/${audio.name}`;
+      const { data: signedAudio, error: signAudioErr } = await db.storage.from('tracks').createSignedUrl(audioPath, 600);
+      if (signAudioErr || !signedAudio?.signedUrl) { console.error('Signed audio URL error:', signAudioErr); return; }
+
+      // 3) Load player
+      console.log('Loading signed URL:', signedAudio.signedUrl);
+      source.src = signedAudio.signedUrl;
+      player.load();
+
+      // 4) Set title text from filename
+      const metaTitle = document.querySelector('.spotlight .meta .title');
+      if (metaTitle) {
+        const { artist, title } = deriveTitle(audio.name);
+        metaTitle.textContent = artist ? `${artist} — ${title}` : title;
+      }
+
+      // 5) Find a matching cover in tracks/covers and set it on the SMALL cover box
+      const coverEl = document.querySelector('.spotlight img.cover');
+      if (coverEl) {
+        const base = audio.name.replace(/\.[^.]+$/, '').toLowerCase();
+        const { data: coverFiles, error: coverListErr } = await db.storage.from('tracks').list('covers', { limit: 500 });
+        if (!coverListErr && coverFiles && coverFiles.length) {
+          const imgs = coverFiles.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+          let match = imgs.find(f => f.name.replace(/\.[^.]+$/, '').toLowerCase() === base);
+          if (!match && imgs.length) match = imgs[Math.floor(Math.random() * imgs.length)];
+
+          if (match) {
+            const { data: signedCover, error: signCoverErr } = await db.storage.from('tracks').createSignedUrl(`covers/${match.name}`, 600);
+            if (!signCoverErr && signedCover?.signedUrl) {
+              coverEl.src = signedCover.signedUrl;
+            }
+          }
+        }
+      }
+
+      // Flag so we don't double-init
+      _rr._teaserInit = true;
+    } catch (e) {
+      console.error('Teaser init error:', e);
+    }
+  }
+})();
+</script>
+<script>
+  (async () => {
+    try {
+      const db = (window._rr && _rr.db) ? _rr.db : null;
+      if (!db) { console.warn('No Supabase client'); return; }
+      const { data, error } = await db.from('tracks').select('*').limit(1);
+      console.log('DEBUG tracks sample:', data, error);
+    } catch (e) { console.error('DEBUG tracks error:', e); }
+  })();
+</script>
+<script>
+  (async () => {
+    try {
+      const db = (window._rr && _rr.db) ? _rr.db : null;
+      if (!db) { console.warn('No Supabase client'); return; }
+      const { data, error } = await db.from('tracks').select('*').limit(1);
+      console.log('DEBUG tracks sample:', data, error);
+    } catch (e) { console.error('DEBUG tracks error:', e); }
+  })();
+</script>
+<script>
+(function () {
+  function fileNameFromSignedUrl(url){
+    try {
+      const m = url.match(/tracks\/audio\/([^?]+)/i);
+      if (!m) return null;
+      return decodeURIComponent(m[1]); // e.g., "Good_Times.mp3" or "GUID-Artist - Title.mp3"
+    } catch { return null; }
+  }
+  function cleanTitleBase(name){
+    let base = name.replace(/\.[^.]+$/, '');
+    base = base.replace(/^[0-9a-f-]{20,}-/i, ''); // drop GUID-like prefixes
+    base = base.replace(/_/g, ' ').trim();
+    return base;
+  }
+
+  async function setArtistAndTitle(){
+    const db = (window._rr && _rr.db) ? _rr.db : null;
+    if (!db) return;
+
+    const source = document.getElementById('teaserSource');
+    const titleEl = document.querySelector('.spotlight .meta .title');
+    if (!source || !source.src || !titleEl) return;
+
+    const fname = fileNameFromSignedUrl(source.src);
+    if (!fname) return;
+
+    // Base title to fall back to
+    const base = cleanTitleBase(fname);
+    let artist = '', title = base;
+
+    try {
+      // Try to find a row whose track_path OR audio_url contains the filename
+      // NOTE: Supabase or() syntax requires the full filter string
+      const orFilter = `track_path.ilike.%${fname}%,audio_url.ilike.%${fname}%`;
+      const { data, error } = await db
+        .from('tracks')
+        .select('*')
+        .or(orFilter)
+        .limit(1);
+
+      if (!error && data && data.length) {
+        const row = data[0];
+        // Prefer explicit title from DB if present
+        if (row.title && typeof row.title === 'string') title = row.title;
+        // Artist field might be 'artist' or 'artist_name' depending on your schema
+        artist = row.artist || row.artist_name || '';
+      }
+    } catch (e) {
+      console.warn('tracks lookup failed; showing filename title only', e);
+    }
+
+    titleEl.textContent = artist ? `${artist} — ${title}` : title;
+  }
+
+  document.addEventListener('DOMContentLoaded', setArtistAndTitle);
+})();
+</script>
+<script>
+/* ==== Teaser: AI Music News (non-clickable) ==== */
+(function () {
+  const BOX = document.querySelector('.news-list');
+  if (!BOX) return;
+
+  // Show a tiny loading state
+  BOX.innerHTML = '<div class="news-item"><div class="tiny">Loading AI music headlines…</div></div>';
+
+  // Use an open CORS proxy to retrieve RSS as raw XML
+  const proxy = (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`;
+
+  // Feeds (4+ sources). We’ll keyword-filter to AI/music.
+  const FEEDS = [
+    // Google News query: "AI music"
+    'https://news.google.com/rss/search?q=%22AI%20music%22&hl=en-US&gl=US&ceid=US:en',
+    // MusicTech (general feed; we’ll filter for AI/music)
+    'https://musictech.com/feed/',
+    // The Verge (general feed; filter)
+    'https://www.theverge.com/rss/index.xml',
+    // TechCrunch AI (filter to music keywords)
+    'https://techcrunch.com/tag/ai/feed/',
+    // Billboard News (filter to AI/music)
+    'https://www.billboard.com/feed/',
+  ];
+
+  const KEYWORDS = [
+    /(^|\b)ai(\b|$)/i,
+    /artificial intelligence/i,
+    /gen(erative)?\s*ai/i,
+    /\bmusic\b/i,
+    /\baudio\b/i,
+    /\bsong\b/i
+  ];
+
+  // Helper: basic keyword check requiring both AI-ish and music-ish presence
+  function isRelevant(title) {
+    const t = (title || '').toLowerCase();
+    const hasAI = /(^|\b)ai(\b|$)|artificial intelligence|generative ai/.test(t);
+    const hasMusic = /\bmusic\b|\baudio\b|\bsong\b|\bartist\b/.test(t);
+    return hasAI && hasMusic;
+  }
+
+  async function fetchFeed(url) {
+    try {
+      const res = await fetch(proxy(url), { credentials: 'omit' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const xml = await res.text();
+      const doc = new DOMParser().parseFromString(xml, 'text/xml');
+      // RSS: <item>, Atom: <entry>
+      const items = [...doc.querySelectorAll('item, entry')].slice(0, 20).map(node => {
+        const title = (node.querySelector('title')?.textContent || '').trim();
+        const source = (doc.querySelector('channel > title, feed > title')?.textContent || '').trim();
+        const date = node.querySelector('pubDate, updated, published')?.textContent || '';
+        return { title, source, date };
+      });
+      return items;
+    } catch (e) {
+      console.warn('Feed fetch failed:', url, e);
+      return [];
+    }
+  }
+
+  function dedupe(items) {
+    const seen = new Set();
+    const out = [];
+    for (const it of items) {
+      const key = (it.title || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push(it);
+    }
+    return out;
+  }
+
+  (async () => {
+    const results = (await Promise.all(FEEDS.map(fetchFeed))).flat();
+    // Filter to relevant AI+music headlines
+    const filtered = results.filter(it => isRelevant(it.title));
+    // Dedupe & sort by recency if a date exists
+    const deduped = dedupe(filtered);
+    deduped.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+    // Keep 6–8 items for the teaser box
+    const pick = deduped.slice(0, 4);
+
+    if (pick.length === 0) {
+      BOX.innerHTML = '<div class="news-item"><div class="tiny">No AI music headlines found right now. Check back soon.</div></div>';
+      return;
+    }
+
+    // Render as NON-CLICKABLE list items (teaser only)
+    BOX.innerHTML = pick.map(it => {
+      const src = it.source ? ` <span class="tiny">— ${it.source}</span>` : '';
+      return `<div class="news-item"><div><strong>${it.title}</strong>${src}</div></div>`;
+    }).join('');
+  })();
+})();
+</script>
+<style>
+/* Flashy billboard text */
+.rr-billboard .rr-ad-headline{
+  background: linear-gradient(90deg,#ff3b3b,#ffd43b,#34d399);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: rr-glow 1.6s ease-in-out infinite alternate;
+}
+.rr-billboard .rr-ad-sub,.rr-billboard .rr-ad-copy{ opacity:0.95 }
+@keyframes rr-glow{
+  from { text-shadow: 0 0 6px rgba(255,59,59,.55), 0 0 12px rgba(255,212,59,.35); filter: saturate(1); }
+  to   { text-shadow: 0 0 10px rgba(52,211,153,.65), 0 0 18px rgba(255,212,59,.55); filter: saturate(1.3); }
+}
+</style>
+<style>
+/* --- Teaser polish 1: CTA box (make it clean, centered, on-brand) --- */
+.cta{
+  margin: 16px auto 20px;
+  padding: 22px 20px;
+  text-align: center;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  max-width: 980px;
+}
+.cta p{
+  max-width: 760px;
+  margin: 0 auto 12px;
+  font-size: 1.08rem;
+  line-height: 1.55;
+  letter-spacing: .2px;
+  opacity: .95;
+}
+.cta .rr-btn{ margin-top: 6px; padding: 10px 18px; font-size: 1.05rem; }
+
+/* Also tighten and center the small line under the Spotlight player */
+.spotlight .extra-note{
+  text-align: center;
+  margin-top: 8px;
+  font-size: .98rem;
+  opacity: .9;
+}
+</style>
+<style>
+.cta p{font-weight:600;text-shadow:0 0 6px rgba(255,255,255,.08);}
+.spotlight .extra-note{
+  font-weight:600; letter-spacing:.2px;
+  text-shadow:0 0 6px rgba(255,255,255,.08), 0 0 10px rgba(255,0,80,.06);
+}
+</style>
+<script>
+(function(){
+  function when(cond, cb, ms=150, tries=60){
+    const t=setInterval(()=>{
+      if (cond()){
+        clearInterval(t); cb();
+      } else if (--tries<=0){ clearInterval(t); }
+    }, ms);
+  }
+
+  function getAudioBase(){
+    const player=document.getElementById('teaserPlayer');
+    if(!player) return null;
+    const srcEl=player.querySelector('source');
+    const url=(player.currentSrc || (srcEl && srcEl.src) || '').trim();
+    if(!url) return null;
+    try{
+      const u=new URL(url);
+      const name=u.pathname.split('/').pop();            // e.g. "GUID-Artist_-_Title.mp3"
+      return name.split('.').slice(0,-1).join('.');      // drop extension safely
+    }catch{ return null; }
+  }
+
+  function applyCover(db){
+    const img=document.querySelector('.spotlight img.cover');
+    if(!img) return;
+    const base=getAudioBase();
+    if(!base) return;
+
+    db.storage.from('covers').list('',{limit:500}).then(({data, error})=>{
+      if(error || !data || !data.length) return;
+      const imgs=data.filter(f=>/\.(jpg|jpeg|png|webp)$/i.test(f.name));
+      if(!imgs.length) return;
+
+      const norm = s => s.replace(/\.[^.]+$/,'').toLowerCase();
+      const exact = imgs.find(f => norm(f.name) === base.toLowerCase());
+      const fuzzy = imgs.find(f => f.name.toLowerCase().includes(base.toLowerCase()));
+      const pick = exact || fuzzy || imgs[0];
+
+      db.storage.from('covers').createSignedUrl(pick.name, 600).then(({data:signed, error:e2})=>{
+        if(!e2 && signed && signed.signedUrl){ img.src = signed.signedUrl; }
+      });
+    });
+  }
+
+  // Wait for DOM, player source set, and your existing _rr.db client
+  document.addEventListener('DOMContentLoaded', ()=>{
+    when(()=> window._rr && _rr.db, ()=>{
+      // run once after metadata loads (ensures currentSrc is available)
+      const player=document.getElementById('teaserPlayer');
+      if(player){
+        player.addEventListener('loadedmetadata', ()=>applyCover(_rr.db), { once:true });
+      }
+      // also run a delayed attempt in case source was set earlier
+      setTimeout(()=>applyCover(_rr.db), 600);
+    });
+  });
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  function whenDb(cb){
+    const max=70, iv=150; let n=0;
+    const t=setInterval(()=>{ if (window._rr && _rr.db) { clearInterval(t); cb(_rr.db); }
+                              else if (++n>=max) clearInterval(t); }, iv);
+  }
+  function audioBase(){
+    const p=document.getElementById('teaserPlayer');
+    const url = p?.currentSrc || p?.querySelector('source')?.src || '';
+    const m = url.match(/tracks\/audio\/([^?]+)/i);
+    return m ? m[1].replace(/\.[^.]+$/,'').toLowerCase() : null;
+  }
+  whenDb(async (db)=>{
+    const base = audioBase(); if (!base) return;
+    try{
+      const { data: files, error } = await db.storage.from('tracks').list('covers', { limit: 500 });
+      if (error || !files) return;
+      const imgs = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+      if (!imgs.length) return;
+      const norm = s => s.replace(/\.[^.]+$/,'').toLowerCase();
+      const match = imgs.find(f => norm(f.name) === base)
+                 || imgs.find(f => norm(f.name).includes(base))
+                 || imgs[0];
+      if (!match) return;
+      const { data: signed, error: e2 } = await db.storage.from('tracks').createSignedUrl(`covers/${match.name}`, 600);
+      if (!e2 && signed?.signedUrl) {
+        const img = document.querySelector('.spotlight img.cover');
+        if (img) img.src = signed.signedUrl;
+      }
+    }catch(e){ console.error('cover-sync error', e); }
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  function whenDb(cb){
+    const max=70, iv=150; let n=0;
+    const t=setInterval(()=>{ if (window._rr && _rr.db) { clearInterval(t); cb(_rr.db); }
+                              else if (++n>=max) clearInterval(t); }, iv);
+  }
+  function audioBase(){
+    const p=document.getElementById('teaserPlayer');
+    const url = p?.currentSrc || p?.querySelector('source')?.src || '';
+    const m = url.match(/tracks\/audio\/([^?]+)/i);
+    return m ? m[1].replace(/\.[^.]+$/,'').toLowerCase() : null;
+  }
+  whenDb(async (db)=>{
+    const base = audioBase(); if (!base) return;
+    try{
+      const { data: files, error } = await db.storage.from('tracks').list('covers', { limit: 500 });
+      if (error || !files) return;
+      const imgs = files.filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+      if (!imgs.length) return;
+      const norm = s => s.replace(/\.[^.]+$/,'').toLowerCase();
+      const match = imgs.find(f => norm(f.name) === base)
+                 || imgs.find(f => norm(f.name).includes(base))
+                 || imgs[0];
+      if (!match) return;
+      const { data: signed, error: e2 } = await db.storage.from('tracks').createSignedUrl(`covers/${match.name}`, 600);
+      if (!e2 && signed?.signedUrl) {
+        const img = document.querySelector('.spotlight img.cover');
+        if (img) img.src = signed.signedUrl;
+      }
+    }catch(e){ console.error('cover-sync error', e); }
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  function whenDb(cb){ let n=0, t=setInterval(()=>{ if (window._rr?.db) {clearInterval(t); cb(window._rr.db);} else if (++n>60){clearInterval(t);} },150); }
+  function audioFileBase(){
+    const p=document.getElementById('teaserPlayer');
+    const url = p?.currentSrc || p?.querySelector('source')?.src || '';
+    const m = url.match(/tracks\/audio\/([^?]+)/i);
+    if (!m) return null;
+    return m[1].toLowerCase(); // keep extension; we'll ILIKE match against audio_url
+  }
+  whenDb(async (db)=>{
+    try{
+      const file = audioFileBase();
+      if (!file) return;
+      // Query tracks table for matching public row
+      let q = db.from('tracks')
+        .select('cover_url,audio_url,status')
+        .eq('status','public')
+        .ilike('audio_url', `%${file}%`)
+        .limit(1)
+        .maybeSingle();
+      const { data, error } = await q;
+      if (error) { console.warn('cover query error', error); return; }
+      const url = data?.cover_url;
+      if (!url) { console.warn('no cover_url on row', data); return; }
+      const img = document.querySelector('.spotlight img.cover');
+      if (img) img.src = url;
+      console.log('Cover set from tracks.cover_url:', url);
+    }catch(e){ console.error('cover-url sync error', e); }
+  });
+});
+</script>

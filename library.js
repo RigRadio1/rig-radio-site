@@ -7,6 +7,37 @@
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const stop = (m) => { fatal.textContent = m; step.textContent = "Stopped"; };
 
+async function incPlay(_client, trackId){
+  try {
+    const { data, error } = await _client.rpc('inc_play', { p_track_id: trackId });
+    if (error) return null;
+
+    // supabase-js v2 may return [{inc_play: number}] or just a number
+    if (Array.isArray(data) && data.length > 0) return data[0].inc_play ?? data[0];
+    if (typeof data === 'number') return data;
+    return null;
+  } catch (e) {
+    console.warn('incPlay fatal:', e?.message || e);
+    return null;
+  }
+}
+
+async function incLike(_client, trackId){
+  try {
+    const { data, error } = await _client.rpc('inc_like', { p_track_id: trackId });
+    if (error) return null;
+
+    // supabase-js v2 may return [{inc_like: number}] or just a number
+    if (Array.isArray(data) && data.length > 0) return data[0].inc_like ?? data[0];
+    if (typeof data === 'number') return data;
+    return null;
+  } catch (e) {
+    console.warn('incLike fatal:', e?.message || e);
+    return null;
+  }
+}
+
+
   async function boot(){
     try{
       step.textContent = "Step 1/5: SDK";
@@ -31,7 +62,7 @@
       step.textContent = "Step 5/5: Render";
       if (!data.length){
         list.innerHTML = '<div class="status">No tracks yet. <a class="rr-link" href="/submit">Submit one</a>.</div>';
-        step.textContent = "Done"; return;
+        step.textContent = `${data.length} track${data.length===1?"":"s"}`; return;
       }
 function rowHTML(r){
   return `
@@ -46,6 +77,16 @@ function rowHTML(r){
         <div class="plwrap">
           <button class="plbtn" data-pl="${r.id}">+ Add to My Playlist</button>
         </div>
+<div class="stats" style="margin-top:6px; display:flex; gap:10px; align-items:center;">
+  <button class="like-btn" data-like="${r.id}" style="padding:6px 10px;border:1px solid #f44;border-radius:6px;background:#140000;color:#fff;cursor:pointer;">
+    ♥ Like
+  </button>
+  <span class="count" style="opacity:.85;">
+    <span class="plays" data-plays="${r.id}">${r.plays ?? 0}</span> plays ·
+    <span class="likes" data-likes="${r.id}">${r.likes ?? 0}</span> likes
+  </span>
+</div>
+
       </div>
       <div class="p">
         <div class="live" aria-hidden="true"></div>
@@ -53,14 +94,139 @@ function rowHTML(r){
       </div>
     </article>`;
 }
+// ---- Search UI wiring (artist + genre) ----
+const params   = new URLSearchParams(location.search);
+const qArtist  = (params.get('artist') || '').trim();
+const qGenre   = (params.get('genre')  || '').trim();
+const iArtist  = document.getElementById('sArtist');
+const iGenre   = document.getElementById('sGenre');
+const btnGo    = document.getElementById('sGo');
+const btnClear = document.getElementById('sClear');
+// Play Page: start from the first rendered track, auto-next does the rest
+const btnPlayAll = document.getElementById('playAll');
+if (btnPlayAll){
+  btnPlayAll.addEventListener('click', ()=>{
+    const firstRow = document.querySelector('#list .row');
+    const firstAudio = firstRow ? firstRow.querySelector('audio') : null;
+    if (firstAudio){
+      firstRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // small delay so scroll doesn't block autoplay on some browsers
+      setTimeout(()=> firstAudio.play().catch(()=>{}), 200);
+    }
+  });
+}
+
+
+// Prefill inputs from URL
+if (iArtist) iArtist.value = qArtist;
+if (iGenre)  iGenre.value  = qGenre;
+
+// Search -> update URL & reload (page=1)
+if (btnGo) btnGo.addEventListener('click', ()=>{
+  const url = new URL(location.href);
+  const a = (iArtist?.value || '').trim();
+  const g = (iGenre?.value  || '').trim();
+  if (a) url.searchParams.set('artist', a); else url.searchParams.delete('artist');
+  if (g) url.searchParams.set('genre',  g); else url.searchParams.delete('genre');
+  url.searchParams.set('page','1');
+  location.href = url.toString();
+});
+
+// Clear -> remove filters & reload (page=1)
+if (btnClear) btnClear.addEventListener('click', ()=>{
+  const url = new URL(location.href);
+  url.searchParams.delete('artist');
+  url.searchParams.delete('genre');
+  url.searchParams.set('page','1');
+  location.href = url.toString();
+});
+// ---- Filtering (artist + genre), then pagination ----
+const pageSize   = 20;
+
+// qArtist / qGenre were set earlier from URL params
+const a = (qArtist || '').toLowerCase();
+const g = (qGenre  || '').toLowerCase();
+
+const filtered = data.filter(r => {
+  const artist = String(r.artist || '').toLowerCase();
+  const genre  = String(r.genre  || '').toLowerCase();
+  const okA = !a || artist.includes(a);
+  const okG = !g || genre.includes(g);
+  return okA && okG;
+});
+
+const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+const pageParam  = parseInt(new URLSearchParams(location.search).get('page') || '1', 10);
+const page       = Math.min(Math.max(pageParam, 1), totalPages);
+const view       = filtered.slice((page - 1) * pageSize, page * pageSize);
 
 
 
+// Build compact pagination (Prev / Next, first/last, gaps)
+const windowSize = 1; // pages to show on each side of current
+const items = [];
+
+const makeBtn = (p, label = String(p), disabled = false) =>
+  `<button class="page-btn" data-page="${p}" ${disabled ? 'disabled' : ''}>${label}</button>`;
+const makeGap = () => `<span class="page-gap" aria-hidden="true">…</span>`;
+
+// Prev
+items.push(makeBtn(Math.max(1, page - 1), 'Prev', page === 1));
+
+// First
+items.push(makeBtn(1, '1', page === 1));
+
+// Left gap
+if (page - windowSize > 2) items.push(makeGap());
+
+// Middle window (numbers around current)
+for (let p = Math.max(2, page - windowSize); p <= Math.min(totalPages - 1, page + windowSize); p++) {
+  items.push(makeBtn(p, String(p), p === page));
+}
+
+// Right gap
+if (page + windowSize < totalPages - 1) items.push(makeGap());
+
+// Last (only if more than one page)
+if (totalPages > 1) items.push(makeBtn(totalPages, String(totalPages), page === totalPages));
+
+// Next
+items.push(makeBtn(Math.min(totalPages, page + 1), 'Next', page === totalPages));
+
+const pagerHTML = items.join(' ');
+document.getElementById('pager-top').innerHTML = pagerHTML;
+document.getElementById('pager-bottom').innerHTML = pagerHTML;
+
+// Highlight current page (numbers only, never Prev/Next)
+document.querySelectorAll('.page-btn').forEach(btn=>{
+  const label = btn.textContent.trim();
+  const isNumber = /^\d+$/.test(label);
+  const p = Number(btn.getAttribute('data-page') || '0');
+
+  if (isNumber && p === page){
+    btn.classList.add('is-current');
+    btn.setAttribute('disabled', 'disabled');
+  } else {
+    btn.classList.remove('is-current');
+    // leave disabled state as generated by the pager builder
+  }
+});
 
 
 
+// Activate pager buttons
+document.querySelectorAll('.page-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const p = btn.getAttribute('data-page');
+    // keep path the same, only change ?page=
+    const url = new URL(location.href);
+    url.searchParams.set('page', p);
+    location.href = url.toString();
+  });
+});
 
-      list.innerHTML = data.map(rowHTML).join("");
+
+      list.innerHTML = view.map(rowHTML).join("");
 // --- Local playlist (safe, no backend changes) ---
 const PL_KEY = "rr_playlist_ids";
 const getPL = () => {
@@ -78,9 +244,9 @@ const togglePL = (id) => {
     // If already in playlist → remove
     arr.splice(i, 1);
   } else {
-    // Add new, but cap at 10
-    if (arr.length >= 10) {
-      alert("Free accounts can only have 10 songs in their playlist.");
+    // Add new, but cap at 20
+    if (arr.length >= 20) {
+      alert("Free accounts can only have 20 songs in their playlist.");
       return arr;
     }
     arr.push(id);
@@ -92,7 +258,8 @@ const togglePL = (id) => {
 
 
 // Initialize buttons
-for (const r of data){
+
+for (const r of view){
   const btn = document.querySelector(`button.plbtn[data-pl="${r.id}"]`);
   if (!btn) continue;
   const render = () => {
@@ -114,7 +281,7 @@ for (const r of data){
         }catch(e){ return { url:null, err:e?.message || "sign error" }; }
       }
 
-      for (const r of data){
+      for (const r of view){
         const card = document.querySelector(`.row[data-id="${r.id}"]`);
         const thumbWrap = card.querySelector('.t');
         const pane = card.querySelector('.p');
@@ -145,18 +312,64 @@ for (const r of data){
 const audio = pane.querySelector('audio');
 const live  = pane.querySelector('.live');
 const setLive = (on)=> live.classList.toggle('on', !!on);
-setLive(false); // ensure OFF initially
+setLive(false);
+  let counted=false; // ensure OFF initially
 
 // When this audio starts, pause all other players on the page
 audio.addEventListener('play', () => {
   document.querySelectorAll('audio').forEach(a => {
     if (a !== audio && !a.paused) a.pause();
   });
-  setLive(true);
+  setLive(true);document.body.classList.add('viz-on');
+// Now Playing pill — show/update on play
+{
+  const pill = document.getElementById('nowPlaying');
+  const np   = document.getElementById('npTitle');
+  if (pill && np){
+    np.textContent = (r.title || "(untitled)") + " — " + (r.artist || "(unknown)");
+    pill.style.display = "block";
+  }
+}
+
+
+  if (!counted) {
+    counted = true;
+    incPlay(_client, r.id).then(newCount => {
+      if (newCount !== null) {
+        const span = document.querySelector(`.plays[data-plays="${r.id}"]`);
+        if (span) span.textContent = newCount;
+      }
+    }).catch(()=>{});
+  }
+});
+audio.addEventListener('pause', () => {
+  setLive(false);
+  if (![...document.querySelectorAll('audio')].some(a => !a.paused)) {
+    document.body.classList.remove('viz-on');
+    const pill = document.getElementById('nowPlaying');
+    if (pill) pill.style.display = 'none';
+  }
 });
 
-audio.addEventListener('pause', () => setLive(false));
-audio.addEventListener('ended', () => setLive(false));
+
+
+audio.addEventListener('ended', () => {
+  setLive(false);if (![...document.querySelectorAll('audio')].some(a => !a.paused)) {
+  document.body.classList.remove('viz-on');
+  const pill = document.getElementById('nowPlaying');
+  if (pill) pill.style.display = 'none';
+}
+
+
+  // auto-play next track in the rendered list
+  const nextRow = card.nextElementSibling && card.nextElementSibling.classList.contains('row')
+    ? card.nextElementSibling
+    : null;
+  if (nextRow) {
+    const nextAudio = nextRow.querySelector('audio');
+    if (nextAudio) nextAudio.play();
+  }
+});
 
 
 
@@ -167,12 +380,43 @@ audio.addEventListener('ended', () => setLive(false));
           refreshed=true;
           const r2 = await sign(r.track_path); if (r2.url) audio.src = r2.url;
         });
-      }
+// Like button handler (guard against multiple likes per browser)
+const likeBtn = card.querySelector('.like-btn');
+if (likeBtn){
+  const likeKey = `liked:${r.id}`;
 
-      step.textContent = "Done";
+  // Initialize button from localStorage
+  if (localStorage.getItem(likeKey) === '1'){
+    likeBtn.textContent = '♥ Liked';
+    likeBtn.disabled = true;
+    likeBtn.classList.add('liked');
+  }
+
+  likeBtn.addEventListener('click', async ()=>{
+    // hard guard (no double-like)
+    if (localStorage.getItem(likeKey) === '1') return;
+
+    likeBtn.disabled = true;
+    const newCount = await incLike(_client, r.id);
+    if (newCount !== null){
+      const span = document.querySelector(`.likes[data-likes="${r.id}"]`);
+      if (span) span.textContent = newCount;
+      // mark as liked in this browser
+      localStorage.setItem(likeKey, '1');
+      likeBtn.textContent = '♥ Liked';
+      likeBtn.classList.add('liked');
+    } else {
+      // if RPC failed, re-enable so user can retry
+      likeBtn.disabled = false;
+    }
+  });
+}
+
+}
+
+      step.textContent = `${data.length} track${data.length===1?"":"s"}`;
     }catch(e){ stop("Fatal: " + (e?.message || e)); }
   }
 
   boot();
 })();
-

@@ -461,4 +461,264 @@ body.auth-page > * {
   border-color:#1e6a3a;
   color:#a9f0b7;
 }
+/* --- Library pager --- */
+.pager{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin:14px 0 18px 0;
+}
+.page-btn{
+  font: 600 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  padding:8px 14px;
+  border:2px solid #ff2a2a;
+  border-radius:999px;
+  background:#120000;
+  color:#fff;
+  letter-spacing:.2px;
+  cursor:pointer;
+  transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+  box-shadow: 0 0 0 rgba(255,42,42,0);
+}
+.page-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255,42,42,.55), 0 0 22px rgba(255,42,42,.25) inset;
+}
+.page-btn:active{
+  transform: translateY(0);
+  background:#200000;
+}
+.page-btn[disabled],
+.page-btn.is-current{
+  background:#ff2a2a;
+  color:#0b0000;
+  border-color:#ff2a2a;
+  cursor:default;
+  box-shadow: 0 0 18px rgba(255,42,42,.45);
+}
+/* make top/bottom groups consistent spacing on mobile */
+@media (max-width:640px){
+  .pager{ flex-wrap:wrap; gap:6px; }
+  .page-btn{ padding:8px 12px; }
+}
+
+/* --- Pager: dark-neon tweaks / override --- */
+.pager .page-btn{
+  background: transparent;            /* no solid red fill */
+  border-color: #ff2a2a;
+  color: #fff;
+  box-shadow: 0 0 0 rgba(255,42,42,0);
+}
+.pager .page-btn:hover{
+  background: rgba(15,0,0,.6);
+  box-shadow: 0 0 10px rgba(255,42,42,.45), inset 0 0 18px rgba(255,42,42,.20);
+}
+.pager .page-btn.is-current,
+.pager .page-btn[disabled].is-current{
+  background: rgba(30,0,0,.85);       /* deep dark red background */
+  color: #ff4444;                     /* bright neon red text */
+  border-color: #ff2a2a;
+  transform: scale(1.15);             /* slightly larger */
+  font-weight: 700;
+  text-decoration: underline;
+  box-shadow: 0 0 16px rgba(255,42,42,.6), inset 0 0 18px rgba(255,42,42,.3);
+}
+/* Prev/Next adjustments */
+.pager .page-btn:not(.is-current){
+  background: transparent;   /* no fill by default */
+  color: #fff;
+}
+.pager .page-btn:not(.is-current):hover{
+  background: rgba(15,0,0,.6); /* subtle hover */
+}
+.pager .page-btn[disabled]:not(.is-current){
+  opacity: 0.35;              /* fade disabled Prev/Next */
+  border-color: #663;         /* muted border */
+  color: #777;
+  box-shadow: none;
+}
+
+}
+
+
+}
+.pager .page-btn[disabled]:not(.is-current){
+  opacity: .55;                       /* dim disabled Prev/Next */
+  cursor: default;
+}
+.pager .page-gap{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width: 22px; margin: 0 4px;
+  color: #aa7777; opacity:.8;         /* muted ellipsis */
+}
+/* --- Library Control Bar (search + pager) --- */
+#lib-search{
+  background: linear-gradient(180deg, rgba(10,0,0,.55), rgba(8,0,0,.45));
+  border: 1px solid rgba(255,42,42,.35);
+  box-shadow: 0 4px 24px rgba(255,42,42,.15), inset 0 0 20px rgba(255,42,42,.08);
+  border-radius: 18px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 220px auto auto;
+  gap: 10px;
+  align-items: center;
+  backdrop-filter: blur(3px);
+}
+
+/* Inputs feel integrated */
+#lib-search input[type="text"],
+#lib-search select{
+  height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #2b2b2b;
+  border-radius: 12px;
+  background: #0b0b0b;
+  color: #fff;
+  outline: none;
+  transition: box-shadow .12s ease, border-color .12s ease;
+}
+#lib-search input[type="text"]:focus,
+#lib-search select:focus{
+  border-color: #ff2a2a;
+  box-shadow: 0 0 10px rgba(255,42,42,.35);
+}
+
+/* Buttons already use rr-btn classes; tighten spacing */
+#lib-search .rr-btn{ height: 36px; }
+
+/* Pager sits snug right under the bar and matches curvature */
+#pager-top{
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+#pager-bottom{ margin-top: 16px; }
+
+/* Keep pager visually tied to the bar */
+#pager-top .page-btn,
+#pager-bottom .page-btn{
+  border-radius: 999px;
+  border-width: 2px;
+}
+
+/* Slight hover float for all control buttons */
+#lib-search .rr-btn:hover,
+.pager .page-btn:hover{
+  transform: translateY(-1px);
+}
+
+/* Optional: make the whole control set feel anchored */
+@media (max-width: 720px){
+  #lib-search{
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: min-content;
+  }
+}
+/* --- Neon sweep hover for control buttons --- */
+.rr-btn,
+.pager .page-btn{
+  position: relative;
+  overflow: hidden;          /* contain the sweep */
+  isolation: isolate;        /* keep effects inside */
+}
+
+.rr-btn::after,
+.pager .page-btn::after{
+  content: "";
+  position: absolute;
+  inset: -40% -120% auto auto;     /* start off at top-right */
+  width: 180%;
+  height: 220%;
+  transform: translateX(-120%) rotate(12deg);
+  background: linear-gradient(90deg,
+    rgba(255,42,42,0) 0%,
+    rgba(255,42,42,.15) 45%,
+    rgba(255,255,255,.25) 50%,
+    rgba(255,42,42,.15) 55%,
+    rgba(255,42,42,0) 100%);
+  opacity: 0;
+  transition: transform .35s ease, opacity .2s ease;
+  pointer-events: none;
+  z-index: -1;  /* under the label but above background */
+}
+
+.rr-btn:hover::after,
+.pager .page-btn:hover::after{
+  opacity: .8;
+  transform: translateX(10%) rotate(12deg);
+}
+
+/* Keep current page stable: no sweep while active/disabled */
+.pager .page-btn.is-current::after,
+.pager .page-btn[disabled].is-current::after{
+  display: none;
+}
+/* --- Sticky Library control bar --- */
+#lib-search{
+  position: sticky;
+  top: 56px;                 /* sits just below your topbar; tweak if needed */
+  z-index: 30;               /* above list rows & visualizer */
+}
+
+/* When sticky, add a soft drop shadow so it reads as a bar */
+@supports (position: sticky){
+  #lib-search{
+    box-shadow: 0 8px 28px rgba(255,42,42,.12), 0 2px 0 rgba(255,42,42,.18) inset;
+  }
+  /* keep the top pager snug under the bar */
+  #pager-top{ margin-top: 8px; }
+}
+/* --- Topbar right buttons --- */
+.rr-topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.rr-topbar-right .rr-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 14px;
+  border:2px solid #ff2a2a;
+  border-radius:999px;
+  background:#120000;
+  color:#fff !important;
+  text-decoration:none;
+  font: 600 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:.2px;
+  transition: transform .06s ease, box-shadow .12s ease, background .12s ease, opacity .12s ease;
+  box-shadow: 0 0 0 rgba(255,42,42,0);
+}
+.rr-topbar-right .rr-link:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255,42,42,.55), inset 0 0 20px rgba(255,42,42,.20);
+}
+.rr-topbar-right .rr-link:active{
+  transform: translateY(0);
+  background:#200000;
+}
+@media (max-width:640px){
+  .rr-topbar-right{ gap:8px; }
+  .rr-topbar-right .rr-link{ padding:8px 12px; }
+}
+/* --- Floating Now Playing pill --- */
+.now-playing{
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,0,0,.85);
+  border: 1px solid #ff2a2a;
+  border-radius: 30px;
+  padding: 6px 18px;
+  font-size: 14px;
+  color: #fff;
+  box-shadow: 0 0 14px rgba(255,42,42,.35), inset 0 0 12px rgba(255,42,42,.25);
+  z-index: 50;
+  animation: fadeIn .25s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translate(-50%,10px);}
+  to{opacity:1; transform:translate(-50%,0);}
+}
 
