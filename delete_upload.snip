@@ -1,0 +1,14 @@
+  async function deleteUpload(id, audioKey, coverKey, cardEl){
+    try{
+      if(!confirm("Delete this upload? This cannot be undone.")) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if(!user){ alert("Please sign in."); return; }
+      // remove storage files if keys exist
+      const keys = [audioKey, coverKey].filter(k => typeof k === 'string' && k.length);
+      if (keys.length){ await supabase.storage.from('tracks').remove(keys); }
+      // delete DB row (RLS must allow owner)
+      const { error } = await supabase.from('tracks').delete().eq('id', id);
+      if (error){ console.error(error); alert('Delete failed.'); return; }
+      if (cardEl) cardEl.remove();
+    } catch(err){ console.error(err); alert('Delete error.'); }
+  }

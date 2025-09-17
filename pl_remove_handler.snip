@@ -1,0 +1,39 @@
+          rm.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            // find this row's current index (robust even after reorders)
+            const index = [...listEl.children].indexOf(row);
+            if (index === -1) return;
+
+            const removedId = String(items[index].id);
+
+            // Update localStorage playlist
+            try {
+              const arrRaw = getPL();
+              const arr = Array.isArray(arrRaw) ? arrRaw.map(String).filter(Boolean) : [];
+              const next = arr.filter(v => v !== removedId);
+              localStorage.setItem(PL_KEY, JSON.stringify(next));
+            } catch {}
+
+            // Remove from in-memory list and UI
+            const wasCurrent = (i === index);
+            items.splice(index, 1);
+            row.remove();
+            if (i > index) i -= 1;
+
+            if (!items.length) {
+              pause();
+              audio.src = '';
+              nowEl.textContent = 'No playable tracks yet.';
+              seek.value = 0; curT.textContent = '0:00'; durT.textContent = '0:00';
+              if (typeof updatePlayingUI === 'function') updatePlayingUI();
+              return;
+            }
+
+            if (wasCurrent) {
+              if (i >= items.length) i = 0;
+              load(); play();
+            } else {
+              markActive();
+              if (typeof updatePlayingUI === 'function') updatePlayingUI();
+            }
+          });

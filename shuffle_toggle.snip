@@ -1,0 +1,6 @@
+        if (shuffleBtn) shuffleBtn.addEventListener('click', () => {
+          shuffleOn = !shuffleOn;
+          localStorage.setItem(SHUFFLE_KEY, shuffleOn ? '1' : '0');
+          shuffleBtn.classList.toggle('on', shuffleOn);
+          if (shuffleOn) { buildOrder(i); }
+        });

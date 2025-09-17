@@ -1109,23 +1109,3 @@ body.auth-page > * {
     0 0 10px rgba(255,42,42,0.45);
 }
 /* ==== /no-clip glow ==== */
-
-/* ==== DASHBOARD: Shuffle toggle ==== */
-.player-console .controls .toggle{
-  background:#0f0f0f;
-  color:#fff;
-  border:1px solid rgba(255,255,255,0.22);
-  border-radius:999px;
-  padding:8px 14px;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .15s ease;
-}
-.player-console .controls .toggle:hover{
-  background:rgba(255,0,0,0.18);
-  box-shadow:0 0 10px rgba(255,0,0,0.45);
-}
-.player-console .controls .toggle.on{
-  border-color:rgba(255,0,0,0.6);
-  box-shadow:0 0 12px rgba(255,0,0,0.55) inset, 0 0 10px rgba(255,0,0,0.35);
-}

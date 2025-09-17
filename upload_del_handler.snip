@@ -1,0 +1,7 @@
+          const del = div.querySelector('button[data-action="delete"]');
+          if (del){
+            del.addEventListener('click', async (ev) => {
+              ev.stopPropagation();
+              await deleteUpload(del.dataset.id, del.dataset.audio, del.dataset.cover, div);
+            });
+          }

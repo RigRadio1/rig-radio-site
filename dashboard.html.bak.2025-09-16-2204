@@ -303,21 +303,18 @@
       <!-- LEFT: Your uploads (reference list) -->
       <section class="card">
         <h2>Your Uploads</h2>
-        <div id="tracks-list" class="uploads-scroll"><div class="muted">Loading…</div></div>
+        <div id="tracks-list"><div class="muted">Loading…</div></div>
       </section>
 
       <!-- RIGHT: Playlist (from Library localStorage or fallback) -->
       <section class="card" id="my-playlist">
         <h2>My Playlist</h2>
-
         <div id="nowPlaying" class="muted">Loading…</div>
-    <div class="player-console">
 
         <div class="controls">
           <button id="prevBtn">⏮ Prev</button>
           <button id="playPauseBtn">▶ Play</button>
           <button id="nextBtn">⏭ Next</button>
-        <button id="shuffleBtn" class="toggle" title="Shuffle">Shuffle</button>
         </div>
 
         <!-- Single, global audio element -->
@@ -332,10 +329,9 @@
             <span id="durTime">0:00</span>
           </div>
           <input id="seek" type="range" min="0" max="1000" value="0" step="1" style="width:100%">
-    </div>
         </div>
 
-        <div class="track-list playlist-scroll" id="playlistList"></div>
+        <div class="track-list" id="playlistList"></div>
       </section>
     </div>
   </div>
@@ -429,24 +425,15 @@
           const signedCover = await getSignedCover(row);
 
           const div = document.createElement('div');
-        div.className = 'upload-item';
-          div.className += ' track-row';
+          div.className = 'track-row';
           div.innerHTML = `
             <div class="cover"></div>
             <div class="track-main">
               <div class="track-title" title="${title}">${title}</div>
               <div class="track-sub" title="${sub}">${sub || '&nbsp;'}</div>
-            <div class="manage"><div class="stats">▶ ${row.plays ?? 0} • ♥ ${row.likes ?? 0}</div><div class="actions"><button class="mini danger" data-action="delete" data-id="${row.id}" data-audio="${row.track_path || ""}" data-cover="${row.cover_path || ""}">Delete</button><button class="mini" disabled title="Coming soon">Replace</button></div></div>
             </div>
           `;
           div.querySelector('.cover').style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;
-          const del = div.querySelector('button[data-action="delete"]');
-          if (del){
-            del.addEventListener('click', async (ev) => {
-              ev.stopPropagation();
-              await deleteUpload(del.dataset.id, del.dataset.audio, del.dataset.cover, div);
-            });
-          }
           list.appendChild(div);
         }
       } catch {
@@ -471,15 +458,8 @@
       const nowEl  = document.getElementById('nowPlaying');
       const audio  = document.getElementById('audio');
       const playBtn= document.getElementById('playPauseBtn');
-        const consoleEl = document.querySelector('.player-console');
       const prevBtn= document.getElementById('prevBtn');
       const nextBtn= document.getElementById('nextBtn');
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        const SHUFFLE_KEY = 'rr_shuffle_on';
-        let shuffleOn = localStorage.getItem(SHUFFLE_KEY) === '1';
-        if (shuffleBtn) shuffleBtn.classList.toggle('on', shuffleOn);
-        let playOrder = [];
-        let p = 0;
 
       const seek   = document.getElementById('seek');
       const curT   = document.getElementById('curTime');
@@ -496,86 +476,14 @@
             <div class="a" title="${it.artist}">${it.artist || '&nbsp;'}</div>
           </div>
         `;
-        const eq = document.createElement('div');
-        eq.className = 'eq-bars';
-        eq.innerHTML = '<span></span><span></span><span></span>';
-        row.querySelector('.meta').appendChild(eq);
-        const rm = document.createElement('button');
-        rm.className = 'pl-remove';
-        rm.type = 'button';
-        rm.title = 'Remove from playlist';
-        rm.textContent = '×';
-        row.appendChild(rm);
-          rm.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            // find this row's current index (robust even after reorders)
-            const index = [...listEl.children].indexOf(row);
-            if (index === -1) return;
-
-            const removedId = String(items[index].id);
-
-            // Update localStorage playlist
-            try {
-              const arrRaw = getPL();
-              const arr = Array.isArray(arrRaw) ? arrRaw.map(String).filter(Boolean) : [];
-              const next = arr.filter(v => v !== removedId);
-              localStorage.setItem(PL_KEY, JSON.stringify(next));
-            } catch {}
-
-            // Remove from in-memory list and UI
-            const wasCurrent = (i === index);
-            items.splice(index, 1);
-            row.remove();
-            if (i > index) i -= 1;
-
-            if (!items.length) {
-              pause();
-              audio.src = '';
-              nowEl.textContent = 'No playable tracks yet.';
-              seek.value = 0; curT.textContent = '0:00'; durT.textContent = '0:00';
-              if (typeof updatePlayingUI === 'function') updatePlayingUI();
-              return;
-            }
-
-            if (shuffleOn) { if (i >= items.length) i = 0; buildOrder(i); }
-            if (wasCurrent) {
-              if (i >= items.length) i = 0;
-              load(); play();
-            } else {
-              markActive();
-              if (typeof updatePlayingUI === 'function') updatePlayingUI();
-            }
-          });
         row.addEventListener('click', () => startAt(idx));
         listEl.appendChild(row);
       });
 
       let i = 0;
-        // Build a shuffled order that keeps the current index at the front
-        function buildOrder(startIdx){
-          const cur = Number.isInteger(startIdx) ? startIdx : 0;
-          // make a list of indices
-          let arr = items.map((_, idx) => idx);
-          // remove current from array
-          arr = arr.filter(x => x !== cur);
-          // Fisher–Yates shuffle
-          for (let j = arr.length - 1; j > 0; j--) {
-            const k = Math.floor(Math.random() * (j + 1));
-            [arr[j], arr[k]] = [arr[k], arr[j]];
-          }
-          // put current at the front
-          playOrder = [cur, ...arr];
-          p = 0;  // playOrder pointer
-        }
-        if (shuffleOn) { buildOrder(i); }
       function markActive(){
         [...listEl.children].forEach((el, idx) => el.classList.toggle('active', idx === i));
       }
-
-        function updatePlayingUI(){
-      [...listEl.children].forEach((el, idx) => el.classList.toggle("playing", idx === i && !audio.paused));
-      if (consoleEl) { consoleEl.classList.toggle("playing", !audio.paused); }
-    }
 
       function mmss(sec){
         if (!isFinite(sec)) return '0:00';
@@ -611,48 +519,22 @@ function reflectProgress(){
         audio.src = items[i].audio;
         nowEl.textContent = `Now playing: ${items[i].title}${items[i].artist ? ' — ' + items[i].artist : ''}`;
         markActive();
-      updatePlayingUI();
         // reset progress indicator
         seek.value = 0; curT.textContent = '0:00'; durT.textContent = '0:00';
       }
 
-      function play(){ audio.play().catch(()=>{}); playBtn.textContent = '⏸ Pause'; updatePlayingUI(); }
-      function pause(){ audio.pause(); playBtn.textContent = '▶ Play'; updatePlayingUI(); }
+      function play(){ audio.play().catch(()=>{}); playBtn.textContent = '⏸ Pause'; }
+      function pause(){ audio.pause(); playBtn.textContent = '▶ Play'; }
       function toggle(){ audio.paused ? play() : pause(); }
-        function next(){
-          if (shuffleOn && playOrder.length === items.length) {
-            p = (p + 1) % playOrder.length;
-            i = playOrder[p];
-          } else {
-            i = (i + 1) % items.length;
-          }
-          load(); play();
-        }
-        function prev(){
-          if (shuffleOn && playOrder.length === items.length) {
-            p = (p - 1 + playOrder.length) % playOrder.length;
-            i = playOrder[p];
-          } else {
-            i = (i - 1 + items.length) % items.length;
-          }
-          load(); play();
-        }
-      function startAt(idx){ i = idx; if (shuffleOn) { buildOrder(i); } load(); play(); }
+      function next(){ i = (i + 1) % items.length; load(); play(); }
+      function prev(){ i = (i - 1 + items.length) % items.length; load(); play(); }
+      function startAt(idx){ i = idx; load(); play(); }
 
       audio.addEventListener('ended', next);
       audio.addEventListener('loadedmetadata', reflectProgress);
       audio.addEventListener('timeupdate', reflectProgress);
-    audio.addEventListener('play', updatePlayingUI);
-    audio.addEventListener('pause', updatePlayingUI);
-    audio.addEventListener('ended', updatePlayingUI);
       playBtn.addEventListener('click', toggle);
       nextBtn.addEventListener('click', next);
-        if (shuffleBtn) shuffleBtn.addEventListener('click', () => {
-          shuffleOn = !shuffleOn;
-          localStorage.setItem(SHUFFLE_KEY, shuffleOn ? '1' : '0');
-          shuffleBtn.classList.toggle('on', shuffleOn);
-          if (shuffleOn) { buildOrder(i); }
-        });
       prevBtn.addEventListener('click', prev);
 
       // Seek
@@ -668,23 +550,8 @@ function reflectProgress(){
       if (items.length){ load(); } else { nowEl.textContent = 'No playable tracks yet.'; }
     }
 
-  async function deleteUpload(id, audioKey, coverKey, cardEl){
-    try{
-      if(!confirm("Delete this upload? This cannot be undone.")) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if(!user){ alert("Please sign in."); return; }
-      // remove storage files if keys exist
-      const keys = [audioKey, coverKey].filter(k => typeof k === 'string' && k.length);
-      if (keys.length){ await supabase.storage.from('tracks').remove(keys); }
-      // delete DB row (RLS must allow owner)
-      const { error } = await supabase.from('tracks').delete().eq('id', id);
-      if (error){ console.error(error); alert('Delete failed.'); return; }
-      if (cardEl) cardEl.remove();
-    } catch(err){ console.error(err); alert('Delete error.'); }
-  }
     /* ---------- Shared local playlist helpers ---------- */
     const PL_KEY = "rr_playlist_ids";
-      const ALLOW_UPLOAD_FALLBACK = false;
     const getPL = () => {
       try { return JSON.parse(localStorage.getItem(PL_KEY) || "[]"); }
       catch { return []; }
@@ -715,7 +582,7 @@ function reflectProgress(){
       }
 
       // Fallback to the user’s own uploads if no playlist
-        if (ALLOW_UPLOAD_FALLBACK && !rows.length){
+      if (!rows.length){
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
           document.getElementById('nowPlaying').textContent = 'Sign in to see your uploads or add tracks from the Library.';

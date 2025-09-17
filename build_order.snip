@@ -1,0 +1,16 @@
+        // Build a shuffled order that keeps the current index at the front
+        function buildOrder(startIdx){
+          const cur = Number.isInteger(startIdx) ? startIdx : 0;
+          // make a list of indices
+          let arr = items.map((_, idx) => idx);
+          // remove current from array
+          arr = arr.filter(x => x !== cur);
+          // Fisher–Yates shuffle
+          for (let j = arr.length - 1; j > 0; j--) {
+            const k = Math.floor(Math.random() * (j + 1));
+            [arr[j], arr[k]] = [arr[k], arr[j]];
+          }
+          // put current at the front
+          playOrder = [cur, ...arr];
+          p = 0;  // playOrder pointer
+        }

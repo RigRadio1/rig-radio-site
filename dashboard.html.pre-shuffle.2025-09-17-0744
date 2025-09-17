@@ -317,7 +317,6 @@
           <button id="prevBtn">⏮ Prev</button>
           <button id="playPauseBtn">▶ Play</button>
           <button id="nextBtn">⏭ Next</button>
-        <button id="shuffleBtn" class="toggle" title="Shuffle">Shuffle</button>
         </div>
 
         <!-- Single, global audio element -->
@@ -474,12 +473,6 @@
         const consoleEl = document.querySelector('.player-console');
       const prevBtn= document.getElementById('prevBtn');
       const nextBtn= document.getElementById('nextBtn');
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        const SHUFFLE_KEY = 'rr_shuffle_on';
-        let shuffleOn = localStorage.getItem(SHUFFLE_KEY) === '1';
-        if (shuffleBtn) shuffleBtn.classList.toggle('on', shuffleOn);
-        let playOrder = [];
-        let p = 0;
 
       const seek   = document.getElementById('seek');
       const curT   = document.getElementById('curTime');
@@ -537,7 +530,6 @@
               return;
             }
 
-            if (shuffleOn) { if (i >= items.length) i = 0; buildOrder(i); }
             if (wasCurrent) {
               if (i >= items.length) i = 0;
               load(); play();
@@ -551,23 +543,6 @@
       });
 
       let i = 0;
-        // Build a shuffled order that keeps the current index at the front
-        function buildOrder(startIdx){
-          const cur = Number.isInteger(startIdx) ? startIdx : 0;
-          // make a list of indices
-          let arr = items.map((_, idx) => idx);
-          // remove current from array
-          arr = arr.filter(x => x !== cur);
-          // Fisher–Yates shuffle
-          for (let j = arr.length - 1; j > 0; j--) {
-            const k = Math.floor(Math.random() * (j + 1));
-            [arr[j], arr[k]] = [arr[k], arr[j]];
-          }
-          // put current at the front
-          playOrder = [cur, ...arr];
-          p = 0;  // playOrder pointer
-        }
-        if (shuffleOn) { buildOrder(i); }
       function markActive(){
         [...listEl.children].forEach((el, idx) => el.classList.toggle('active', idx === i));
       }
@@ -619,25 +594,9 @@ function reflectProgress(){
       function play(){ audio.play().catch(()=>{}); playBtn.textContent = '⏸ Pause'; updatePlayingUI(); }
       function pause(){ audio.pause(); playBtn.textContent = '▶ Play'; updatePlayingUI(); }
       function toggle(){ audio.paused ? play() : pause(); }
-        function next(){
-          if (shuffleOn && playOrder.length === items.length) {
-            p = (p + 1) % playOrder.length;
-            i = playOrder[p];
-          } else {
-            i = (i + 1) % items.length;
-          }
-          load(); play();
-        }
-        function prev(){
-          if (shuffleOn && playOrder.length === items.length) {
-            p = (p - 1 + playOrder.length) % playOrder.length;
-            i = playOrder[p];
-          } else {
-            i = (i - 1 + items.length) % items.length;
-          }
-          load(); play();
-        }
-      function startAt(idx){ i = idx; if (shuffleOn) { buildOrder(i); } load(); play(); }
+      function next(){ i = (i + 1) % items.length; load(); play(); }
+      function prev(){ i = (i - 1 + items.length) % items.length; load(); play(); }
+      function startAt(idx){ i = idx; load(); play(); }
 
       audio.addEventListener('ended', next);
       audio.addEventListener('loadedmetadata', reflectProgress);
@@ -647,12 +606,6 @@ function reflectProgress(){
     audio.addEventListener('ended', updatePlayingUI);
       playBtn.addEventListener('click', toggle);
       nextBtn.addEventListener('click', next);
-        if (shuffleBtn) shuffleBtn.addEventListener('click', () => {
-          shuffleOn = !shuffleOn;
-          localStorage.setItem(SHUFFLE_KEY, shuffleOn ? '1' : '0');
-          shuffleBtn.classList.toggle('on', shuffleOn);
-          if (shuffleOn) { buildOrder(i); }
-        });
       prevBtn.addEventListener('click', prev);
 
       // Seek
