@@ -446,7 +446,7 @@
             <div class="track-main">
               <div class="track-title" title="${title}">${title}</div>
               <div class="track-sub" title="${sub}">${sub || '&nbsp;'}</div>
-            <div class="manage"><div class="stats">▶ ${row.plays ?? 0} • ♥ ${row.likes ?? 0}</div><div class="actions"><button class="mini danger" data-action="delete" data-id="${row.id}" data-audio="${row.track_path || ""}" data-cover="${row.cover_path || ""}">Delete</button><button class="mini" disabled title="Coming soon">Replace</button></div></div>
+            <div class="manage"><div class="stats"><span class="ic">▶</span> ${row.plays ?? 0} • <span class="ic">♥</span> ${row.likes ?? 0}</div><div class="actions"><button class="mini danger" data-action="delete" data-id="${row.id}" data-audio="${row.track_path || ""}" data-cover="${row.cover_path || ""}">Delete</button><button class="mini" disabled title="Coming soon">Replace</button></div></div>
             </div>
           `;
           div.querySelector('.cover').style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;

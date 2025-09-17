@@ -1129,3 +1129,11 @@ body.auth-page > * {
   border-color:rgba(255,0,0,0.6);
   box-shadow:0 0 12px rgba(255,0,0,0.55) inset, 0 0 10px rgba(255,0,0,0.35);
 }
+
+/* ==== DASHBOARD: Uploads stats icon color ==== */
+.upload-item .manage .stats .ic{
+  color: #ff2a2a;
+  text-shadow: 0 0 6px rgba(255,0,0,0.55);
+  font-weight: 800;
+  margin-right: 4px;   /* space before the number */
+}
