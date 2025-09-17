@@ -1,0 +1,20 @@
+# Build/OS
+.DS_Store
+Thumbs.db
+
+# Editor swap/backup
+*~
+*.swp
+*.swo
+
+# Local caches
+node_modules/
+dist/
+.cache/
+
+# Our temp helpers & backups
+*.snip
+*.bak.*
+*.before-*
+*.pre-*
+*.final.*
