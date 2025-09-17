@@ -1137,3 +1137,118 @@ body.auth-page > * {
   font-weight: 800;
   margin-right: 4px;   /* space before the number */
 }
+
+/* === OCD fix #1: align card tops === */
+#my-playlist{ margin-top:0 !important; }
+
+/* === OCD fix #2: playlist row outline breathing room === */
+#my-playlist .track-list{ padding:8px 10px; }
+
+#playlistList .track-item{
+  position: relative;
+  padding-right: 48px; /* space so the red outline isn't under the X */
+}
+
+#playlistList .track-item .pl-remove{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* === OCD fix #3: dashboard hero matches site panels === */
+
+
+
+/* === Hero banner = same card vibe as Teaser === */
+
+
+
+/* === Hero: darker, less transparent background to match Teaser === */
+
+
+/* === Shared hero card (use on any page hero) === */
+.card-hero{
+  background: rgba(8,8,10,0.84);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34),
+    0 0 42px rgba(255,0,0,0.14) inset,
+    0 10px 28px rgba(0,0,0,0.40);
+  padding: 18px 22px;
+  max-width: 1120px;
+  margin: 10px auto 22px;
+}
+.card-hero img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius: 12px;
+}
+
+/* === Hero dedupe: rely only on .card + .card-hero (no extra banner chrome) === */
+
+
+/* DASHBOARD HERO — make the backing darker, less transparent */
+
+/* Dashboard hero: pull it down from the top */
+
+/* Dashboard hero: move the banner down without moving the page/background */
+
+/* Dashboard hero: keep centered, add top gap, don't move the page bg */
+
+
+/* === DASHBOARD-ONLY: make hero identical to Library === */
+body.dashboard-page 
+
+/* Banner image must fill the hero like Library */
+body.dashboard-page 
+
+/* DASHBOARD-ONLY: ensure banner image fills the hero */
+body.dashboard-page .card-hero img{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  max-width:none !important;
+  border-radius:12px !important;
+}
+
+/* DASHBOARD-ONLY: ensure hero matches Library and image fills */
+body.dashboard-page .card.card-hero{
+  background: rgba(8,8,10,0.84) !important;
+  border-radius: 18px !important;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34) !important,
+    0 0 42px rgba(255,0,0,0.14) inset !important,
+    0 10px 28px rgba(0,0,0,0.40) !important;
+  padding: 18px 22px !important;
+  max-width: 1120px !important;
+  margin: 10px auto 22px !important;
+  width: auto !important;
+}
+body.dashboard-page .card.card-hero img{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  max-width:none !important;
+  border-radius:12px !important;
+}
+
+/* === Canonical site-wide hero banner === */
+.hero-banner{
+  background: rgba(8,8,10,0.84);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34),
+    0 0 42px rgba(255,0,0,0.14) inset,
+    0 10px 28px rgba(0,0,0,0.40);
+  padding: 18px 22px;
+  max-width: 1120px;
+  margin: 10px auto 22px; /* centers + spacing */
+}
+.hero-banner img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:12px;
+}
