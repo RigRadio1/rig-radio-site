@@ -74,7 +74,7 @@ async function incLike(_client, trackId){
       if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 4/5: Fetch";
       const { data, error } = await _client.from('tracks').select('*')
       .order(((window.LIB_SORT||localStorage.getItem("LIB_SORT")||"recent")==="az"?"title":"created_at"), {ascending:((window.LIB_SORT||localStorage.getItem("LIB_SORT")||"recent")==="az")})
-      .limit(100);
+      .limit(2500);
       if (error){ stop("DB error: " + esc(error.message)); return; }
 
       if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 5/5: Render";
