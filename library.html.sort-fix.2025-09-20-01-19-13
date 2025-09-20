@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Canonical host guard: force www -->
+  <script>
+  (function(){
+    var want = 'www.rig-radio.ai';
+    if (location.hostname !== want) {
+      var target = 'https://' + want + location.pathname + location.search + location.hash;
+      location.replace(target);
+    }
+  })();
+  </script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Library — Rig-Radio</title>
+  <link rel="stylesheet" href="/rr.css"/>
+  <style>
+    .wrap{max-width:1100px;margin:28px auto;padding:0 16px;}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .status{opacity:.9}
+    .error{color:#f66;font-weight:700}
+    .list{display:flex;flex-direction:column;gap:12px}
+
+    .row{display:grid;grid-template-columns:84px 1fr 460px;gap:14px;align-items:center;
+      background:rgba(8,10,16,.88);padding:10px 14px;border-radius:16px;
+      box-shadow:0 0 0 2px rgba(255,0,0,.18)}
+    @media (max-width:1100px){.row{grid-template-columns:84px 1fr 1fr}}
+    @media (max-width:760px){.row{grid-template-columns:84px 1fr}.p{grid-column:1/-1}}
+
+    .thumb{width:84px;height:84px;border-radius:10px;background:#0c0d12;border:1px solid #2a1a1e;object-fit:cover}
+    .meta{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pill{font-size:11px;padding:2px 8px;border-radius:999px;background:#1a1012;border:1px solid #34171c;display:inline-block;margin-top:4px}
+
+    .p{background:#0d0d12;border:2px solid #222;border-radius:14px;padding:8px 10px;
+      display:flex;align-items:center;gap:10px;box-shadow:inset 0 0 0 1px rgba(255,0,0,.12)}
+
+    /* LIVE DOT: default = off (gray); .on = green */
+    .live{width:10px;height:10px;border-radius:50%;background:#3a3a3a;box-shadow:none;transition:all .2s ease}
+    .live.on{background:#2f2;box-shadow:0 0 8px #2f2}
+
+    /* Tweak native controls */
+    .p audio{flex:1;filter:invert(1) hue-rotate(180deg); accent-color:#ff2a3a}
+    /* Hide download UI where supported */
+    .p audio::-webkit-media-controls-download-button{display:none}
+    .p audio::-webkit-media-controls-enclosure{overflow:hidden}
+    .p audio::-webkit-media-controls-panel{--_rr:none}
+    /* Make timeline glow red (best-effort on WebKit/Blink) */
+    .p audio::-webkit-media-controls-timeline{filter:hue-rotate(330deg) saturate(4) brightness(1.3)}
+  </style>
+</head>
+<body class="rr-bg">
+<div id="bg"></div>
+
+
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">LIBRARY</div>
+    <nav class="rr-topbar-right">
+      <a class="rr-link" href="/dashboard">Dashboard</a>
+      <a class="rr-link" href="/submit.html">Submit</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="top">
+      <div id="step" class="status">Loading…</div>
+      <div id="auth" class="status"></div>
+    </div>
+    <div id="fatal" class="error"></div>
+<!-- Library search (artist + genre) -->
+  <div class="hero-banner">
+    <img src="/banner.png" alt="Rig-Radio Banner">
+  </div>
+<form id="lib-search" class="lib-search" action="" onsubmit="return false;" style="display:flex;gap:10px;align-items:center;margin:12px 0 10px 0;">
+  <input id="sArtist" type="text" placeholder="Search by artist" style="flex:1;min-width:180px;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#0e0e0e;color:#fff;">
+<select id="sGenre" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#0e0e0e;color:#fff;">
+  <option value="">Any Genre</option>
+  <option>Rock</option><option>Metal</option><option>Pop</option>
+  <option>Hip-Hop</option><option>EDM</option><option>House</option>
+  <option>Techno</option><option>Drum &amp; Bass</option><option>Ambient</option>
+  <option>Jazz</option><option>Blues</option><option>Country</option>
+  <option>Folk</option><option>Classical</option><option>R&amp;B</option>
+  <option>Reggae</option><option>Indie</option><option>Other</option>
+</select>
+<button id="sGo" type="button" class="rr-btn rr-primary">Search</button>
+<button id="sClear" type="button" class="rr-btn rr-ghost">Clear</button>
+  <select id="sSort" style="flex:0 0 180px; max-width:220px; padding:6px 10px; border:1px solid #444; border-radius:8px; background:#0e0e0e; color:#fff;">
+    <option value="recent" selected>Recent uploads</option>
+    <option value="popular">Most popular (likes)</option>
+    <option value="plays">Most played</option>
+    <option value="az">Title A–Z</option>
+  </select>
+<button id="playAll" type="button" class="rr-btn rr-primary">Play Page</button>
+
+
+
+</form>
+
+<div id="pager-top" class="pager"></div>
+<section id="list" class="list"></section>
+<div id="pager-bottom" class="pager"></div>
+
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.LIB_SORT=(document.getElementById("sSort")?document.getElementById("sSort").value:"recent");</script>
+<script src="/library.js?v=FIXES7-1"></script>
+<script src="/auth.js" defer></script>
+<!-- Floating Now Playing pill -->
+<div id="nowPlaying" class="now-playing" style="display:none;">
+  <span id="npTitle">(no track playing)</span>
+</div>
+
+<script>/* Library sort wiring (FIXES 7) */document.addEventListener("DOMContentLoaded",function(){
+  var sel=document.getElementById("sSort"); if(!sel){ window.LIB_SORT="recent"; return;}
+  window.LIB_SORT = sel.value || "recent";
+  sel.addEventListener("change", function(){ window.LIB_SORT = sel.value || "recent"; var go=document.getElementById("sGo"); if(go){ go.click(); } });
+});</script>
+</body>
+</html>
+

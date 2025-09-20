@@ -261,7 +261,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="rr-bg dashboard-page">
+<body class="rr-bg dashboard-page dashboard-page">
 <div id="bg"></div>
 
 <div id="welcomeUser" class="welcome"></div>
@@ -310,6 +310,7 @@
       <!-- RIGHT: Playlist (from Library localStorage or fallback) -->
       <section class="card" id="my-playlist">
         <h2>My Playlist</h2>
+        <div id="newTrackToast" class="new-track-toast" style="display:none;"><span class="msg">New track uploaded</span><button class="dismiss" aria-label="Dismiss">✕</button></div>
 
         <div id="nowPlaying" class="muted">Loading…</div>
     <div class="player-console">
@@ -333,11 +334,21 @@
             <span id="durTime">0:00</span>
           </div>
           <input id="seek" type="range" min="0" max="1000" value="0" step="1" style="width:100%">
+  <div class="volume-wrap" style="display:flex;align-items:center;gap:10px;margin-top:10px">
+    <span class="small-label" style="min-width:48px">Volume</span>
+    <input id="volume" type="range" min="0" max="1" step="0.01" value="1" style="flex:1">
+  </div>
     </div>
         </div>
 
         <div class="track-list playlist-scroll" id="playlistList"></div>
-      </section>
+    <!-- BEGIN: shortcut-info (FIXES 7) -->
+    <div class="shortcut-info" id="shortcutInfoBox">
+      <div class="si-title">Keyboard Shortcuts</div>
+      <div class="si-line">Space &middot; &larr;/&rarr; &plusmn;5s &middot; &uarr;/&darr; Vol &plusmn;5% &middot; S Shuffle</div>
+    </div>
+    <!-- END: shortcut-info (FIXES 7) -->
+</section>
     </div>
   </div>
 
@@ -765,6 +776,75 @@ function reflectProgress(){
 
 
   </script>
+<script>/* Volume wiring (FIXES 7) */(function(){
+  var a=document.getElementById("audio");
+  var v=document.getElementById("volume");
+  if(!a||!v) return;
+  try{ v.value=(typeof a.volume==="number")?a.volume:1; }catch(e){}
+  v.addEventListener("input",function(){
+    var x=parseFloat(v.value); if(isNaN(x)) x=1; x=Math.min(1,Math.max(0,x));
+    try{ a.volume=x; }catch(e){}
+  });
+})();</script>
+<script>/* KB v2 (FIXES 7) */(function(){
+  var a=document.getElementById("audio"); if(!a) return;
+  function isTyping(el){ if(!el) return false; var t=el.tagName; var ty=el.type||""; return t==="INPUT"||t==="TEXTAREA"||el.isContentEditable||ty==="range"; }
+  function clamp(x,min,max){ return Math.max(min, Math.min(max, x)); }
+  document.addEventListener("keydown", function(e){
+    if(isTyping(document.activeElement)) return;
+    var k=e.key||"";
+    if(k===" "){ e.preventDefault(); var b=document.getElementById("playPauseBtn"); if(b){ b.click(); } else { try{ a.paused?a.play():a.pause(); }catch(_){ } } }
+    else if(k==="ArrowLeft"){ e.preventDefault(); try{ a.currentTime = clamp((a.currentTime||0)-5, 0, a.duration||1e9); }catch(_){ } }
+    else if(k==="ArrowRight"){ e.preventDefault(); try{ a.currentTime = clamp((a.currentTime||0)+5, 0, a.duration||1e9); }catch(_){ } }
+    else if(k==="ArrowUp"){ e.preventDefault(); try{ a.volume = clamp((a.volume||0)+0.05, 0, 1); var v=document.getElementById("volume"); if(v) v.value=a.volume; }catch(_){ } }
+    else if(k==="ArrowDown"){ e.preventDefault(); try{ a.volume = clamp((a.volume||0)-0.05, 0, 1); var v2=document.getElementById("volume"); if(v2) v2.value=a.volume; }catch(_){ } }
+    else if(k==="s" || k==="S"){ var s=document.getElementById("shuffleBtn"); if(s){ e.preventDefault(); s.click(); } }
+  }, true);
+})();</script>
+<script>/* New Track Toast polling (FIXES 7) */(function(){
+  var toast=document.getElementById("newTrackToast");
+  if(!toast) return;
+  var msg=toast.querySelector(".msg");
+  var dismiss=toast.querySelector(".dismiss");
+  function show(text){ if(msg){ msg.textContent=text; } toast.style.display="flex"; toast.classList.add("show"); }
+  function hide(){ toast.classList.remove("show"); toast.style.display="none"; }
+  if(dismiss){ dismiss.addEventListener("click", function(e){ e.stopPropagation(); hide(); }); }
+  toast.addEventListener("click", function(){ try{ window.location.href="/library.html"; }catch(_){ } });
+
+  // Try to find an existing Supabase client used by this page
+  var sb = (typeof supabase !== "undefined") ? supabase : null;
+  // If not found, try a very naive fallback (some pages attach it on window.supabase)
+  if(!sb && window.supabase && typeof window.supabase.from === "function"){ sb = window.supabase; }
+  if(!sb || typeof sb.from !== "function"){ return; }
+
+  // Mark the time we loaded so we only alert for truly NEW tracks
+  var lastSeen = Date.now();
+  async function check(){
+    try {
+      var q = sb.from("tracks").select("id,title,artist,created_at,status").eq("status","public").order("created_at",{ascending:false}).limit(1);
+      var res = await q;
+      var row = (res && res.data && res.data[0]) ? res.data[0] : null;
+      if(!row || !row.created_at) return;
+      var ts = Date.parse(row.created_at)||0;
+      if(ts > lastSeen + 1000){
+        var who = row.artist || "Unknown";
+        var title = row.title || "Untitled";
+        show("New track from " + who + ": " + title);
+        // Advance the watermark so we dont spam
+        lastSeen = ts;
+      }
+    } catch(e) { /* silent */ }
+  }
+  // Run every 30s
+  setInterval(check, 30000);
+})();</script>
+<script>/* Toast test hook (FIXES 7) */(function(){
+  window._toastTest = function(msg){
+    var t=document.getElementById("newTrackToast"); if(!t) return;
+    var m=t.querySelector(".msg"); if(m) m.textContent = msg || "New track uploaded";
+    t.style.display = "flex"; t.classList.add("show");
+  };
+})();</script>
 </body>
 </html>
 

@@ -1,0 +1,850 @@
+<!-- DASH_PROOF 9b1a -->
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Canonical host guard: force www -->
+  <script>
+  (function(){
+    var want = 'www.rig-radio.ai';
+    if (location.hostname !== want) {
+      var target = 'https://' + want + location.pathname + location.search + location.hash;
+      location.replace(target);
+    }
+  })();
+  </script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rig-Radio • Dashboard</title>
+  <link rel="stylesheet" href="/rr.css"/>
+  <style>
+    body.rr-bg { min-height: 100vh; }
+    .wrap { max-width: 1100px; margin: 10px auto 22px; padding: 0 16px; }
+    header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .brand { font-weight:800; font-size:24px; letter-spacing:.5px; user-select:none; }
+    /* ensure "Outlaw Airwaves" is NOT a link */
+    .brand .tag { font-weight:600; opacity:.85; font-size:14px; margin-left:8px; }
+
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    @media (max-width: 900px){ .grid { grid-template-columns: 1fr; } }
+
+    .card { background: rgba(15,18,24,.7); border:1px solid rgba(255,255,255,.08);
+            border-radius:16px; padding:16px; box-shadow: 0 6px 24px rgba(0,0,0,.35); }
+
+    /* uploads list (left) */
+    #tracks-list .track-row { display:flex; gap:12px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+    #tracks-list .track-row:last-child { border-bottom:0; }
+    #tracks-list .cover { width:56px; height:56px; background:#111 center/cover no-repeat; border-radius:10px; }
+    .track-main { display:flex; flex-direction:column; min-width:0; }
+    .track-title { font-weight:700; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .track-sub { opacity:.8; font-size:12px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+    /* playlist (right) */
+    #my-playlist { margin-top:8px; }
+    #nowPlaying { margin: 10px auto 22px; font-weight:600; }
+    .controls { display:flex; gap:8px; margin: 10px auto 22px; }
+    .controls button { border-radius:10px; padding:8px 12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); cursor:pointer; }
+    .controls button:hover { background:rgba(255,255,255,.08); }
+
+    .progress-wrap { margin-top:8px; }
+    #playlistList { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+    .track-item { display:flex; gap:10px; padding:10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; cursor:pointer; align-items:center; }
+    .track-item .thumb { width:44px; height:44px; border-radius:8px; background:#111 center/cover no-repeat; }
+    .track-item .meta { display:flex; flex-direction:column; min-width:0; }
+    .track-item .t { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .track-item .a { opacity:.85; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .track-item.active { outline:2px solid #ff2b2b; box-shadow: 0 0 16px rgba(255,43,43,.25); }
+
+    .muted { opacity:.8; }
+/* --- Player control buttons --- */
+.controls button {
+  color: #fff !important;
+  font-weight: 700;
+  margin-right: 6px;           /* space between buttons */
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  text-shadow: 0 1px 2px rgba(0,0,0,.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.controls button:hover {
+  border-color: #ff2b2b;
+  color: #ff2b2b !important;
+  text-shadow: 0 0 6px #ff2b2b;
+}
+<style>
+  /* existing CSS … */
+/* --- Custom seek bar style (cross-browser red fill) --- */
+#seek{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:6px;
+  border-radius:3px;
+  outline:none;
+  cursor:pointer;
+  /* layered background: red fill width = --val, gray remainder */
+  background:
+    linear-gradient(#ff2b2b, #ff2b2b) 0 / var(--val, 0%) 100% no-repeat,
+    #222;
+}
+
+/* Chrome/Edge (WebKit) */
+#seek::-webkit-slider-runnable-track{
+  height:6px;
+  border-radius:3px;
+  background: transparent; /* let #seek background show */
+}
+#seek::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:12px;height:12px;border-radius:50%;
+  background:#ff2b2b;border:none;
+  box-shadow:0 0 6px #ff2b2b;
+  margin-top:-3px; /* center on 6px track */
+}
+
+/* Firefox */
+#seek::-moz-range-track{
+  height:6px;border-radius:3px;background:#222;
+}
+#seek::-moz-range-progress{
+  height:6px;border-radius:3px;background:#ff2b2b;
+}
+#seek::-moz-range-thumb{
+  width:12px;height:12px;border-radius:50%;
+  background:#ff2b2b;border:none;
+  box-shadow:0 0 6px #ff2b2b;
+}
+/* Header action buttons */
+.actions .btn {
+  display:inline-block;
+  color:#fff;
+  font-weight:700;
+  padding:8px 12px;
+  margin-left:8px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;
+  background:rgba(255,255,255,.04);
+  text-decoration:none;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.actions .btn:hover {
+  border-color:#ff2b2b;
+  color:#ff2b2b;
+  text-shadow:0 0 6px #ff2b2b;
+}
+/* Dashboard banner */
+/* Welcome message */
+.welcome {
+  text-align:center;
+  font-size:1.4rem;
+  font-weight:700;
+  margin:10px 0 20px;
+  color:#fff;
+  text-shadow:0 0 6px #ff2b2b;
+}
+/* Action button row under banner/welcome */
+.dash-actions{
+  margin: 8px auto 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.dash-actions .btn{
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.05);
+  color:#fff; text-decoration:none; font-weight:800;
+  letter-spacing:.3px;
+  transition:all .2s ease;
+}
+.dash-actions .btn:hover{
+  border-color:#ff2b2b;
+  color:#ff2b2b;
+  text-shadow:0 0 6px #ff2b2b;
+}
+.dash-actions .btn.primary{
+  border-color:#ff2b2b;
+  box-shadow:0 0 12px rgba(255,43,43,.35);
+}
+.dash-actions .btn.disabled{
+  opacity:.45;
+  pointer-events:none;
+  filter: grayscale(60%);
+}
+/* Logout button aligned with actions */
+.logout-wrap{
+  text-align: center;
+  margin-top: 10px;
+}
+.logout-wrap .logout{
+  background: rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:12px;
+  padding:8px 14px;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.logout-wrap .logout:hover{
+  border-color:#ff2b2b;
+  color:#ff2b2b;
+  text-shadow:0 0 6px #ff2b2b;
+}
+/* Logout button aligned under actions */
+.logout-wrap{
+  text-align: center;
+  margin-top: 12px;
+}
+.logout-wrap .logout{
+  background: rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:12px;
+  padding:8px 14px;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.logout-wrap .logout:hover{
+  border-color:#ff2b2b;
+  color:#ff2b2b;
+  text-shadow:0 0 6px #ff2b2b;
+}
+
+
+/* --- Your Uploads: grid card layout --- */
+#tracks-list{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* turn each row into a card */
+#tracks-list .track-row{
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+}
+
+#tracks-list .cover{
+  width: 56px; height: 56px; border-radius: 10px;
+  background: #111 center/cover no-repeat;
+}
+
+#tracks-list .track-main{
+  min-width: 0; display: flex; flex-direction: column;
+}
+
+#tracks-list .track-title{
+  font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+#tracks-list .track-sub{
+  opacity: .8; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+
+
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="rr-bg dashboard-page dashboard-page">
+<div id="bg"></div>
+
+<div id="welcomeUser" class="welcome"></div>
+<!-- Action button row -->
+<nav class="dash-actions">
+  <a class="btn primary" href="/submit.html">Submit Song</a>
+  <a class="btn" href="/library.html">Library</a>
+  <span class="btn disabled" title="Coming soon">My Profile</span>
+  <span class="btn disabled" title="Coming soon">Videos</span>
+  <span class="btn disabled" title="Coming soon">News</span>
+  <span class="btn disabled" title="Coming soon">Memberships</span>
+  <a class="btn logout" href="javascript:void(0)" onclick="logout()">Log out</a>
+</nav>
+
+
+
+
+
+
+
+<div class="logout-wrap">
+</div>
+
+
+
+
+  <div class="wrap">
+    <div class="hero-banner">
+      <img src="/banner.png" alt="Rig-Radio Banner">
+    </div>
+        <header>
+      <div class="brand">
+        Rig-Radio <span class="tag">Outlaw Airwaves</span>
+      </div>
+
+
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: Your uploads (reference list) -->
+      <section class="card">
+        <h2>Your Uploads</h2>
+        <div id="tracks-list" class="uploads-scroll"><div class="muted">Loading…</div></div>
+      </section>
+
+      <!-- RIGHT: Playlist (from Library localStorage or fallback) -->
+      <section class="card" id="my-playlist">
+        <h2>My Playlist</h2>
+        <div id="newTrackToast" class="new-track-toast" style="display:none;"><span class="msg">New track uploaded</span><button class="dismiss" aria-label="Dismiss">✕</button></div>
+
+        <div id="nowPlaying" class="muted">Loading…</div>
+    <div class="player-console">
+
+        <div class="controls">
+          <button id="prevBtn">⏮ Prev</button>
+          <button id="playPauseBtn">▶ Play</button>
+          <button id="nextBtn">⏭ Next</button>
+        <button id="shuffleBtn" class="toggle" title="Shuffle">Shuffle</button>
+        </div>
+
+        <!-- Single, global audio element -->
+<audio id="audio" preload="none" style="display:none" oncontextmenu="return false"></audio>
+
+
+
+        <!-- Progress / seek -->
+        <div id="progressBar" class="progress-wrap">
+          <div class="time-row" style="display:flex;justify-content:space-between;font-size:12px;opacity:.85">
+            <span id="curTime">0:00</span>
+            <span id="durTime">0:00</span>
+          </div>
+          <input id="seek" type="range" min="0" max="1000" value="0" step="1" style="width:100%">
+  <div class="volume-wrap" style="display:flex;align-items:center;gap:10px;margin-top:10px">
+    <span class="small-label" style="min-width:48px">Volume</span>
+    <input id="volume" type="range" min="0" max="1" step="0.01" value="1" style="flex:1">
+  </div>
+    </div>
+        </div>
+
+        <div class="track-list playlist-scroll" id="playlistList"></div>
+    <!-- BEGIN: shortcut-info (FIXES 7) -->
+    <div class="shortcut-info" id="shortcutInfoBox">
+      <div class="si-title">Keyboard Shortcuts</div>
+      <div class="si-line">Space &middot; &larr;/&rarr; &plusmn;5s &middot; &uarr;/&darr; Vol &plusmn;5% &middot; S Shuffle</div>
+    </div>
+    <!-- END: shortcut-info (FIXES 7) -->
+</section>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- Supabase bootstrap ---------- */
+    const supabase = window.supabase.createClient(
+      'https://tpzpeoqdpfwqumlsyhpx.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E'
+    );
+
+    /* ---------- Helpers for Storage signing ---------- */
+    function extractKeyFromPublicUrl(url){
+      // Try to find ".../object/.../tracks/<key>"
+      try{
+        if (!url) return null;
+        const u = new URL(url, window.location.origin);
+        const m1 = u.pathname.match(/tracks\/(.+)$/);
+        if (m1 && m1[1]) return decodeURIComponent(m1[1]);
+      }catch{}
+      return null;
+    }
+
+    async function signTracksKey(key, seconds = 3600){
+      try{
+        if (!key) return null;
+        const { data, error } = await supabase.storage.from('tracks').createSignedUrl(key, seconds);
+        if (error) return null;
+        return data.signedUrl;
+      }catch{ return null; }
+    }
+
+    async function getSignedCover(row){
+      if (row.cover_path && typeof row.cover_path === 'string') {
+        const s = await signTracksKey(row.cover_path); if (s) return s;
+      }
+      if (row.cover_url && typeof row.cover_url === 'string') {
+        const k = extractKeyFromPublicUrl(row.cover_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.artwork_url && typeof row.artwork_url === 'string') {
+        const k = extractKeyFromPublicUrl(row.artwork_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.cover_url && typeof row.cover_url === 'string') return row.cover_url;
+      if (row.artwork_url && typeof row.artwork_url === 'string') return row.artwork_url;
+      return null;
+    }
+
+    async function getSignedAudio(row){
+      if (row.track_path && typeof row.track_path === 'string'){
+        const s = await signTracksKey(row.track_path); if (s) return s;
+      }
+      if (row.audio_url && typeof row.audio_url === 'string'){
+        const k = extractKeyFromPublicUrl(row.audio_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
+      }
+      if (row.audio_url && typeof row.audio_url === 'string') return row.audio_url;
+      return null;
+    }
+
+    const PLACEHOLDER_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>
+        <defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>
+          <stop offset='0%' stop-color='#2b3542'/><stop offset='100%' stop-color='#1a222c'/>
+        </linearGradient></defs>
+        <rect width='100%' height='100%' fill='url(#g)'/>
+        <circle cx='60' cy='60' r='22' fill='#ff2b2b' opacity='.35'/>
+      </svg>`
+    );
+
+    /* ---------- Left column: your uploads ---------- */
+    async function loadMyTracks() {
+      const list = document.getElementById("tracks-list");
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { list.innerHTML = `<div class="muted">Please sign in to see your uploads.</div>`; return; }
+
+        const { data, error } = await supabase
+          .from('tracks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (error) { list.innerHTML = `<div class="muted">Couldn't load tracks.</div>`; return; }
+        if (!data || data.length === 0) { list.innerHTML = `<div class="muted">No uploads yet. Use “Submit Song”.</div>`; return; }
+
+        list.innerHTML = '';
+        for (const row of data) {
+          const title  = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/,'') : 'Untitled track');
+          const artist = row.artist || row.artist_name || '';
+          const sub    = artist || row.genre || row.style || row.description || '';
+          const signedCover = await getSignedCover(row);
+
+          const div = document.createElement('div');
+        div.className = 'upload-item';
+          div.className += ' track-row';
+          div.innerHTML = `
+            <div class="cover"></div>
+            <div class="track-main">
+              <div class="track-title" title="${title}">${title}</div>
+              <div class="track-sub" title="${sub}">${sub || '&nbsp;'}</div>
+            <div class="manage"><div class="stats"><span class="ic">▶</span> ${row.plays ?? 0} • <span class="ic">♥</span> ${row.likes ?? 0}</div><div class="actions"><button class="mini danger" data-action="delete" data-id="${row.id}" data-audio="${row.track_path || ""}" data-cover="${row.cover_path || ""}">Delete</button><button class="mini" disabled title="Coming soon">Replace</button></div></div>
+            </div>
+          `;
+          div.querySelector('.cover').style.backgroundImage = `url('${signedCover || PLACEHOLDER_IMG}')`;
+          const del = div.querySelector('button[data-action="delete"]');
+          if (del){
+            del.addEventListener('click', async (ev) => {
+              ev.stopPropagation();
+              await deleteUpload(del.dataset.id, del.dataset.audio, del.dataset.cover, div);
+            });
+          }
+          list.appendChild(div);
+        }
+      } catch {
+        list.innerHTML = `<div class="muted">Unexpected error loading your tracks.</div>`;
+      }
+    }
+
+    /* ---------- Playlist builder (single audio element with seek) ---------- */
+    async function buildBasicPlaylist(rows){
+      const items = [];
+      for (const r of rows){
+        const title  = r.title || r.name || (r.audio_filename ? r.audio_filename.replace(/\.[^/.]+$/,'') : 'Untitled');
+        const artist = r.artist || r.artist_name || '';
+        const coverKey = (r.cover_path && typeof r.cover_path === 'string') ? r.cover_path : extractKeyFromPublicUrl(r.cover_url || r.artwork_url || '');
+        const coverUrl = coverKey ? await signTracksKey(coverKey) : (r.cover_url || r.artwork_url || null);
+        const audioUrl = await getSignedAudio(r);
+        if (!audioUrl) continue;
+        items.push({ id: r.id, title, artist, cover: coverUrl, audio: audioUrl });
+      }
+
+      const listEl = document.getElementById('playlistList');
+      const nowEl  = document.getElementById('nowPlaying');
+      const audio  = document.getElementById('audio');
+      const playBtn= document.getElementById('playPauseBtn');
+        const consoleEl = document.querySelector('.player-console');
+      const prevBtn= document.getElementById('prevBtn');
+      const nextBtn= document.getElementById('nextBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const SHUFFLE_KEY = 'rr_shuffle_on';
+        let shuffleOn = localStorage.getItem(SHUFFLE_KEY) === '1';
+        if (shuffleBtn) shuffleBtn.classList.toggle('on', shuffleOn);
+        let playOrder = [];
+        let p = 0;
+
+      const seek   = document.getElementById('seek');
+      const curT   = document.getElementById('curTime');
+      const durT   = document.getElementById('durTime');
+
+      listEl.innerHTML = '';
+      items.forEach((it, idx) => {
+        const row = document.createElement('div');
+        row.className = 'track-item';
+        row.innerHTML = `
+          <div class="thumb" style="background-image:url('${it.cover || ''}')"></div>
+          <div class="meta">
+            <div class="t" title="${it.title}">${it.title}</div>
+            <div class="a" title="${it.artist}">${it.artist || '&nbsp;'}</div>
+          </div>
+        `;
+        const eq = document.createElement('div');
+        eq.className = 'eq-bars';
+        eq.innerHTML = '<span></span><span></span><span></span>';
+        row.querySelector('.meta').appendChild(eq);
+        const rm = document.createElement('button');
+        rm.className = 'pl-remove';
+        rm.type = 'button';
+        rm.title = 'Remove from playlist';
+        rm.textContent = '×';
+        row.appendChild(rm);
+          rm.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            // find this row's current index (robust even after reorders)
+            const index = [...listEl.children].indexOf(row);
+            if (index === -1) return;
+
+            const removedId = String(items[index].id);
+
+            // Update localStorage playlist
+            try {
+              const arrRaw = getPL();
+              const arr = Array.isArray(arrRaw) ? arrRaw.map(String).filter(Boolean) : [];
+              const next = arr.filter(v => v !== removedId);
+              localStorage.setItem(PL_KEY, JSON.stringify(next));
+            } catch {}
+
+            // Remove from in-memory list and UI
+            const wasCurrent = (i === index);
+            items.splice(index, 1);
+            row.remove();
+            if (i > index) i -= 1;
+
+            if (!items.length) {
+              pause();
+              audio.src = '';
+              nowEl.textContent = 'No playable tracks yet.';
+              seek.value = 0; curT.textContent = '0:00'; durT.textContent = '0:00';
+              if (typeof updatePlayingUI === 'function') updatePlayingUI();
+              return;
+            }
+
+            if (shuffleOn) { if (i >= items.length) i = 0; buildOrder(i); }
+            if (wasCurrent) {
+              if (i >= items.length) i = 0;
+              load(); play();
+            } else {
+              markActive();
+              if (typeof updatePlayingUI === 'function') updatePlayingUI();
+            }
+          });
+        row.addEventListener('click', () => startAt(idx));
+        listEl.appendChild(row);
+      });
+
+      let i = 0;
+        // Build a shuffled order that keeps the current index at the front
+        function buildOrder(startIdx){
+          const cur = Number.isInteger(startIdx) ? startIdx : 0;
+          // make a list of indices
+          let arr = items.map((_, idx) => idx);
+          // remove current from array
+          arr = arr.filter(x => x !== cur);
+          // Fisher–Yates shuffle
+          for (let j = arr.length - 1; j > 0; j--) {
+            const k = Math.floor(Math.random() * (j + 1));
+            [arr[j], arr[k]] = [arr[k], arr[j]];
+          }
+          // put current at the front
+          playOrder = [cur, ...arr];
+          p = 0;  // playOrder pointer
+        }
+        if (shuffleOn) { buildOrder(i); }
+      function markActive(){
+        [...listEl.children].forEach((el, idx) => el.classList.toggle('active', idx === i));
+      }
+
+        function updatePlayingUI(){
+      [...listEl.children].forEach((el, idx) => el.classList.toggle("playing", idx === i && !audio.paused));
+      if (consoleEl) { consoleEl.classList.toggle("playing", !audio.paused); }
+    }
+
+      function mmss(sec){
+        if (!isFinite(sec)) return '0:00';
+        sec = Math.max(0, Math.floor(sec));
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return m + ':' + String(s).padStart(2, '0');
+      }
+
+function reflectProgress(){
+  const d = audio.duration || 0;
+  const t = audio.currentTime || 0;
+
+  if (isFinite(d) && d > 0) {
+    seek.value = Math.round((t / d) * 1000);
+    seek.style.setProperty('--val', (t / d * 100) + '%');
+    durT.textContent = mmss(d);
+  } else {
+    seek.value = 0;
+    seek.style.setProperty('--val', '0%');
+    durT.textContent = '0:00';
+  }
+
+  curT.textContent = mmss(t);
+}
+
+
+
+
+
+      function load(){
+        if (!items[i]) return;
+        audio.src = items[i].audio;
+        nowEl.textContent = `Now playing: ${items[i].title}${items[i].artist ? ' — ' + items[i].artist : ''}`;
+        markActive();
+      updatePlayingUI();
+        // reset progress indicator
+        seek.value = 0; curT.textContent = '0:00'; durT.textContent = '0:00';
+      }
+
+      function play(){ audio.play().catch(()=>{}); playBtn.textContent = '⏸ Pause'; updatePlayingUI(); }
+      function pause(){ audio.pause(); playBtn.textContent = '▶ Play'; updatePlayingUI(); }
+      function toggle(){ audio.paused ? play() : pause(); }
+        function next(){
+          if (shuffleOn && playOrder.length === items.length) {
+            p = (p + 1) % playOrder.length;
+            i = playOrder[p];
+          } else {
+            i = (i + 1) % items.length;
+          }
+          load(); play();
+        }
+        function prev(){
+          if (shuffleOn && playOrder.length === items.length) {
+            p = (p - 1 + playOrder.length) % playOrder.length;
+            i = playOrder[p];
+          } else {
+            i = (i - 1 + items.length) % items.length;
+          }
+          load(); play();
+        }
+      function startAt(idx){ i = idx; if (shuffleOn) { buildOrder(i); } load(); play(); }
+
+      audio.addEventListener('ended', next);
+      audio.addEventListener('loadedmetadata', reflectProgress);
+      audio.addEventListener('timeupdate', reflectProgress);
+    audio.addEventListener('play', updatePlayingUI);
+    audio.addEventListener('pause', updatePlayingUI);
+    audio.addEventListener('ended', updatePlayingUI);
+      playBtn.addEventListener('click', toggle);
+      nextBtn.addEventListener('click', next);
+        if (shuffleBtn) shuffleBtn.addEventListener('click', () => {
+          shuffleOn = !shuffleOn;
+          localStorage.setItem(SHUFFLE_KEY, shuffleOn ? '1' : '0');
+          shuffleBtn.classList.toggle('on', shuffleOn);
+          if (shuffleOn) { buildOrder(i); }
+        });
+      prevBtn.addEventListener('click', prev);
+
+      // Seek
+      seek.addEventListener('input', () => {
+        const d = audio.duration || 0;
+        if (isFinite(d) && d > 0) {
+          const ratio = Number(seek.value) / 1000;
+          audio.currentTime = d * ratio;
+          reflectProgress();
+        }
+      });
+
+      if (items.length){ load(); } else { nowEl.textContent = 'No playable tracks yet.'; }
+    }
+
+  async function deleteUpload(id, audioKey, coverKey, cardEl){
+    try{
+      if(!confirm("Delete this upload? This cannot be undone.")) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if(!user){ alert("Please sign in."); return; }
+      // remove storage files if keys exist
+      const keys = [audioKey, coverKey].filter(k => typeof k === 'string' && k.length);
+      if (keys.length){ await supabase.storage.from('tracks').remove(keys); }
+      // delete DB row (RLS must allow owner)
+      const { error } = await supabase.from('tracks').delete().eq('id', id);
+      if (error){ console.error(error); alert('Delete failed.'); return; }
+      if (cardEl) cardEl.remove();
+    } catch(err){ console.error(err); alert('Delete error.'); }
+  }
+    /* ---------- Shared local playlist helpers ---------- */
+    const PL_KEY = "rr_playlist_ids";
+      const ALLOW_UPLOAD_FALLBACK = false;
+    const getPL = () => {
+      try { return JSON.parse(localStorage.getItem(PL_KEY) || "[]"); }
+      catch { return []; }
+    };
+
+    /* ---------- Dashboard init ---------- */
+    async function initDashboard(){
+      await loadMyTracks();
+
+      // Prefer Library’s selected playlist (any owner; RLS still applies)
+      const plIdsRaw = getPL();
+      const plIds = Array.isArray(plIdsRaw) ? plIdsRaw.map(String).filter(Boolean) : [];
+      let rows = [];
+
+      if (plIds.length){
+        const { data: byIds, error: byIdsErr } = await supabase
+          .from('tracks')
+          .select('*')
+          .in('id', plIds)
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (!byIdsErr && Array.isArray(byIds)) {
+          // Keep playlist order as saved in Library if possible
+          const map = new Map(byIds.map(r => [String(r.id), r]));
+          rows = plIds.map(id => map.get(String(id))).filter(Boolean);
+        }
+      }
+
+      // Fallback to the user’s own uploads if no playlist
+        if (ALLOW_UPLOAD_FALLBACK && !rows.length){
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          document.getElementById('nowPlaying').textContent = 'Sign in to see your uploads or add tracks from the Library.';
+          return;
+        }
+        const { data, error } = await supabase
+          .from('tracks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (error || !data) {
+          document.getElementById('nowPlaying').textContent = 'Could not load tracks.';
+          return;
+        }
+        rows = data;
+      }
+
+      if (rows && rows.length) { await buildBasicPlaylist(rows); }
+      else { document.getElementById('nowPlaying').textContent = 'No playable tracks yet.'; }
+    }
+
+    // Ensure init runs whether DOM is already loaded or not
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDashboard);
+    } else {
+      initDashboard();
+    }
+
+    /* --- logout (safety) --- */
+    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
+
+
+
+// Welcome text from Auth metadata display_name
+(async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  const el = document.getElementById('welcomeUser');
+  if (!el) return;
+  const name = user?.user_metadata?.display_name
+            || (user?.email ? user.email.split('@')[0] : null)
+            || 'User';
+  el.textContent = `Welcome, ${name}`;
+})();
+
+
+  </script>
+<script>/* Volume wiring (FIXES 7) */(function(){
+  var a=document.getElementById("audio");
+  var v=document.getElementById("volume");
+  if(!a||!v) return;
+  try{ v.value=(typeof a.volume==="number")?a.volume:1; }catch(e){}
+  v.addEventListener("input",function(){
+    var x=parseFloat(v.value); if(isNaN(x)) x=1; x=Math.min(1,Math.max(0,x));
+    try{ a.volume=x; }catch(e){}
+  });
+})();</script>
+<script>/* KB v2 (FIXES 7) */(function(){
+  var a=document.getElementById("audio"); if(!a) return;
+  function isTyping(el){ if(!el) return false; var t=el.tagName; var ty=el.type||""; return t==="INPUT"||t==="TEXTAREA"||el.isContentEditable||ty==="range"; }
+  function clamp(x,min,max){ return Math.max(min, Math.min(max, x)); }
+  document.addEventListener("keydown", function(e){
+    if(isTyping(document.activeElement)) return;
+    var k=e.key||"";
+    if(k===" "){ e.preventDefault(); var b=document.getElementById("playPauseBtn"); if(b){ b.click(); } else { try{ a.paused?a.play():a.pause(); }catch(_){ } } }
+    else if(k==="ArrowLeft"){ e.preventDefault(); try{ a.currentTime = clamp((a.currentTime||0)-5, 0, a.duration||1e9); }catch(_){ } }
+    else if(k==="ArrowRight"){ e.preventDefault(); try{ a.currentTime = clamp((a.currentTime||0)+5, 0, a.duration||1e9); }catch(_){ } }
+    else if(k==="ArrowUp"){ e.preventDefault(); try{ a.volume = clamp((a.volume||0)+0.05, 0, 1); var v=document.getElementById("volume"); if(v) v.value=a.volume; }catch(_){ } }
+    else if(k==="ArrowDown"){ e.preventDefault(); try{ a.volume = clamp((a.volume||0)-0.05, 0, 1); var v2=document.getElementById("volume"); if(v2) v2.value=a.volume; }catch(_){ } }
+    else if(k==="s" || k==="S"){ var s=document.getElementById("shuffleBtn"); if(s){ e.preventDefault(); s.click(); } }
+  }, true);
+})();</script>
+<script>/* New Track Toast polling (FIXES 7) */(function(){
+  var toast=document.getElementById("newTrackToast");
+  if(!toast) return;
+  var msg=toast.querySelector(".msg");
+  var dismiss=toast.querySelector(".dismiss");
+  function show(text){ if(msg){ msg.textContent=text; } toast.style.display="flex"; toast.classList.add("show"); }
+  function hide(){ toast.classList.remove("show"); toast.style.display="none"; }
+  if(dismiss){ dismiss.addEventListener("click", function(e){ e.stopPropagation(); hide(); }); }
+  toast.addEventListener("click", function(){ try{ window.location.href="/library.html"; }catch(_){ } });
+
+  // Try to find an existing Supabase client used by this page
+  var sb = (window._client) || (window.supabaseClient) || null;
+  // If not found, try a very naive fallback (some pages attach it on window.supabase)
+  if(!sb && window.supabase && typeof window.supabase.from === "function"){ sb = window.supabase; }
+  if(!sb || typeof sb.from !== "function"){ return; }
+
+  // Mark the time we loaded so we only alert for truly NEW tracks
+  var lastSeen = Date.now();
+  async function check(){
+    try {
+      var q = sb.from("tracks").select("id,title,artist,created_at,status").eq("status","public").order("created_at",{ascending:false}).limit(1);
+      var res = await q;
+      var row = (res && res.data && res.data[0]) ? res.data[0] : null;
+      if(!row || !row.created_at) return;
+      var ts = Date.parse(row.created_at)||0;
+      if(ts > lastSeen + 1000){
+        var who = row.artist || "Unknown";
+        var title = row.title || "Untitled";
+        show("New track from " + who + ": " + title);
+        // Advance the watermark so we dont spam
+        lastSeen = ts;
+      }
+    } catch(e) { /* silent */ }
+  }
+  // Run every 30s
+  setInterval(check, 30000);
+})();</script>
+<script>/* Toast test hook (FIXES 7) */(function(){
+  window._toastTest = function(msg){
+    var t=document.getElementById("newTrackToast"); if(!t) return;
+    var m=t.querySelector(".msg"); if(m) m.textContent = msg || "New track uploaded";
+    t.style.display = "flex"; t.classList.add("show");
+  };
+})();</script>
+</body>
+</html>
+

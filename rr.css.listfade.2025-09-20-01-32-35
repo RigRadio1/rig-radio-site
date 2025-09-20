@@ -1,0 +1,1572 @@
+/* ============================
+   Rig-Radio Global Theme CSS
+   ============================ */
+
+/* --- Base / Theme --- */
+:root{
+  --rr-bg: #0b0c10;
+  --rr-panel: rgba(8,10,16,.88);
+  --rr-panel-soft: rgba(8,10,16,.72);
+  --rr-border: #2a1a1e;
+  --rr-border-strong: #3a151b;
+  --rr-text: #e9e9f2;
+  --rr-muted: #b9b9c8;
+  --rr-accent: #ff2a3a; /* neon red */
+  --rr-accent-dim: rgba(255,42,58,.25);
+  --rr-shadow: 0 18px 50px rgba(0,0,0,.35);
+}
+
+html,body{
+  margin:0; padding:0;
+html,body{
+  margin:0; padding:0;
+  min-height:100vh;               /* <-- add this line */
+  background:#000; color:var(--rr-text);
+  font: 14px/1.45 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+  background:#000; color:var(--rr-text);
+  font: 14px/1.45 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+.rr-bg{
+  /* if you’re using a background image, leave it; otherwise solid bg */
+  background: #000 url('/studio-bg.png') center/cover no-repeat fixed;
+}
+
+/* --- Topbar --- */
+.rr-topbar{
+  position:sticky; top:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 16px;
+  background:linear-gradient(180deg, rgba(0,0,0,.8), rgba(0,0,0,.35) 90%, transparent);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  backdrop-filter: blur(4px);
+}
+.rr-topbar-left{ font-weight:800; letter-spacing:.5px; }
+.rr-topbar-right{ display:flex; gap:12px; }
+.rr-link{ color:var(--rr-muted); text-decoration:none; }
+.rr-link:hover{ color:var(--rr-text); text-shadow:0 0 10px var(--rr-accent-dim); }
+
+/* --- Layout helpers --- */
+.wrap{ max-width:1100px; margin:28px auto; padding:0 16px; }
+.rr-muted{ color:var(--rr-muted); }
+.rr-grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+@media (max-width:820px){ .rr-grid-2{ grid-template-columns:1fr; }}
+
+/* --- Buttons (consistent across wizard) --- */
+.rr-btn{
+  padding:9px 14px;
+  border-radius:10px;
+  border:1px solid var(--rr-border);
+  background:#14141b;
+  color:var(--rr-text);
+  cursor:pointer;
+  transition:.18s ease box-shadow, .18s ease transform, .18s ease background;
+}
+.rr-btn:hover{ box-shadow:0 0 12px var(--rr-accent-dim); transform:translateY(-1px); }
+.rr-btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+.rr-btn.rr-primary{ background:#1e0f12; border-color:var(--rr-border-strong); }
+.rr-btn.rr-ghost{ background:transparent; border-color:var(--rr-border); color:#cfcfe5; }
+.rr-actions{ margin-top:14px; display:flex; gap:10px; }
+
+/* --- Wizard: steps rail --- */
+.steps{ list-style:none; margin:0 0 16px; padding:0; }
+.steps li{
+  display:flex; align-items:center; gap:10px;
+  margin:8px 0; padding:10px 12px;
+  background:var(--rr-panel-soft); border:1px solid var(--rr-border);
+  border-radius:12px; color:var(--rr-muted);
+}
+.steps li .num{
+  width:28px; height:28px; border-radius:999px;
+  display:grid; place-items:center;
+  background:#13131a; border:1px solid var(--rr-border);
+  font-weight:700; color:#fff;
+}
+.steps li.active{ color:#fff; box-shadow:0 0 0 2px var(--rr-accent-dim) inset, var(--rr-shadow); }
+.steps li.done{ opacity:.75; }
+
+.progressbar{
+  width:100%; height:6px; border-radius:8px;
+  background:rgba(255,255,255,.06);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  margin:8px 0 18px;
+}
+.progressbar > .bar{
+  height:100%; width:0%;
+  background:linear-gradient(90deg, rgba(255,42,58,.6), rgba(255,89,100,.95));
+  box-shadow:0 0 14px rgba(255,42,58,.25), 0 0 3px rgba(255,42,58,.45) inset;
+  border-radius:8px;
+  transition:width .25s ease;
+}
+
+/* --- Wizard panels --- */
+.stage{
+  display:none;
+  background:var(--rr-panel);
+  padding:16px;
+  border-radius:16px;
+  box-shadow:0 0 0 2px var(--rr-accent-dim);
+}
+.stage.active{ display:block; }
+.rr-label{ display:block; margin:4px 0 6px; color:#cfcfe5; font-weight:700; }
+.rr-help{ color:var(--rr-muted); }
+
+/* --- Dropzone (Step 1) --- */
+.dropzone{
+  display:flex; align-items:center; justify-content:center;
+  height:160px; border-radius:12px;
+  border:2px dashed rgba(255,42,58,.35);
+  background:rgba(15,10,12,.7);
+  color:#f0f0f5; text-align:center;
+  transition:.15s ease box-shadow, .15s ease transform, .15s ease border-color;
+}
+.dropzone strong{ color:#fff; }
+.dropzone.hover{
+  border-color:var(--rr-accent);
+  box-shadow:0 0 22px rgba(255,42,58,.35), inset 0 0 0 1px rgba(255,42,58,.35);
+  transform:scale(1.01);
+}
+
+/* --- Form elements --- */
+input[type="text"], input[type="email"], input[type="password"], input[type="file"], select, textarea{
+  width:100%; box-sizing:border-box;
+  background:#12131a; color:#f2f2fb;
+  border:1px solid var(--rr-border);
+  border-radius:10px; padding:10px 12px;
+}
+textarea{ min-height:110px; resize:vertical; }
+
+/* --- Library: row card (“monitor”) --- */
+.list{ display:flex; flex-direction:column; gap:12px; }
+.row{
+  display:grid; grid-template-columns:84px 1fr 460px; gap:14px; align-items:center;
+  background:var(--rr-panel);
+  padding:10px 14px; border-radius:16px;
+  box-shadow:0 0 0 2px var(--rr-accent-dim);
+}
+@media (max-width:1100px){ .row{ grid-template-columns:84px 1fr 1fr; } }
+@media (max-width:760px){ .row{ grid-template-columns:84px 1fr; } .p{ grid-column:1 / -1; } }
+
+.thumb{
+  width:84px; height:84px; object-fit:cover;
+  border-radius:10px; background:#0c0d12; border:1px solid var(--rr-border);
+}
+.meta{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+.title{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pill{ font-size:11px; padding:2px 8px; border-radius:999px; background:#1a1012; border:1px solid var(--rr-border); display:inline-block; margin-top:4px; }
+
+/* Player shell */
+.p{
+  background:#0d0d12; border:2px solid #222; border-radius:14px;
+  padding:8px 10px; display:flex; align-items:center; gap:10px;
+  box-shadow: inset 0 0 0 1px rgba(255,0,0,.12);
+}
+.p:hover{ box-shadow:0 0 18px rgba(255,0,0,.45), inset 0 0 0 1px rgba(255,0,0,.18); }
+
+/* Live dot: default OFF; .on when playing (toggled via JS) */
+.live{ width:10px; height:10px; border-radius:50%; background:#3a3a3a; box-shadow:none; transition:all .2s ease; }
+.live.on{ background:#2f2; box-shadow:0 0 8px #2f2; }
+
+/* Native audio controls tint + hide download */
+.p audio{
+  flex:1; outline:none;
+  filter: invert(1) hue-rotate(180deg); /* brighten on dark */
+  accent-color: var(--rr-accent);
+}
+/* Hide download button (WebKit/Blink) */
+.p audio::-webkit-media-controls-download-button{ display:none; }
+.p audio::-webkit-media-controls-enclosure{ overflow:hidden; }
+.p audio::-webkit-media-controls-panel{ --_rr:none; }
+/* Make the timeline glow red (best-effort) */
+.p audio::-webkit-media-controls-timeline{
+  filter: hue-rotate(330deg) saturate(4) brightness(1.35);
+}
+
+/* --- Small utilities --- */
+.badge{ font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--rr-border); }
+.card{ background:var(--rr-panel); border:1px solid var(--rr-border); border-radius:16px; padding:12px; box-shadow:var(--rr-shadow); }
+.hr{ height:1px; background:rgba(255,255,255,.06); border:none; margin:12px 0; }
+
+/* === Create Account page background === */
+body.auth-page {
+  min-height: 100vh;
+  background: #000 url('/assets/studio-bg.png') center/cover no-repeat fixed;
+}
+
+/* Soft red glow + dark overlay to match the bunker vibe */
+body.auth-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255, 0, 0, 0.08), transparent 60%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.85));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === Create Account page background === */
+body.auth-page {
+  min-height: 100vh;
+  background: #000 url('/studio-bg.png') center center / cover no-repeat fixed;
+}
+
+/* Soft red glow + gentle darkening overlay */
+body.auth-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 22% 12%, rgba(255, 50, 50, 0.15), transparent 60%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.28));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep page content above overlay */
+body.auth-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* === Banner sizing for auth pages === */
+.auth-page .banner {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-page .banner img {
+  max-width: 300px;   /* adjust size */
+  height: auto;
+  display: inline-block;
+}
+
+/* === Banner sizing for auth pages (full width like rest of site) === */
+.auth-page .banner {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-page .banner img {
+  max-width: 80%;   /* wide like other pages */
+  height: auto;
+  display: inline-block;
+}
+
+/* === Auth layout: banner above form, centered, higher on page === */
+.auth-page .auth-layout {
+  display: block;            /* stack naturally */
+  text-align: center;        /* center contents */
+  margin-top: 40px;          /* move whole section ~1 inch from top */
+}
+
+.auth-page .banner {
+  margin-bottom: 30px;       /* space between banner and form */
+}
+
+.auth-page .banner img {
+  width: 60%;
+  height: auto;
+  display: inline-block;
+}
+
+.auth-page .card {
+  margin: 0 auto;            /* keep card centered */
+  max-width: 420px;
+}
+
+
+
+
+.auth-page .banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;  /* center the banner image */
+}
+
+.auth-page .banner img {
+  width: 60%;               /* banner scale */
+  height: auto;
+  display: block;
+}
+
+.auth-page .card {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  max-width: 420px;
+  width: 100%;
+  color: #fff;
+}
+
+/* === Create Account form visuals === */
+.auth-page .card h1 {
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
+  color: #ff2d2d; /* neon red title */
+  letter-spacing: 0.3px;
+}
+
+.auth-page .card .muted {
+  color: #cfcfcf;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-page .card label {
+  display: block;
+  font-size: 0.9rem;
+  color: #ddd;
+  margin: 0.6rem 0 0.35rem;
+}
+
+.auth-page .card input[type="text"],
+.auth-page .card input[type="email"],
+.auth-page .card input[type="password"] {
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: #0e0e0e;
+  color: #fff;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.08s ease;
+}
+
+.auth-page .card input[type="text"]::placeholder,
+.auth-page .card input[type="email"]::placeholder,
+.auth-page .card input[type="password"]::placeholder {
+  color: #8a8a8a;
+}
+
+.auth-page .card input[type="text"]:focus,
+.auth-page .card input[type="email"]:focus,
+.auth-page .card input[type="password"]:focus {
+  border-color: #ff2d2d;
+  box-shadow: 0 0 16px rgba(255, 45, 45, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Terms row */
+.auth-page .card .terms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0.9rem 0 0.3rem;
+  line-height: 1.2;
+}
+
+.auth-page .card .terms input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #ff2d2d; /* modern browsers */
+}
+
+/* Primary button */
+.auth-page .card .btn-primary {
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.95rem 1rem;
+  background: #ff2d2d;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.auth-page .card .btn-primary:hover {
+  background: #ff4545;
+  box-shadow: 0 0 18px rgba(255, 69, 69, 0.35);
+  transform: translateY(-1px);
+}
+
+.auth-page .card .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 0 8px rgba(255, 45, 45, 0.25);
+}
+
+/* Login link */
+.auth-page .card .auth-switch {
+  margin-top: 0.9rem;
+  font-size: 0.95rem;
+  color: #cfcfcf;
+  text-align: center;
+}
+
+.auth-page .card .auth-switch a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.35);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-page .card .auth-switch a:hover {
+  color: #ffb3b3;
+  border-bottom-color: rgba(255, 179, 179, 0.7);
+}
+
+/* Card polish: slight border + glow on hover to match site boxes */
+.auth-page .card {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-page .card:hover {
+  border-color: rgba(255, 45, 45, 0.35);
+  box-shadow: 0 0 22px rgba(255, 45, 45, 0.28);
+}
+
+.upload-warning {
+  margin: 28px auto;
+  width: 100%;
+  max-width: 100%;              /* span full content column */
+  padding: 16px 20px;
+  font-weight: 700;
+  color: #ff2b2b;
+  background: rgba(15, 15, 20, 0.9);
+  border: 2px solid #ff2b2b;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.upload-warning code {
+  background: rgba(255,255,255,0.08);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Library: Add/Remove playlist pill */
+.plbtn{
+  margin-top:6px;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid #34171c;
+  background:#1a1012;
+  color:#ffd7dc;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.plbtn:hover{ box-shadow:0 0 10px rgba(255,42,58,.25) }
+.plbtn.in{
+  background:#112616;
+  border-color:#1e6a3a;
+  color:#a9f0b7;
+}
+/* --- Library pager --- */
+.pager{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin:14px 0 18px 0;
+}
+.page-btn{
+  font: 600 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  padding:8px 14px;
+  border:2px solid #ff2a2a;
+  border-radius:999px;
+  background:#120000;
+  color:#fff;
+  letter-spacing:.2px;
+  cursor:pointer;
+  transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+  box-shadow: 0 0 0 rgba(255,42,42,0);
+}
+.page-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255,42,42,.55), 0 0 22px rgba(255,42,42,.25) inset;
+}
+.page-btn:active{
+  transform: translateY(0);
+  background:#200000;
+}
+.page-btn[disabled],
+.page-btn.is-current{
+  background:#ff2a2a;
+  color:#0b0000;
+  border-color:#ff2a2a;
+  cursor:default;
+  box-shadow: 0 0 18px rgba(255,42,42,.45);
+}
+/* make top/bottom groups consistent spacing on mobile */
+@media (max-width:640px){
+  .pager{ flex-wrap:wrap; gap:6px; }
+  .page-btn{ padding:8px 12px; }
+}
+
+/* --- Pager: dark-neon tweaks / override --- */
+.pager .page-btn{
+  background: transparent;            /* no solid red fill */
+  border-color: #ff2a2a;
+  color: #fff;
+  box-shadow: 0 0 0 rgba(255,42,42,0);
+}
+.pager .page-btn:hover{
+  background: rgba(15,0,0,.6);
+  box-shadow: 0 0 10px rgba(255,42,42,.45), inset 0 0 18px rgba(255,42,42,.20);
+}
+.pager .page-btn.is-current,
+.pager .page-btn[disabled].is-current{
+  background: rgba(30,0,0,.85);       /* deep dark red background */
+  color: #ff4444;                     /* bright neon red text */
+  border-color: #ff2a2a;
+  transform: scale(1.15);             /* slightly larger */
+  font-weight: 700;
+  text-decoration: underline;
+  box-shadow: 0 0 16px rgba(255,42,42,.6), inset 0 0 18px rgba(255,42,42,.3);
+}
+/* Prev/Next adjustments */
+.pager .page-btn:not(.is-current){
+  background: transparent;   /* no fill by default */
+  color: #fff;
+}
+.pager .page-btn:not(.is-current):hover{
+  background: rgba(15,0,0,.6); /* subtle hover */
+}
+.pager .page-btn[disabled]:not(.is-current){
+  opacity: 0.35;              /* fade disabled Prev/Next */
+  border-color: #663;         /* muted border */
+  color: #777;
+  box-shadow: none;
+}
+
+}
+
+
+}
+.pager .page-btn[disabled]:not(.is-current){
+  opacity: .55;                       /* dim disabled Prev/Next */
+  cursor: default;
+}
+.pager .page-gap{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width: 22px; margin: 0 4px;
+  color: #aa7777; opacity:.8;         /* muted ellipsis */
+}
+/* --- Library Control Bar (search + pager) --- */
+#lib-search{
+  background: linear-gradient(180deg, rgba(10,0,0,.55), rgba(8,0,0,.45));
+  border: 1px solid rgba(255,42,42,.35);
+  box-shadow: 0 4px 24px rgba(255,42,42,.15), inset 0 0 20px rgba(255,42,42,.08);
+  border-radius: 18px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 220px auto auto;
+  gap: 10px;
+  align-items: center;
+  backdrop-filter: blur(3px);
+}
+
+/* Inputs feel integrated */
+#lib-search input[type="text"],
+#lib-search select{
+  height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #2b2b2b;
+  border-radius: 12px;
+  background: #0b0b0b;
+  color: #fff;
+  outline: none;
+  transition: box-shadow .12s ease, border-color .12s ease;
+}
+#lib-search input[type="text"]:focus,
+#lib-search select:focus{
+  border-color: #ff2a2a;
+  box-shadow: 0 0 10px rgba(255,42,42,.35);
+}
+
+/* Buttons already use rr-btn classes; tighten spacing */
+#lib-search .rr-btn{ height: 36px; }
+
+/* Pager sits snug right under the bar and matches curvature */
+#pager-top{
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+#pager-bottom{ margin-top: 16px; }
+
+/* Keep pager visually tied to the bar */
+#pager-top .page-btn,
+#pager-bottom .page-btn{
+  border-radius: 999px;
+  border-width: 2px;
+}
+
+/* Slight hover float for all control buttons */
+#lib-search .rr-btn:hover,
+.pager .page-btn:hover{
+  transform: translateY(-1px);
+}
+
+/* Optional: make the whole control set feel anchored */
+@media (max-width: 720px){
+  #lib-search{
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: min-content;
+  }
+}
+/* --- Neon sweep hover for control buttons --- */
+.rr-btn,
+.pager .page-btn{
+  position: relative;
+  overflow: hidden;          /* contain the sweep */
+  isolation: isolate;        /* keep effects inside */
+}
+
+.rr-btn::after,
+.pager .page-btn::after{
+  content: "";
+  position: absolute;
+  inset: -40% -120% auto auto;     /* start off at top-right */
+  width: 180%;
+  height: 220%;
+  transform: translateX(-120%) rotate(12deg);
+  background: linear-gradient(90deg,
+    rgba(255,42,42,0) 0%,
+    rgba(255,42,42,.15) 45%,
+    rgba(255,255,255,.25) 50%,
+    rgba(255,42,42,.15) 55%,
+    rgba(255,42,42,0) 100%);
+  opacity: 0;
+  transition: transform .35s ease, opacity .2s ease;
+  pointer-events: none;
+  z-index: -1;  /* under the label but above background */
+}
+
+.rr-btn:hover::after,
+.pager .page-btn:hover::after{
+  opacity: .8;
+  transform: translateX(10%) rotate(12deg);
+}
+
+/* Keep current page stable: no sweep while active/disabled */
+.pager .page-btn.is-current::after,
+.pager .page-btn[disabled].is-current::after{
+  display: none;
+}
+/* --- Sticky Library control bar --- */
+#lib-search{
+  position: sticky;
+  top: 56px;                 /* sits just below your topbar; tweak if needed */
+  z-index: 30;               /* above list rows & visualizer */
+}
+
+/* When sticky, add a soft drop shadow so it reads as a bar */
+@supports (position: sticky){
+  #lib-search{
+    box-shadow: 0 8px 28px rgba(255,42,42,.12), 0 2px 0 rgba(255,42,42,.18) inset;
+  }
+  /* keep the top pager snug under the bar */
+  #pager-top{ margin-top: 8px; }
+}
+/* --- Topbar right buttons --- */
+.rr-topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.rr-topbar-right .rr-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 14px;
+  border:2px solid #ff2a2a;
+  border-radius:999px;
+  background:#120000;
+  color:#fff !important;
+  text-decoration:none;
+  font: 600 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:.2px;
+  transition: transform .06s ease, box-shadow .12s ease, background .12s ease, opacity .12s ease;
+  box-shadow: 0 0 0 rgba(255,42,42,0);
+}
+.rr-topbar-right .rr-link:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255,42,42,.55), inset 0 0 20px rgba(255,42,42,.20);
+}
+.rr-topbar-right .rr-link:active{
+  transform: translateY(0);
+  background:#200000;
+}
+@media (max-width:640px){
+  .rr-topbar-right{ gap:8px; }
+  .rr-topbar-right .rr-link{ padding:8px 12px; }
+}
+/* --- Floating Now Playing pill --- */
+.now-playing{
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,0,0,.85);
+  border: 1px solid #ff2a2a;
+  border-radius: 30px;
+  padding: 6px 18px;
+  font-size: 14px;
+  color: #fff;
+  box-shadow: 0 0 14px rgba(255,42,42,.35), inset 0 0 12px rgba(255,42,42,.25);
+  z-index: 50;
+  animation: fadeIn .25s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translate(-50%,10px);}
+  to{opacity:1; transform:translate(-50%,0);}
+}
+
+
+/* ==== DASHBOARD: Fixed-height scroll area for playlist ==== */
+.playlist-scroll {
+  max-height: 420px;              /* ~6–8 items visible; tweak later if needed */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;             /* room for scrollbar */
+}
+
+/* Subtle neon scrollbar styling (WebKit/Blink) */
+.playlist-scroll::-webkit-scrollbar { width: 8px; }
+.playlist-scroll::-webkit-scrollbar-track { background: rgba(255,0,0,0.08); }
+.playlist-scroll::-webkit-scrollbar-thumb { background: rgba(255,0,0,0.35); border-radius: 8px; }
+.playlist-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,0,0,0.6); }
+
+/* Firefox scrollbar */
+.playlist-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,0,0,0.35) rgba(255,0,0,0.08);
+}
+/* ==== /DASHBOARD ==== */
+
+/* ==== DASHBOARD: Now Playing EQ Bars ==== */
+.eq-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-left: 6px;
+  height: 14px;     /* bar height */
+}
+
+.eq-bars span {
+  display: block;
+  width: 3px;
+  background: #ff2a2a;
+  border-radius: 2px;
+  animation: eqBounce 1s infinite ease-in-out;
+}
+
+.eq-bars span:nth-child(1) { animation-delay: 0s; }
+.eq-bars span:nth-child(2) { animation-delay: 0.2s; }
+.eq-bars span:nth-child(3) { animation-delay: 0.4s; }
+
+/* Keyframes for fake EQ bounce */
+@keyframes eqBounce {
+  0%, 100% { height: 3px; }
+  50%      { height: 14px; }
+}
+
+/* Hide EQ by default, show only when track has .is-playing */
+.track-item .eq-bars { display: none; }
+.track-item.active.playing .eq-bars { display: inline-flex; }
+/* ==== /DASHBOARD ==== */
+
+/* ==== DASHBOARD: Player Console ==== */
+.player-console {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(20,20,20,0.7);
+  border: 1px solid rgba(255,0,0,0.4);
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(255,0,0,0.35);
+  backdrop-filter: blur(6px);
+}
+
+/* Button styling inside console */
+.player-console .controls button {
+  background: #111;
+  color: #fff;
+  border: 1px solid rgba(255,0,0,0.5);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin: 0 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.player-console .controls button:hover {
+  background: rgba(255,0,0,0.15);
+  box-shadow: 0 0 6px rgba(255,0,0,0.5);
+}
+
+/* Progress bar tweaks */
+.player-console .progress-wrap {
+  margin-top: 8px;
+}
+.player-console input[type="range"] {
+  accent-color: #ff2a2a;
+}
+/* ==== /DASHBOARD ==== */
+
+/* ==== DASHBOARD: Neon seek bar ==== */
+.player-console input[type="range"] {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    rgba(255,42,42,0.85) 0%,
+    rgba(255,42,42,0.85) var(--val, 0%),
+    rgba(120,120,120,0.25) var(--val, 0%),
+    rgba(120,120,120,0.25) 100%
+  );
+  outline: none;
+}
+
+/* WebKit thumb */
+.player-console input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff;
+  border: 2px solid #ff2a2a;
+  box-shadow: 0 0 8px rgba(255,42,42,0.65);
+  cursor: pointer;
+}
+
+/* Firefox track & thumb */
+.player-console input[type="range"]::-moz-range-track {
+  height: 8px; border-radius: 999px; background: transparent;
+}
+.player-console input[type="range"]::-moz-range-progress {
+  height: 8px; border-radius: 999px; background: rgba(255,42,42,0.85);
+}
+.player-console input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; border: 2px solid #ff2a2a;
+  box-shadow: 0 0 8px rgba(255,42,42,0.65);
+  cursor: pointer;
+}
+/* ==== /neon seek bar ==== */
+
+/* ==== DASHBOARD: Console pulse while playing ==== */
+@keyframes consolePulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,0,0,0.35); }
+  50%      { box-shadow: 0 0 18px rgba(255,0,0,0.6);  }
+}
+.player-console.playing {
+  animation: consolePulse 1.8s ease-in-out infinite;
+}
+/* ==== /console pulse ==== */
+
+/* ==== DASHBOARD: Console refinements ==== */
+.player-console {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(20,20,20,0.72);
+  border: 1px solid rgba(255,0,0,0.45);
+  border-radius: 14px;
+  box-shadow: 0 0 14px rgba(255,0,0,0.38);
+  backdrop-filter: blur(6px);
+}
+
+.player-console #nowPlaying {
+  font-weight: 700;
+  letter-spacing: .2px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 6px rgba(255,0,0,0.35);
+}
+
+/* Button group */
+.player-console .controls {
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  margin-bottom: 8px;
+}
+.player-console .controls button {
+  background: #0f0f0f;
+  color: #fff;
+  border: 1px solid rgba(255,0,0,0.55);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
+}
+.player-console .controls button:hover {
+  background: rgba(255,0,0,0.18);
+  box-shadow: 0 0 10px rgba(255,0,0,0.55);
+}
+.player-console .controls button:active {
+  transform: translateY(1px) scale(.98);
+}
+
+/* Progress container frame */
+.player-console .progress-wrap {
+  border: 1px solid rgba(255,0,0,0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.35);
+}
+.player-console .progress-wrap .time-row {
+  font-weight: 600;
+  opacity: .9;
+  margin-bottom: 6px;
+}
+/* ==== /Console refinements ==== */
+
+/* ==== DASHBOARD: Uploads control panel (per-card) ==== */
+.upload-item .manage{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:8px; gap:10px;
+  opacity:.95;
+}
+.upload-item .manage .stats{
+  font-size:12px; opacity:.9;
+}
+.upload-item .manage .actions{ display:flex; gap:8px; }
+
+.upload-item .manage .mini{
+  font-size:12px; padding:6px 10px; border-radius:8px; cursor:pointer;
+  background:#0f0f0f; color:#fff; border:1px solid rgba(255,255,255,.18);
+  transition:background .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+.upload-item .manage .mini:hover{ background:rgba(255,255,255,.08); box-shadow:0 0 6px rgba(255,255,255,.15); }
+.upload-item .manage .mini:active{ transform:translateY(1px); }
+
+.upload-item .manage .mini.danger{
+  border-color:rgba(255,0,0,.55);
+}
+.upload-item .manage .mini.danger:hover{
+  background:rgba(255,0,0,.16); box-shadow:0 0 8px rgba(255,0,0,.45);
+}
+/* ==== /Uploads control panel ==== */
+
+/* ==== DASHBOARD: Uploads manage stacked layout (buttons over stats) ==== */
+.upload-item .manage{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;   /* override previous space-between */
+  gap:6px;
+}
+.upload-item .manage .actions{ order:1; }
+.upload-item .manage .stats{
+  order:2;
+  font-size:12px;
+  opacity:.9;
+}
+
+/* ==== DASHBOARD: Upload cards tighten & align ==== */
+.upload-item.track-row{
+  padding-bottom: 10px;
+}
+
+.upload-item .track-main{
+  display:grid;
+  grid-template-rows:auto auto;
+  row-gap:2px;
+}
+
+.upload-item .track-title,
+.upload-item .track-sub{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.upload-item .track-title{ font-weight:700; }
+.upload-item .track-sub{ opacity:.9; font-size:12px; }
+
+/* Manage row: consistent spacing + aligned buttons */
+.upload-item .manage{
+  margin-top:8px !important;
+  width:100%;
+}
+.upload-item .manage .actions{
+  display:flex;
+  gap:8px;
+}
+.upload-item .manage .mini{
+  min-width:84px;      /* keeps Delete/Replace aligned across cards */
+  text-align:center;
+}
+
+@media (max-width:520px){
+  .upload-item .manage .mini{ min-width:72px; }
+}
+
+/* Subtle hover pop */
+.upload-item:hover{
+  box-shadow:0 0 12px rgba(255,0,0,0.18);
+  transform:translateY(-1px);
+  transition:box-shadow .15s ease, transform .12s ease;
+}
+/* ==== /tighten ==== */
+
+/* ==== DASHBOARD: Disabled action button style ==== */
+.upload-item .manage .mini[disabled]{
+  opacity: .45;
+  color: #bbb;
+  border-color: rgba(255,255,255,.15);
+  background: #0d0d0d;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.upload-item .manage .mini[disabled]:hover,
+.upload-item .manage .mini[disabled]:active{
+  background: #0d0d0d;
+  box-shadow: none;
+  transform: none;
+}
+/* ==== /disabled style ==== */
+
+/* ==== DASHBOARD: Upload buttons fit inside cards ==== */
+.upload-item .manage .actions{ gap:6px; flex-wrap:wrap; }
+.upload-item .manage .mini{
+  min-width:72px;          /* was 84px */
+  padding:6px 10px;        /* slightly slimmer */
+  box-sizing:border-box;   /* avoid edge bleed */
+}
+/* ==== /fit ==== */
+
+/* ==== DASHBOARD: Fixed-height scroll for uploads ==== */
+.uploads-scroll{
+  max-height: 420px;        /* tweak later if you want taller */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+}
+
+/* Scrollbar styling */
+.uploads-scroll::-webkit-scrollbar{ width:8px; }
+.uploads-scroll::-webkit-scrollbar-track{ background: rgba(255,0,0,0.08); }
+.uploads-scroll::-webkit-scrollbar-thumb{ background: rgba(255,0,0,0.35); border-radius:8px; }
+.uploads-scroll::-webkit-scrollbar-thumb:hover{ background: rgba(255,0,0,0.6); }
+.uploads-scroll{ scrollbar-width: thin; scrollbar-color: rgba(255,0,0,0.35) rgba(255,0,0,0.08); }
+/* ==== /uploads scroll ==== */
+
+/* ==== DASHBOARD: Recolor stats (▶ / ♥) ==== */
+.upload-item .manage .stats{
+  color: #fff;                      /* high-contrast text */
+  text-shadow: 0 0 6px rgba(255,0,0,0.35);  /* red neon glow */
+  font-weight: 600;
+  letter-spacing: .2px;
+  opacity: .95;
+}
+
+/* ==== DASHBOARD: Panel cards glow & padding ==== */
+.grid > section.card{
+  background: rgba(20,20,20,0.60);
+  border: 1px solid rgba(255,0,0,0.35);
+  border-radius: 14px;
+  box-shadow: 0 0 14px rgba(255,0,0,0.28);
+  padding: 12px;
+}
+
+/* Headings pop a bit */
+.grid > section.card > h2{
+  margin-top: 0;
+  text-shadow: 0 0 6px rgba(255,0,0,0.35);
+}
+/* ==== /panel glow ==== */
+
+/* ==== DASHBOARD: Playlist remove button ==== */
+.track-item { position: relative; }
+.track-item .pl-remove{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:50%;
+  background:#0f0f0f; color:#fff;
+  border:1px solid rgba(255,0,0,0.5);
+  font-size:14px; line-height:1;
+  cursor:pointer;
+  opacity:.85;
+  transition:box-shadow .15s ease, background .15s ease, opacity .15s ease, transform .05s ease;
+}
+.track-item .pl-remove:hover{
+  background:rgba(255,0,0,0.18);
+  box-shadow:0 0 8px rgba(255,0,0,0.5);
+  opacity:1;
+}
+.track-item.active .pl-remove{ border-color:rgba(255,255,255,0.6); }
+/* keep row text from hiding under button */
+#playlistList .meta{ margin-right:32px; }
+/* ==== /playlist remove ==== */
+
+/* ==== DASHBOARD: Active playlist row — no-clip glow ==== */
+#playlistList .track-item{
+  border-radius: 10px;
+  padding: 6px 8px;              /* tiny breathing room so glow never looks chopped */
+}
+#playlistList .track-item.active{
+  /* inset = never clipped by scroll container; outer glow for vibe */
+  box-shadow:
+    inset 0 0 0 2px rgba(255,42,42,0.9),
+    0 0 10px rgba(255,42,42,0.45);
+}
+/* ==== /no-clip glow ==== */
+
+/* ==== DASHBOARD: Shuffle toggle ==== */
+.player-console .controls .toggle{
+  background:#0f0f0f;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:999px;
+  padding:8px 14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.player-console .controls .toggle:hover{
+  background:rgba(255,0,0,0.18);
+  box-shadow:0 0 10px rgba(255,0,0,0.45);
+}
+.player-console .controls .toggle.on{
+  border-color:rgba(255,0,0,0.6);
+  box-shadow:0 0 12px rgba(255,0,0,0.55) inset, 0 0 10px rgba(255,0,0,0.35);
+}
+
+/* ==== DASHBOARD: Uploads stats icon color ==== */
+.upload-item .manage .stats .ic{
+  color: #ff2a2a;
+  text-shadow: 0 0 6px rgba(255,0,0,0.55);
+  font-weight: 800;
+  margin-right: 4px;   /* space before the number */
+}
+
+/* === OCD fix #1: align card tops === */
+#my-playlist{ margin-top:0 !important; }
+
+/* === OCD fix #2: playlist row outline breathing room === */
+#my-playlist .track-list{ padding:8px 10px; }
+
+#playlistList .track-item{
+  position: relative;
+  padding-right: 48px; /* space so the red outline isn't under the X */
+}
+
+#playlistList .track-item .pl-remove{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* === OCD fix #3: dashboard hero matches site panels === */
+
+
+
+/* === Hero banner = same card vibe as Teaser === */
+
+
+
+/* === Hero: darker, less transparent background to match Teaser === */
+
+
+/* === Shared hero card (use on any page hero) === */
+.card-hero{
+  background: rgba(8,8,10,0.84);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34),
+    0 0 42px rgba(255,0,0,0.14) inset,
+    0 10px 28px rgba(0,0,0,0.40);
+  padding: 18px 22px;
+  max-width: 1120px;
+  margin: 10px auto 22px;
+}
+.card-hero img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius: 12px;
+}
+
+/* === Hero dedupe: rely only on .card + .card-hero (no extra banner chrome) === */
+
+
+/* DASHBOARD HERO — make the backing darker, less transparent */
+
+/* Dashboard hero: pull it down from the top */
+
+/* Dashboard hero: move the banner down without moving the page/background */
+
+/* Dashboard hero: keep centered, add top gap, don't move the page bg */
+
+
+/* === DASHBOARD-ONLY: make hero identical to Library === */
+body.dashboard-page 
+
+/* Banner image must fill the hero like Library */
+body.dashboard-page 
+
+/* DASHBOARD-ONLY: ensure banner image fills the hero */
+body.dashboard-page .card-hero img{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  max-width:none !important;
+  border-radius:12px !important;
+}
+
+/* DASHBOARD-ONLY: ensure hero matches Library and image fills */
+body.dashboard-page .card.card-hero{
+  background: rgba(8,8,10,0.84) !important;
+  border-radius: 18px !important;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34) !important,
+    0 0 42px rgba(255,0,0,0.14) inset !important,
+    0 10px 28px rgba(0,0,0,0.40) !important;
+  padding: 18px 22px !important;
+  max-width: 1120px !important;
+  margin: 10px auto 22px !important;
+  width: auto !important;
+}
+body.dashboard-page .card.card-hero img{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  max-width:none !important;
+  border-radius:12px !important;
+}
+
+/* === Canonical site-wide hero banner === */
+.hero-banner{
+  background: rgba(8,8,10,0.84);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34),
+    0 0 42px rgba(255,0,0,0.14) inset,
+    0 10px 28px rgba(0,0,0,0.40);
+  padding: 18px 22px;
+  max-width: 1120px;
+  margin: 10px auto 22px; /* centers + spacing */
+}
+.hero-banner img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:12px;
+}
+
+/* === Dashboard panels: match hero banner backing === */
+.dashboard-page .card.panel-match {
+  background: rgba(8,8,10,0.84);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.34),
+    0 0 42px rgba(255,0,0,0.14) inset,
+    0 10px 28px rgba(0,0,0,0.40);
+  padding: 16px;
+}
+
+/* === Readability pass v1 (FIXES 7) ================================ */
+/* Darker, denser dashboard panels + higher contrast text */
+.dashboard-page .card.panel-match{
+  background: rgba(8,8,10,0.88) !important;
+  backdrop-filter: blur(2px) saturate(110%);
+  -webkit-backdrop-filter: blur(2px) saturate(110%);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.32),
+    0 0 42px rgba(255,0,0,0.16) inset,
+    0 10px 28px rgba(0,0,0,0.50);
+}
+
+/* Text contrast inside dashboard panels */
+.dashboard-page .card.panel-match,
+.dashboard-page .card.panel-match p,
+.dashboard-page .card.panel-match li,
+.dashboard-page .card.panel-match .meta{
+  color: rgba(255,255,255,0.92);
+}
+.dashboard-page .card.panel-match h1,
+.dashboard-page .card.panel-match h2,
+.dashboard-page .card.panel-match h3{
+  color:#fff;
+  text-shadow: 0 0 6px rgba(255,32,32,0.18);
+}
+
+/* Player: font sizing + button heft */
+.dashboard-page .player,
+.dashboard-page .playlist-player{
+  font-size: 1.02rem;
+}
+.dashboard-page .player .controls button,
+.dashboard-page .playlist-player .controls button{
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(255,42,42,0.35) inset, 0 2px 10px rgba(0,0,0,0.45);
+}
+
+/* Scrub bar: thicker track + clearer thumb */
+.dashboard-page input[type="range"]{
+  height: 14px;
+}
+
+/* WebKit */
+.dashboard-page input[type="range"]::-webkit-slider-runnable-track{
+  height: 10px;
+  background: linear-gradient(90deg, rgba(255,0,0,0.55), rgba(255,0,0,0.20));
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255,42,42,0.35), 0 0 8px rgba(255,0,0,0.25);
+}
+.dashboard-page input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width: 16px; height: 16px; margin-top: -3px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255,42,42,0.75), 0 0 10px rgba(255,0,0,0.55);
+}
+
+/* Firefox */
+.dashboard-page input[type="range"]::-moz-range-track{
+  height: 10px;
+  background: linear-gradient(90deg, rgba(255,0,0,0.55), rgba(255,0,0,0.20));
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255,42,42,0.35), 0 0 8px rgba(255,0,0,0.25);
+}
+.dashboard-page input[type="range"]::-moz-range-thumb{
+  width: 16px; height: 16px;
+  background: #fff;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255,42,42,0.75), 0 0 10px rgba(255,0,0,0.55);
+}
+
+/* Active track row: tighten neon ring without double borders */
+.dashboard-page .track-row.active{
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.45),
+    0 0 16px rgba(255,0,0,0.35);
+  background: rgba(20,10,12,0.35);
+}
+
+/* Slightly larger small labels like "Now playing" */
+.dashboard-page .now-playing,
+.dashboard-page .small-label{
+  font-size: .95rem;
+  color: rgba(255,255,255,0.90);
+}
+
+/* ================================================================== */
+
+/* === Readability fallback (apply even without .dashboard-page) === */
+.card.panel-match{
+  background: rgba(8,8,10,0.88) !important;
+  backdrop-filter: blur(2px) saturate(110%);
+  -webkit-backdrop-filter: blur(2px) saturate(110%);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.32),
+    0 0 42px rgba(255,0,0,0.16) inset,
+    0 10px 28px rgba(0,0,0,0.50);
+}
+
+/* === Dashboard card override (FIXES 7) ============================ */
+.dashboard-page .card{
+  background: rgba(8,8,10,0.88) !important;
+  backdrop-filter: blur(2px) saturate(110%);
+  -webkit-backdrop-filter: blur(2px) saturate(110%);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.32),
+    0 0 42px rgba(255,0,0,0.16) inset,
+    0 10px 28px rgba(0,0,0,0.50);
+}
+.dashboard-page .card,
+.dashboard-page .card p,
+.dashboard-page .card .muted,
+.dashboard-page .card li{
+  color: rgba(255,255,255,0.92);
+}
+.dashboard-page .card h1,
+.dashboard-page .card h2,
+.dashboard-page .card h3{
+  color:#fff;
+  text-shadow: 0 0 6px rgba(255,32,32,0.18);
+}
+/* ================================================================= */
+
+/* === Player controls upgrade (FIXES 7) ============================= */
+.dashboard-page .player-console .controls button,
+#prevBtn,#playPauseBtn,#nextBtn,#shuffleBtn{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px;
+  padding:10px 16px;
+  border-radius:12px;
+  font-weight:700;
+  letter-spacing:.2px;
+  border:1px solid rgba(255,42,42,0.45);
+  background: rgba(20,10,12,0.65);
+  color:#fff;
+  box-shadow:
+    0 0 0 1px rgba(255,42,42,0.25) inset,
+    0 6px 16px rgba(0,0,0,0.45);
+  transition: transform .08s ease, box-shadow .12s ease, background .12s ease;
+}
+
+#shuffleBtn.toggle.active{ /* if you toggle a class, it will glow more */
+  background: rgba(40,10,12,0.85);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.55),
+    0 0 18px rgba(255,0,0,0.35),
+    0 6px 16px rgba(0,0,0,0.55);
+}
+
+.dashboard-page .player-console .controls button:hover{
+  transform: translateY(-1px);
+  background: rgba(28,12,14,0.80);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.55),
+    0 0 18px rgba(255,0,0,0.35),
+    0 10px 24px rgba(0,0,0,0.55);
+}
+
+.dashboard-page .player-console .controls button:active{
+  transform: translateY(0);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.65),
+    0 0 12px rgba(255,0,0,0.45),
+    0 4px 12px rgba(0,0,0,0.55) inset;
+}
+
+.dashboard-page .player-console .controls button:focus{
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(255,42,42,0.65),
+    0 0 18px rgba(255,0,0,0.40);
+}
+/* =================================================================== */
+
+/* === Shuffle state fix (FIXES 7) ================================ */
+.dashboard-page .player-console .controls button{ cursor:pointer; }
+
+/* Your JS toggles .on (not .active). Style that state. */
+#shuffleBtn.on,
+#shuffleBtn.toggle.on,
+.dashboard-page .player-console .controls #shuffleBtn.on{
+  background: rgba(40,10,12,0.85);
+  border-color: rgba(255,42,42,0.65);
+  box-shadow:
+    0 0 0 2px rgba(255,42,42,0.55),
+    0 0 18px rgba(255,0,0,0.35),
+    0 6px 16px rgba(0,0,0,0.55);
+}
+/* ================================================================ */
+
+/* === Help tooltip for shortcuts (FIXES 7) ========================= */
+.dashboard-page .player-console{ position: relative; }
+.dashboard-page .player-console .icon-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; margin-left:6px;
+  border-radius:50%; border:1px solid rgba(255,42,42,0.45);
+  background: rgba(20,10,12,0.65); color:#fff; font-weight:800; line-height:1;
+  cursor:pointer; user-select:none;
+  box-shadow: 0 0 0 1px rgba(255,42,42,0.25) inset, 0 6px 16px rgba(0,0,0,0.45);
+}
+.dashboard-page .player-console .icon-btn:hover{
+  background: rgba(28,12,14,0.80);
+  box-shadow: 0 0 0 2px rgba(255,42,42,0.55), 0 0 18px rgba(255,0,0,0.35);
+}
+
+.rr-tooltip{
+  position:absolute; z-index:30; min-width:320px; max-width:520px;
+  background: rgba(8,8,10,0.92);
+  border:1px solid rgba(255,42,42,0.55);
+  border-radius:12px; padding:10px 12px;
+  color:#fff; font-size:.90rem; line-height:1.35;
+  box-shadow: 0 0 20px rgba(255,0,0,0.20), 0 10px 28px rgba(0,0,0,0.55);
+  opacity:0; pointer-events:none; transition:opacity .12s ease;
+}
+.rr-tooltip[aria-hidden="false"]{ opacity:1; pointer-events:auto; }
+/* ================================================================= */
+
+/******** Shortcut info styles (FIXES 7) ********/
+#my-playlist .shortcut-info{
+  margin-top:12px;
+  padding:10px 12px;
+  background: rgba(8,8,10,0.88);
+  border:1px solid rgba(255,42,42,0.45);
+  border-radius:12px;
+  text-align:center;
+  color:#fff;
+  box-shadow:
+    0 0 0 1px rgba(255,42,42,0.25) inset,
+    0 10px 24px rgba(0,0,0,0.45);
+}
+#my-playlist .shortcut-info .si-title{
+  font-weight:700;
+  letter-spacing:.2px;
+  margin-bottom:4px;
+  text-shadow: 0 0 6px rgba(255,32,32,0.18);
+}
+#my-playlist .shortcut-info .si-line{
+  font-size:.92rem;
+  opacity:.92;
+}
+/******** End shortcut info styles (FIXES 7) ****/
+
+/* === New Track Toast (FIXES 7) =================================== */
+#my-playlist .new-track-toast{
+  margin: 10px 0 6px;
+  padding: 8px 12px;
+  display: none; /* default hidden; JS will toggle */
+  background: rgba(8,8,10,0.95);
+  color:#fff;
+  border:1px solid rgba(255,42,42,0.55);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px rgba(255,42,42,0.25) inset,
+    0 8px 18px rgba(0,0,0,0.45);
+  font-size: .95rem;
+  line-height: 1.35;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+#my-playlist .new-track-toast .msg{
+  text-shadow: 0 0 6px rgba(255,32,32,0.18);
+}
+#my-playlist .new-track-toast .dismiss{
+  all: unset;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border:1px solid rgba(255,42,42,0.45);
+  box-shadow: 0 0 0 1px rgba(255,42,42,0.25) inset;
+}
+#my-playlist .new-track-toast.show{
+  display:flex;
+  animation: toast-pop 160ms ease-out;
+}
+@keyframes toast-pop{
+  from{ transform: translateY(-6px); opacity:.0; }
+  to{ transform: translateY(0); opacity:1; }
+}
+/* ================================================================ */
+
+/* === Library toolbar (FIXES 7) =================================== */
+.library-page #libraryToolbar,
+#libraryToolbar{
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  margin: 10px 0 14px;
+}
+#libraryToolbar input[type="search"]{
+  flex:1; min-width:240px;
+  padding:10px 12px; border-radius:10px;
+  background: rgba(8,8,10,0.85);
+  border:1px solid rgba(255,42,42,0.35);
+  color:#fff;
+}
+#libraryToolbar select{
+  padding:10px 12px; border-radius:10px;
+  background: rgba(8,8,10,0.90); color:#fff;
+  border:1px solid rgba(255,42,42,0.35);
+}
+/* ================================================================ */
+
+/* === Library no-flash tweak (FIXES 7) ============================ */
+/* Hide the transient step text that flickers during sort/filter */
+.library-page #step { display: none !important; }
+/* ================================================================ */

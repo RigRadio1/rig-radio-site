@@ -4,8 +4,24 @@
   const auth  = document.getElementById('auth');
   const fatal = document.getElementById('fatal');
   const list  = document.getElementById('list');
+  const sortSel = document.getElementById('sSort');
+  if (sortSel) {
+    const initial = (window.LIB_SORT || localStorage.getItem('LIB_SORT') || 'recent');
+    // reflect current mode in the UI
+    try { sortSel.value = initial; } catch {}
+    sortSel.addEventListener('change', () => {
+      const v = sortSel.value || 'recent';
+      localStorage.setItem('LIB_SORT', v);
+      window.LIB_SORT = v;
+      // reset to page 1 so results are consistent
+      const url = new URL(location.href);
+      url.searchParams.set('page','1');
+      location.href = url.toString();
+    });
+  }
+
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const stop = (m) => { fatal.textContent = m; step.textContent = "Stopped"; };
+  const stop = (m) => { fatal.textContent = m; if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Stopped"; };
 
 async function incPlay(_client, trackId){
   try {
@@ -40,29 +56,31 @@ async function incLike(_client, trackId){
 
   async function boot(){
     try{
-      step.textContent = "Step 1/5: SDK";
+      if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 1/5: SDK";
       if (!window.supabase){ stop("Supabase SDK failed to load."); return; }
 
-      step.textContent = "Step 2/5: Client";
+      if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 2/5: Client";
       const _client = window.supabase.createClient(
         'https://tpzpeoqdpfwqumlsyhpx.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E'
       );
 
-      step.textContent = "Step 3/5: Session";
+      if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 3/5: Session";
       const { data: s, error: se } = await _client.auth.getSession();
       if (se) console.warn("getSession error:", se);
       const session = s?.session || null;
       auth.textContent = session?.user ? ("Signed in: " + (session.user.email || "user")) : "Not signed in";
 
-      step.textContent = "Step 4/5: Fetch";
-      const { data, error } = await _client.from('tracks').select('*').order('created_at',{ascending:false}).limit(100);
+      if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 4/5: Fetch";
+      const { data, error } = await _client.from('tracks').select('*')
+      .order(((window.LIB_SORT||localStorage.getItem("LIB_SORT")||"recent")==="az"?"title":"created_at"), {ascending:((window.LIB_SORT||localStorage.getItem("LIB_SORT")||"recent")==="az")})
+      .limit(100);
       if (error){ stop("DB error: " + esc(error.message)); return; }
 
-      step.textContent = "Step 5/5: Render";
+      if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 5/5: Render";
       if (!data.length){
         list.innerHTML = '<div class="status">No tracks yet. <a class="rr-link" href="/submit">Submit one</a>.</div>';
-        step.textContent = `${data.length} track${data.length===1?"":"s"}`; return;
+        if(!window.LIB_SUPPRESS_STATUS) step.textContent = `${data.length} track${data.length===1?"":"s"}`; return;
       }
 function rowHTML(r){
   return `
@@ -154,11 +172,43 @@ const filtered = data.filter(r => {
   const okG = !g || genre.includes(g);
   return okA && okG;
 });
+  // Global sort BEFORE pagination (FIXES 8)
+  (function(){
+    const mode = (window.LIB_SORT || localStorage.getItem('LIB_SORT') || 'recent');
+    const N = (x) => { x = Number(x); return isFinite(x) ? x : 0; };
+
+    if (!Array.isArray(filtered)) return;
+
+    if (mode === 'az') {
+      filtered.sort((a,b) =>
+        String(a.title||'').localeCompare(String(b.title||''), undefined, { sensitivity: 'base' })
+      );
+    } else if (mode === 'popular') {
+      filtered.sort((a,b) => N(b.likes) - N(a.likes));
+    } else if (mode === 'plays') {
+      filtered.sort((a,b) => N(b.plays) - N(a.plays));
+    } else {
+      // recent (newest first)
+      const T = (r) => Date.parse(r.created_at || 0) || 0;
+      filtered.sort((a,b) => T(b) - T(a));
+    }
+  })();
+
 
 const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
 const pageParam  = parseInt(new URLSearchParams(location.search).get('page') || '1', 10);
 const page       = Math.min(Math.max(pageParam, 1), totalPages);
 const view       = filtered.slice((page - 1) * pageSize, page * pageSize);
+  // Update track count display (Showing X–Y of N)
+  (function(){
+    const el = document.getElementById('libCount');
+    if (!el) return;
+    const total = filtered.length;
+    if (total === 0) { el.textContent = '0 tracks'; return; }
+    const from = ((page - 1) * pageSize) + 1;
+    const to   = Math.min(page * pageSize, total);
+    el.textContent = `Showing ${from}–${to} of ${total}`;
+  })();
 
 
 
@@ -226,7 +276,52 @@ document.querySelectorAll('.page-btn').forEach(btn=>{
 });
 
 
-      list.innerHTML = view.map(rowHTML).join("");
+        (function(){
+          var mode = (window.LIB_SORT || localStorage.getItem("LIB_SORT") || "recent");
+          function num(x){ x = Number(x); return isFinite(x) ? x : 0; }
+          if(Array.isArray(view)){
+            if(mode === "az"){
+              view.sort(function(a,b){
+                var A = (a.title||"").toString();
+                var B = (b.title||"").toString();
+                return A.localeCompare(B, undefined, {sensitivity:"base"});
+              });
+            } else if(mode === "popular"){
+              view.sort(function(a,b){ return num(b.likes) - num(a.likes); });
+            } else if(mode === "plays"){
+              view.sort(function(a,b){ return num(b.plays) - num(a.plays); });
+            } else {
+              view.sort(function(a,b){
+                var ta = Date.parse(a.created_at||0) || 0;
+                var tb = Date.parse(b.created_at||0) || 0;
+                return tb - ta; /* recent first */
+              });
+            }
+          }
+        })();
+      list.classList.add("updating");
+        /* CLIENT SORT (FIXES7) */
+        (function(){
+          var mode=(window.LIB_SORT||localStorage.getItem("LIB_SORT")||"recent");
+          function N(x){x=Number(x);return isFinite(x)?x:0;}
+          if(Array.isArray(view)){
+            if(mode==="az"){
+              view.sort(function(a,b){
+                return String(a.title||"").localeCompare(String(b.title||""),undefined,{sensitivity:"base"});
+              });
+            } else if(mode==="popular"){
+              view.sort(function(a,b){ return N(b.likes)-N(a.likes); });
+            } else if(mode==="plays"){
+              view.sort(function(a,b){ return N(b.plays)-N(a.plays); });
+            } else {
+              view.sort(function(a,b){
+                var ta=Date.parse(a.created_at||0)||0, tb=Date.parse(b.created_at||0)||0; return tb-ta;
+              });
+            }
+          }
+        })();
+        list.innerHTML = view.map(rowHTML).join("");
+        requestAnimationFrame(function(){ list.classList.remove("updating"); });
 // --- Local playlist (safe, no backend changes) ---
 const PL_KEY = "rr_playlist_ids";
 const getPL = () => {
@@ -414,7 +509,7 @@ if (likeBtn){
 
 }
 
-      step.textContent = `${data.length} track${data.length===1?"":"s"}`;
+      if(!window.LIB_SUPPRESS_STATUS) step.textContent = `${data.length} track${data.length===1?"":"s"}`;
     }catch(e){ stop("Fatal: " + (e?.message || e)); }
   }
 

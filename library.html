@@ -14,7 +14,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Library — Rig-Radio</title>
-  <link rel="stylesheet" href="/rr.css"/>
+  <link rel="stylesheet" href="/rr.css?v=ROLLBACK"/>
   <style>
     .wrap{max-width:1100px;margin:28px auto;padding:0 16px;}
     .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -58,7 +58,7 @@
     <div class="rr-topbar-left">LIBRARY</div>
     <nav class="rr-topbar-right">
       <a class="rr-link" href="/dashboard">Dashboard</a>
-      <a class="rr-link" href="/submit">Submit</a>
+      <a class="rr-link" href="/submit.html">Submit</a>
     </nav>
   </header>
 
@@ -85,6 +85,12 @@
 </select>
 <button id="sGo" type="button" class="rr-btn rr-primary">Search</button>
 <button id="sClear" type="button" class="rr-btn rr-ghost">Clear</button>
+  <select id="sSort" style="flex:0 0 180px; max-width:220px; padding:6px 10px; border:1px solid #444; border-radius:8px; background:#0e0e0e; color:#fff;">
+    <option value="recent">Recent uploads</option>
+    <option value="popular">Most popular (likes)</option>
+    <option value="plays">Most played</option>
+    <option value="az">Title A–Z</option>
+  </select>
 <button id="playAll" type="button" class="rr-btn rr-primary">Play Page</button>
 
 
@@ -92,15 +98,14 @@
 </form>
 
 <div id="pager-top" class="pager"></div>
+
+  <div id="libCount" class="status"></div>
 <section id="list" class="list"></section>
 <div id="pager-bottom" class="pager"></div>
 
 
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/library.js?v=20250915b"></script>
-<script src="/auth.js" defer></script>
 <!-- Floating Now Playing pill -->
 <div id="nowPlaying" class="now-playing" style="display:none;">
   <span id="npTitle">(no track playing)</span>
@@ -109,3 +114,6 @@
 </body>
 </html>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/library.js?v=FIXES7-CLEAN2"></script>
+  <script src="/auth.js" defer></script>
