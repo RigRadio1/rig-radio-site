@@ -88,10 +88,47 @@ async function getCoverUrl(r) {
         .limit(3);
       if (e2) console.error("NEWS: trending error:", e2.message);
       await renderList(elTrend, trending, "trending tracks (this week)");
+      appendTrendingBadges(trending);
 
       console.log("NEWS: feed render complete");
     } catch (e) {
       console.error("NEWS: exception:", e.message);
     }
   })();
+}
+
+/* post-pass: add plays/likes badges to Trending cards without touching cover rendering */
+function appendTrendingBadges(rows){
+  try{
+    const wrap = document.getElementById('trending-list');
+    if (!wrap || !rows || rows.length === 0) return;
+    const cards = wrap.querySelectorAll('.card');
+    rows.forEach((r, i) => {
+      const card = cards[i];
+      if (!card) return;
+      // avoid duplicates if re-run
+      if (card.querySelector('.badges')) return;
+
+      const plays = (r?.plays ?? 0);
+      const likes = (r?.likes ?? 0);
+
+      const badges = document.createElement('div');
+      badges.className = 'badges';
+      badges.style.cssText = 'display:flex;gap:8px;align-items:center;margin-left:auto;';
+
+      const s1 = document.createElement('span');
+      s1.title = 'plays';
+      s1.style.cssText = 'font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid rgba(255,255,255,0.18);';
+      s1.textContent = `▶ ${plays}`;
+
+      const s2 = document.createElement('span');
+      s2.title = 'likes';
+      s2.style.cssText = 'font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid rgba(255,255,255,0.18);';
+      s2.textContent = `❤ ${likes}`;
+
+      badges.appendChild(s1);
+      badges.appendChild(s2);
+      card.appendChild(badges);
+    });
+  }catch(e){ console.warn('appendTrendingBadges error:', e?.message); }
 }
