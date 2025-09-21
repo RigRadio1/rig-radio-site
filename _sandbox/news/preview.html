@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>NEWS — Rig-Radio (Sandbox)</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link rel="stylesheet" href="/rr.css"/>
+  <style>
+    body{background:url(/studio-bg.png) center top no-repeat fixed;background-size:cover;color:#ddd}
+    body{background:url(/studio-bg.png) center top no-repeat fixed;background-size:cover;color:#ddd;font-family:Orbitron,sans-serif}
+    .news-hero{background:rgba(8,8,12,.92);text-align:center}
+    .news-hero h1 span{font-size:56px;letter-spacing:.1em;text-shadow:0 0 12px #f33,0 0 36px #c00}
+    body{background:#000 url(/studio-bg.png) center top no-repeat fixed;background-size:cover;color:#ddd}
+    /* === Sandbox-only styles (local to this file) === */
+    .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+    .section{margin:20px auto;max-width:1100px;padding:12px 16px;border-radius:16px;
+      border:1px solid rgba(255,42,42,.28);background:rgba(8,8,10,.84);
+      box-shadow:0 0 40px rgba(255,0,0,.12) inset}
+    .muted{opacity:.85;font-size:.95em}
+
+    /* Neon header */
+    .news-hero{display:flex;flex-direction:column;gap:8px;padding:18px 20px;border-radius:20px;
+      background:rgba(8,8,10,.90);border:1px solid rgba(255,42,42,.34);
+      box-shadow:0 0 0 2px rgba(255,42,42,.22) inset, 0 0 48px rgba(255,0,0,.16)}
+    .news-hero h1{margin:0;font-size:42px;letter-spacing:.06em;text-transform:uppercase}
+    .news-hero h1 span{display:inline-block;text-shadow:0 0 10px rgba(255,0,0,.65),0 0 22px rgba(255,0,0,.35)}
+
+    /* Ticker placeholder */
+    .ticker{display:flex;gap:12px;overflow:hidden;white-space:nowrap;margin-top:6px;padding-top:10px;
+      border-top:1px dashed rgba(255,42,42,.35)}
+    .ticker .chip{display:inline-block;padding:6px 12px;border-radius:999px;
+      border:1px solid rgba(255,42,42,.32);background:rgba(22,10,10,.55)}
+
+    /* Sections */
+    h2{margin:0 0 8px 0}
+  </style>
+  <style id="news-theme-overrides">
+    .wrap{max-width:1200px;margin:28px auto;padding:0 16px}
+    .section{background:rgba(8,8,12,.88)!important;border:1px solid rgba(255,42,42,.35)!important;border-radius:18px;
+      box-shadow:0 0 0 2px rgba(255,42,42,.22) inset, 0 0 42px rgba(255,0,0,.14) inset, 0 18px 28px rgba(0,0,0,.45)!important}
+    .section + .section{margin-top:18px}
+    .news-hero{padding:24px 24px!important;text-align:center!important}
+    .news-hero h1{margin:0 0 8px 0;font-weight:800;letter-spacing:.08em}
+    .news-hero h1 span{text-shadow:0 0 14px rgba(255,0,0,.75),0 0 36px rgba(255,0,0,.35)}
+    .ticker{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px;padding-top:12px;
+      border-top:1px solid rgba(255,42,42,.28)}
+    .ticker .chip{padding:7px 14px;border-radius:999px;border:1px solid rgba(255,42,42,.38);
+      background:rgba(22,10,10,.55);box-shadow:0 0 18px rgba(255,22,22,.10) inset}
+    h2{font-weight:800;letter-spacing:.02em}
+    .muted{opacity:.88}
+  </style>
+  <style id="news-log-overrides">
+    #server-updates .logs{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    #server-updates .log{padding:10px 12px;border-radius:12px;background:rgba(12,10,12,.85);
+      border:1px solid rgba(255,42,42,.28);box-shadow:0 0 22px rgba(255,0,0,.10) inset}
+    #server-updates .log .ts{font-weight:700;margin-right:8px;letter-spacing:.02em}
+    #server-updates .log .tag{margin-left:8px;padding:2px 8px;border-radius:999px;
+      border:1px solid rgba(255,42,42,.35);background:rgba(30,12,12,.55);font-size:.9em}
+  </style>
+  <style id="news-feed-overrides">
+    #live-feeds .feedlist{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+    #live-feeds .card{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
+      background:rgba(12,10,12,.85);border:1px solid rgba(255,42,42,.28);
+      box-shadow:0 0 22px rgba(255,0,0,.12) inset}
+    #live-feeds .card img{width:50px;height:50px;object-fit:cover;border-radius:8px;
+      border:1px solid rgba(255,42,42,.35)}
+    #live-feeds .meta{display:flex;flex-direction:column;font-size:.95em}
+    #live-feeds .title{font-weight:700}
+    #live-feeds .artist{opacity:.85}
+  </style>
+  <style id="trending-polish">
+    #live-feeds h3.trending{display:flex;align-items:center;gap:6px;font-weight:800;letter-spacing:.02em}
+    #live-feeds .trending-chip{margin-left:8px;padding:2px 8px;border-radius:999px;
+      border:1px solid rgba(255,42,42,.45);background:rgba(45,10,10,.65);font-size:.85em}
+    #live-feeds .card.trending{background:rgba(20,10,12,.92)!important;}
+  </style>
+  <style id="contest-styles">
+    #contests .contest-current{padding:16px;border-radius:16px;background:rgba(14,10,14,.88);
+      border:1px solid rgba(255,42,42,.35);box-shadow:0 0 28px rgba(255,0,0,.14) inset;margin-bottom:16px}
+    #contests .contest-current h3{margin:0 0 8px 0;font-weight:800;letter-spacing:.03em}
+    #contests .badge{display:inline-block;margin-left:10px;padding:2px 10px;border-radius:999px;
+      border:1px solid rgba(255,42,42,.55);background:rgba(40,10,10,.65);font-size:.85em;box-shadow:0 0 12px rgba(255,22,22,.45)}
+    #contests .upcoming{display:flex;flex-direction:column;gap:10px}
+    #contests .event{padding:10px 12px;border-radius:12px;background:rgba(12,10,12,.85);
+      border:1px solid rgba(255,42,42,.28)}
+    #contests .event strong{margin-right:6px}
+  </style>
+  <style id="events-styles">
+    #events .calendar{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+    #events .day{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;
+      background:rgba(12,10,12,.85);border:1px solid rgba(255,42,42,.28)}
+    #events .date{min-width:90px;text-align:center;padding:6px 10px;border-radius:8px;
+      background:rgba(45,12,12,.65);border:1px solid rgba(255,42,42,.45);font-weight:700}
+    #events .info{display:flex;flex-direction:column}
+    #events .title{font-weight:700}
+    #events .note{opacity:.85;font-size:.9em}
+  </style>
+</head>
+<body style="background:url(/studio-bg.png) center top no-repeat fixed;background-size:cover;color:#ddd">
+  <div class="wrap">
+
+    <!-- Top Banner -->
+    <header class="section news-hero">
+      <h1><span>NEWS</span></h1>
+      <p class="muted">Rig-Radio bunker bulletin: server updates • live feeds • contests • events</p>
+      <div class="ticker" aria-label="Latest">
+        <div class="chip">[placeholder] New uploads feed hooks here</div>
+        <div class="chip">[placeholder] Trending plays this week</div>
+        <div class="chip">[placeholder] Contest: Halloween Battle opens 10/15</div>
+      </div>
+    </header>
+
+    <!-- 1) Server & Site Updates -->
+    <section class="section" id="server-updates">
+      <h2>Server & Site Updates</h2>
+      <p class="muted">Short, dated notes for deploys, fixes, outages.</p>
+      <div class="logs">
+        <article class="log"><span class="ts">[2025-09-20]</span> NEWS sandbox initialized; neon header + ticker stub. <span class="tag">sandbox</span></article>
+        <article class="log"><span class="ts">[2025-09-19]</span> Nginx configs backed up; no live changes. <span class="tag">ops</span></article>
+      </div>
+    </section>
+
+    <!-- 2) Live Feeds -->
+    <section class="section" id="live-feeds">
+      <h2>Live Feeds</h2>
+      <p class="muted">Auto-updating activity (new uploads, trending plays). Placeholder for now.</p>
+      <div class="feedlist">
+        <div class="card"><img src="/covers/sample1.jpg" alt=""><div class="meta"><div class="title">Mock Track 1</div><div class="artist">Artist A</div></div></div>
+        <div class="card"><img src="/covers/sample2.jpg" alt=""><div class="meta"><div class="title">Mock Track 2</div><div class="artist">Artist B</div></div></div>
+        <div class="card"><img src="/covers/sample3.jpg" alt=""><div class="meta"><div class="title">Mock Track 3</div><div class="artist">Artist C</div></div></div>
+      </div>
+<h3 class="trending" style="margin-top:18px">🔥 Trending This Week</h3>
+<div class="feedlist">
+  <div class="card">
+    <img src="/covers/sample4.jpg" alt="">
+    <div class="meta">
+      <div class="title">Hot Track 1 <span class="trending-chip">🔥 Trending</span></div>
+      <div class="artist">Artist X</div>
+    </div>
+  </div>
+  <div class="card">
+    <img src="/covers/sample5.jpg" alt="">
+    <div class="meta">
+      <div class="title">Hot Track 2 <span class="trending-chip">🔥 Trending</span></div>
+      <div class="artist">Artist Y</div>
+    </div>
+  </div>
+</div>
+
+
+    </section>
+
+    <!-- 3) Contests & Challenges -->
+    <section class="section" id="contests">
+      <h2>Contests & Challenges</h2>
+      <p class="muted">Announce rules, prizes, and countdowns.</p>
+      <div class="contest-current">
+        <h3>Halloween Battle <span class="badge">Active Now</span></h3>
+        <p>Submit your spookiest track. Winner announced Oct 31.</p>
+        <p><strong>Ends:</strong> Oct 31 — <em>Countdown: [10 days left]</em></p>
+      </div>
+      <h4>Upcoming Events</h4>
+      <div class="upcoming">
+        <div class="event"><strong>Nov 15:</strong> Winter Warmup Contest — Upload theme: Fire & Ice</div>
+        <div class="event"><strong>Dec 5:</strong> Rig-Radio Live Show — Houston, TX</div>
+        <div class="event"><strong>Jan 1:</strong> New Year’s Drop Party — midnight uploads premiere</div>
+      </div>
+    </section>
+
+    <!-- 4) Events -->
+    <section class="section" id="events">
+      <h2>Events</h2>
+      <p class="muted">Upcoming list; can grow into a calendar later.</p>
+      <div class="calendar">
+        <div class="day"><div class="date">Oct 25</div><div class="info"><div class="title">Beta Test 2</div><div class="note">Invite-only session</div></div></div>
+        <div class="day"><div class="date">Nov 5</div><div class="info"><div class="title">Rig-Radio Q&A Stream</div><div class="note">Live AMA with dev team</div></div></div>
+        <div class="day"><div class="date">Dec 10</div><div class="info"><div class="title">Year-End Mix Drop</div><div class="note">Community showcase event</div></div></div>
+      </div>
+    </section>
+
+    <!-- 5) Archive -->
+    <section class="section" id="archive">
+      <h2>Archive</h2>
+      <p class="muted">Older posts live here. “Load more” later if needed.</p>
+      <div id="archive-list">[Empty]</div>
+    </section>
+
+  </div>
+</body>
+</html>
