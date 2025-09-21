@@ -13,11 +13,11 @@ if (!window.supabase) {
 
   // Try common field names for the cover path stored in the row.
   function pickCoverPath(r) {
-    return r.cover_path || r.cover || r.cover_key || r.coverUrl || r.coverurl || null;
+    return r.cover_path || null;
   }
 
   async function getCoverUrl(r) {
-    const path = pickCoverPath(r);
+    let path = pickCoverPath(r); if (path const path = pickCoverPath(r);const path = pickCoverPath(r); path.startsWith('covers/')) { path = path.slice(7); }
     if (!path) return null;
     try {
       const { data, error } = await sb.storage.from('covers').createSignedUrl(path, 3600);
@@ -62,7 +62,7 @@ if (!window.supabase) {
       console.log("NEWS: fetching Latest (limit 3) …");
       const { data: latest, error: e1 } = await sb
         .from('tracks')
-        .select('id,title,artist,artist_name,created_at,cover_path,cover,cover_key')
+        .select('id,title,artist,artist_name,created_at,cover_path')
         .eq('status','public')
         .order('created_at', { ascending: false })
         .limit(3);
@@ -74,7 +74,7 @@ if (!window.supabase) {
       console.log("NEWS: fetching Trending (7-day window, limit 3) …", since);
       const { data: trending, error: e2 } = await sb
         .from('tracks')
-        .select('id,title,artist,artist_name,plays,likes,created_at,cover_path,cover,cover_key')
+        .select('id,title,artist,artist_name,plays,likes,created_at,cover_path')
         .eq('status','public')
         .gte('created_at', since)
         .order('plays', { ascending: false })
