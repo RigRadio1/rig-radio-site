@@ -7,6 +7,8 @@ if (!window.supabase) {
   console.error("Supabase SDK missing");
 } else {
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // manual refresh for debugging
+    window._rrRefresh = () => refreshFeeds(sb);
 
   const elLatest = document.getElementById('latest-list');
   const elTrend  = document.getElementById('trending-list');
@@ -89,6 +91,9 @@ async function getCoverUrl(r) {
       if (e2) console.error("NEWS: trending error:", e2.message);
       await renderList(elTrend, trending, "trending tracks (this week)");
       appendTrendingBadges(trending);
+      console.log("NEWS: scheduling auto-refresh 60s");
+      try { await refreshFeeds(sb); } catch(e) { console.warn("initial refresh failed", e?.message); }
+      setInterval(() => { console.log("NEWS: auto-refresh tick"); refreshFeeds(sb); }, 60000);
       {
         const elTicker = document.getElementById("news-ticker");
         if (elTicker) {
@@ -194,5 +199,37 @@ async function refreshFeeds(sb) {
     stampLastUpdated();
   } catch(e){
     console.warn('refreshFeeds error:', e?.message);
+  }
+}
+
+/* fallback: generic list renderer (only used if missing) */
+if (typeof renderList !== 'function') {
+  async function renderList(target, rows, label){
+    try{
+      if (!target) return;
+      if (!rows || rows.length === 0){
+        target.innerHTML = `<div class="status">No ${label} yet.</div>`;
+        return;
+      }
+      const signer = (typeof signCoverUrl === 'function') ? signCoverUrl : getCoverUrl;
+      const urls = await Promise.all(rows.map(signer));
+      const html = rows.map((r,i) => {
+        const title  = r.title || 'Untitled';
+        const artist = r.artist || r.artist_name || 'Unknown';
+        const cover  = urls[i];
+        const imgTag = cover
+          ? `<img src="${cover}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 0 0 2px rgba(255,42,42,0.10)">`
+          : ``;
+        return `
+          <div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 12px;margin:8px 0;border-radius:12px;">
+            ${imgTag}
+            <div class="meta" style="display:flex;flex-direction:column;">
+              <div class="t" style="font-weight:700;">${title}</div>
+              <div class="a" style="opacity:0.8;">${artist}</div>
+            </div>
+          </div>`;
+      }).join('');
+      target.innerHTML = html;
+    }catch(e){ console.warn('fallback renderList error:', e?.message); }
   }
 }
