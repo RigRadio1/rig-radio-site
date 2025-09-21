@@ -104,7 +104,10 @@
     <header class="section news-hero">
       <h1><span>NEWS</span></h1>
       <p class="muted">Rig-Radio bunker bulletin: server updates • live feeds • contests • events</p>
-      <div id="news-ticker" class="ticker" aria-label="Latest"></div>
+      <div class="ticker" aria-label="Latest">
+        <div class="chip">[placeholder] New uploads feed hooks here</div>
+        <div class="chip">[placeholder] Trending plays this week</div>
+        <div class="chip">[placeholder] Contest: Halloween Battle opens 10/15</div>
       </div>
     </header>
 
