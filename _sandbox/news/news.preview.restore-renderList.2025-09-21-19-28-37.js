@@ -22,32 +22,6 @@ async function getCoverUrl(r) {
   if (!path) return null;
   try {
     const { data, error } = await sb.storage.from("tracks").createSignedUrl(path, 3600);
-    const { data, error } = await sb.storage.from("tracks").createSignedUrl(path, 3600);
-
-/* generic list renderer (covers + title/artist) */
-function renderList(target, rows, label){
-  if (!target) return;
-  if (!rows || rows.length === 0){ target.innerHTML = `<div class="status">No ${label} yet.</div>`; return; }
-  (async () => {
-    const signer = (typeof signCoverUrl === function) ? signCoverUrl : getCoverUrl;
-    const urls = await Promise.all(rows.map(signer));
-    const html = rows.map((r,i) => {
-      const title  = r.title || Untitled;
-      const artist = r.artist || r.artist_name || Unknown;
-      const cover  = urls[i];
-      const imgTag = cover ? `<img src="${cover}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 0 0 2px rgba(255,42,42,0.10)">` : ``;
-      return `
-        <div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 12px;margin:8px 0;border-radius:12px;">
-          ${imgTag}
-          <div class="meta" style="display:flex;flex-direction:column;">
-            <div class="t" style="font-weight:700;">${title}</div>
-            <div class="a" style="opacity:0.8;">${artist}</div>
-          </div>
-        </div>`;
-    }).join("");
-    target.innerHTML = html;
-  })();
-}
     if (error) { console.warn("cover sign error:", error.message); return null; }
     return data?.signedUrl || null;
   } catch (e) {
