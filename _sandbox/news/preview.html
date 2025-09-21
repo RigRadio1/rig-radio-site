@@ -125,17 +125,12 @@
     <section class="section" id="live-feeds">
       <h2>Live Feeds</h2>
       <p class="muted">Auto-updating activity (new uploads, trending plays). Placeholder for now.</p>
-      <div class="feedlist">
-        <div class="card"><img src="/covers/sample1.jpg" alt=""><div class="meta"><div class="title">Mock Track 1</div><div class="artist">Artist A</div></div></div>
+<div id="latest-list" class="feedlist"></div>
         <div class="card"><img src="/covers/sample2.jpg" alt=""><div class="meta"><div class="title">Mock Track 2</div><div class="artist">Artist B</div></div></div>
         <div class="card"><img src="/covers/sample3.jpg" alt=""><div class="meta"><div class="title">Mock Track 3</div><div class="artist">Artist C</div></div></div>
       </div>
 <h3 class="trending" style="margin-top:18px">🔥 Trending This Week</h3>
-<div class="feedlist">
-  <div class="card">
-    <img src="/covers/sample4.jpg" alt="">
-    <div class="meta">
-      <div class="title">Hot Track 1 <span class="trending-chip">🔥 Trending</span></div>
+<div id="trending-list" class="feedlist"></div>
       <div class="artist">Artist X</div>
     </div>
   </div>
@@ -190,13 +185,5 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./news.preview.js?v=fix1"></script>
   <!-- Live wiring containers (sandbox) -->
-  <section id="live-feeds-wire" class="card panel-match" style="margin:24px auto;max-width:980px;padding:14px 18px;">
-    <h2 style="margin:0 0 10px 0;">Live Feeds — Latest Uploads</h2>
-    <div id="latest-list"></div>
-  </section>
-  <section id="trending-wire" class="card panel-match" style="margin:24px auto;max-width:980px;padding:14px 18px;">
-    <h2 style="margin:0 0 10px 0;">🔥 Trending This Week</h2>
-    <div id="trending-list"></div>
-  </section>
 </body>
 </html>
