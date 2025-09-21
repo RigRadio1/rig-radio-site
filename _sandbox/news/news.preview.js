@@ -89,6 +89,22 @@ async function getCoverUrl(r) {
       if (e2) console.error("NEWS: trending error:", e2.message);
       await renderList(elTrend, trending, "trending tracks (this week)");
       appendTrendingBadges(trending);
+      {
+        const elTicker = document.getElementById("news-ticker");
+        if (elTicker) {
+          try {
+            (async () => {
+              const { data: latest } = await sb.from("tracks").select("id,title,artist,created_at").eq("status","public").order("created_at",{ascending:false}).limit(1);
+              const { data: top }    = await sb.from("tracks").select("id,title,artist,plays").eq("status","public").order("plays",{ascending:false}).limit(1);
+              const chips = [];
+              if (latest && latest.length) chips.push(`<span class=\"chip\">🆕 ${latest[0].title || Untitled}</span>`);
+              if (top && top.length)       chips.push(`<span class=\"chip\">🔥 Top Play: ${top[0].title || Unknown}</span>`);
+              chips.push(`<span class=\"chip\">🏆 Contest: Halloween Battle (opens 10/15)</span>`);
+              elTicker.innerHTML = chips.join(" ");
+            })();
+          } catch(e) { console.error("ticker error:", e?.message); }
+        }
+      }
 
       console.log("NEWS: feed render complete");
     } catch (e) {
