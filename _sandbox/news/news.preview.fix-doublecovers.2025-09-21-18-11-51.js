@@ -21,7 +21,7 @@ async function getCoverUrl(r) {
   const path = pickCoverPath(r);
   if (!path) return null;
   try {
-    const { data, error } = await sb.storage.from("tracks").createSignedUrl(path, 3600);
+    const { data, error } = await sb.storage.from("covers").createSignedUrl(path, 3600);
     if (error) { console.warn("cover sign error:", error.message); return null; }
     return data?.signedUrl || null;
   } catch (e) {
@@ -87,40 +87,11 @@ async function getCoverUrl(r) {
         .order('id', { ascending: true })
         .limit(3);
       if (e2) console.error("NEWS: trending error:", e2.message);
-      await renderTrending(elTrend, trending);
+      await renderList(elTrend, trending, "trending tracks (this week)");
 
       console.log("NEWS: feed render complete");
     } catch (e) {
       console.error("NEWS: exception:", e.message);
     }
   })();
-}
-
-/* --- Trending renderer: adds small badges --- */
-function renderTrending(target, rows){
-  if (!target) return;
-  if (!rows || rows.length === 0){
-    target.innerHTML = `<div class="status">No trending tracks this week.</div>`;
-    return;
-  }
-  const html = rows.map(r => {
-    const title  = r.title || 'Untitled';
-    const artist = r.artist || r.artist_name || 'Unknown';
-    const plays  = (r.plays ?? 0);
-    const likes  = (r.likes ?? 0);
-    return `
-      <div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 12px;margin:8px 0;border-radius:12px;">
-        <div class="meta" style="display:flex;flex-direction:column;flex:1;">
-          <div class="t" style="font-weight:700;">${title}
-            <span style="font-size:12px;margin-left:8px;padding:2px 6px;border-radius:999px;border:1px solid rgba(255,80,80,0.35);">🔥 This Week</span>
-          </div>
-          <div class="a" style="opacity:0.85;">${artist}</div>
-        </div>
-        <div class="badges" style="display:flex;gap:8px;align-items:center;">
-          <span title="plays" style="font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid rgba(255,255,255,0.18);">▶ ${plays}</span>
-          <span title="likes" style="font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid rgba(255,255,255,0.18);">❤ ${likes}</span>
-        </div>
-      </div>`;
-  }).join('');
-  target.innerHTML = html;
 }
