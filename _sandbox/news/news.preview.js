@@ -1,6 +1,5 @@
 console.log("NEWS: js loaded");
 
-// --- Supabase init (sandbox only) ---
 const SUPABASE_URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
 
@@ -34,25 +33,37 @@ if (!window.supabase) {
 
   (async () => {
     try {
-      console.log("NEWS: fetching Latest…");
+      // === Latest: cap at 3 ===
+      console.log("NEWS: fetching Latest (limit 3) …");
       const { data: latest, error: e1 } = await sb
         .from('tracks')
         .select('id,title,artist,artist_name,created_at')
         .eq('status','public')
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(3);
       if (e1) console.error("NEWS: latest error:", e1.message);
       renderList(elLatest, latest, "latest uploads");
 
-      console.log("NEWS: fetching Trending…");
+      // === Trending: last 7 days window, cap at 3 ===
+      const since = new Date(Date.now() - 7*24*60*60*1000).toISOString();
+      console.log("NEWS: fetching Trending (7-day window, limit 3) …", since);
+
+      // NOTE: This assumes your table keeps cumulative plays/likes and that
+      // we are approximating “this week” by prioritizing recent tracks.
+      // Proper weekly metrics would use a materialized view or daily counters.
       const { data: trending, error: e2 } = await sb
         .from('tracks')
-        .select('id,title,artist,artist_name,plays')
+        .select('id,title,artist,artist_name,plays,likes,created_at')
         .eq('status','public')
+        .gte('created_at', since)
         .order('plays', { ascending: false })
-        .limit(5);
+        .order('likes', { ascending: false })
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: true })
+        .limit(3);
+
       if (e2) console.error("NEWS: trending error:", e2.message);
-      renderList(elTrend, trending, "trending tracks");
+      renderList(elTrend, trending, "trending tracks (this week)");
 
       console.log("NEWS: feed render complete");
     } catch (e) {
