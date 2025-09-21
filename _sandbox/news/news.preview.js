@@ -11,17 +11,42 @@ if (!window.supabase) {
   const elLatest = document.getElementById('latest-list');
   const elTrend  = document.getElementById('trending-list');
 
-  function renderList(target, rows, label) {
+  // Try common field names for the cover path stored in the row.
+  function pickCoverPath(r) {
+    return r.cover_path || r.cover || r.cover_key || r.coverUrl || r.coverurl || null;
+  }
+
+  async function getCoverUrl(r) {
+    const path = pickCoverPath(r);
+    if (!path) return null;
+    try {
+      const { data, error } = await sb.storage.from('covers').createSignedUrl(path, 3600);
+      if (error) return null;
+      return data?.signedUrl || null;
+    } catch { return null; }
+  }
+
+  async function renderList(target, rows, label) {
     if (!target) return;
     if (!rows || rows.length === 0) {
       target.innerHTML = `<div class="status">No ${label} yet.</div>`;
       return;
     }
-    const html = rows.map(r => {
+
+    // Fetch cover URLs in parallel
+    const urls = await Promise.all(rows.map(getCoverUrl));
+
+    const html = rows.map((r, i) => {
       const title  = r.title || 'Untitled';
       const artist = r.artist || r.artist_name || 'Unknown';
+      const cover  = urls[i];
+      const imgTag = cover
+        ? `<img src="${cover}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 0 0 2px rgba(255,42,42,0.10)">`
+        : ``;
+
       return `
         <div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 12px;margin:8px 0;border-radius:12px;">
+          ${imgTag}
           <div class="meta" style="display:flex;flex-direction:column;">
             <div class="t" style="font-weight:700;">${title}</div>
             <div class="a" style="opacity:0.8;">${artist}</div>
@@ -37,23 +62,19 @@ if (!window.supabase) {
       console.log("NEWS: fetching Latest (limit 3) …");
       const { data: latest, error: e1 } = await sb
         .from('tracks')
-        .select('id,title,artist,artist_name,created_at')
+        .select('id,title,artist,artist_name,created_at,cover_path,cover,cover_key')
         .eq('status','public')
         .order('created_at', { ascending: false })
         .limit(3);
       if (e1) console.error("NEWS: latest error:", e1.message);
-      renderList(elLatest, latest, "latest uploads");
+      await renderList(elLatest, latest, "latest uploads");
 
-      // === Trending: last 7 days window, cap at 3 ===
+      // === Trending: last 7 days window, cap at 3 (deterministic tie-breakers) ===
       const since = new Date(Date.now() - 7*24*60*60*1000).toISOString();
       console.log("NEWS: fetching Trending (7-day window, limit 3) …", since);
-
-      // NOTE: This assumes your table keeps cumulative plays/likes and that
-      // we are approximating “this week” by prioritizing recent tracks.
-      // Proper weekly metrics would use a materialized view or daily counters.
       const { data: trending, error: e2 } = await sb
         .from('tracks')
-        .select('id,title,artist,artist_name,plays,likes,created_at')
+        .select('id,title,artist,artist_name,plays,likes,created_at,cover_path,cover,cover_key')
         .eq('status','public')
         .gte('created_at', since)
         .order('plays', { ascending: false })
@@ -61,9 +82,8 @@ if (!window.supabase) {
         .order('created_at', { ascending: false })
         .order('id', { ascending: true })
         .limit(3);
-
       if (e2) console.error("NEWS: trending error:", e2.message);
-      renderList(elTrend, trending, "trending tracks (this week)");
+      await renderList(elTrend, trending, "trending tracks (this week)");
 
       console.log("NEWS: feed render complete");
     } catch (e) {
