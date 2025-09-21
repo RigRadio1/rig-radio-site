@@ -148,3 +148,51 @@ function appendTrendingBadges(rows){
     });
   }catch(e){ console.warn('appendTrendingBadges error:', e?.message); }
 }
+
+/* --- Live Feeds: last-updated stamp (non-intrusive) --- */
+function stampLastUpdated() {
+  const host = document.getElementById('live-feeds') || document;
+  const id = 'live-updated-stamp';
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement('div');
+    el.id = id;
+    el.style.cssText = 'opacity:.6;font-size:12px;margin:6px 0 0 2px;';
+    const h2 = host.querySelector('h2');
+    (h2?.parentNode || host).appendChild(el);
+  }
+  const t = new Date();
+  const pad = (n)=>String(n).padStart(2,'0');
+  el.textContent = `Last updated ${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+}
+
+/* --- Live Feeds: refresh both lists --- */
+async function refreshFeeds(sb) {
+  try {
+    // Latest (3)
+    const { data: latest } = await sb.from('tracks')
+      .select('id,title,artist,artist_name,created_at,cover_path')
+      .eq('status','public')
+      .order('created_at', { ascending:false })
+      .limit(3);
+    await renderList(document.getElementById('latest-list'), latest, 'latest uploads');
+
+    // Trending (7-day, 3)
+    const since = new Date(Date.now() - 7*24*60*60*1000).toISOString();
+    const { data: trending } = await sb.from('tracks')
+      .select('id,title,artist,artist_name,plays,likes,created_at,cover_path')
+      .eq('status','public')
+      .gte('created_at', since)
+      .order('plays', { ascending:false })
+      .order('likes', { ascending:false })
+      .order('created_at', { ascending:false })
+      .order('id', { ascending:true })
+      .limit(3);
+    await renderList(document.getElementById('trending-list'), trending, 'trending tracks (this week)');
+    appendTrendingBadges(trending);
+
+    stampLastUpdated();
+  } catch(e){
+    console.warn('refreshFeeds error:', e?.message);
+  }
+}
