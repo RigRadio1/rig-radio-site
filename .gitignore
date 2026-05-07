@@ -18,3 +18,18 @@ dist/
 *.before-*
 *.pre-*
 *.final.*
+
+# Local/server backup artifacts
+*.save
+*.safe
+*.bak
+*.backup
+*.before-*
+*.working.*
+*_preview.mp4
+_sandbox/*.mp4
+_sandbox/*.png
+_sandbox/*.jpg
+
+# Runtime stream output
+hls/
