@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Contact — Rig-Radio</title>
+  <link rel="stylesheet" href="/rr.css"/>
+  <style>
+    .wrap{max-width:960px;margin:28px auto;padding:0 16px}
+    .card{background:rgba(8,8,10,0.84);border-radius:18px;padding:20px;box-shadow:
+      0 0 0 2px rgba(255,42,42,0.34),
+      0 0 42px rgba(255,0,0,0.14) inset,
+      0 10px 28px rgba(0,0,0,0.40);}
+    h1{margin:0 0 12px}
+    .muted{opacity:.8;font-size:.95rem;margin-bottom:18px}
+    form{display:grid;gap:14px}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input, textarea{
+      width:100%;background:#0b0b0f;border:1px solid rgba(255,42,42,.35);
+      border-radius:12px;padding:12px 14px;font:inherit;color:#f3f3f3;
+      outline:none;
+    }
+    input:focus, textarea:focus{box-shadow:0 0 0 2px rgba(255,42,42,.55), 0 0 4px rgba(255,42,42,.8), 0 0 12px rgba(255,0,0,.4)}
+    textarea{min-height:160px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .actions{display:flex;gap:12px;align-items:center}
+    .btn{
+      border:1px solid rgba(255,42,42,.6);border-radius:999px;padding:10px 16px;
+      background:#130f12;cursor:pointer;color:#fff;font-weight:700;
+      box-shadow:0 0 20px rgba(255,0,0,.15);
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .status{margin-top:8px;font-size:.95rem}
+    .ok{color:#88ff9a}
+    .err{color:#ff6b6b}
+    /* Honeypot (hidden from humans) */
+    .hp{position:absolute;left:-5000px;opacity:0;height:0;width:0;overflow:hidden}
+  @media (max-width:600px){
+    .row{grid-template-columns:1fr;}
+    .actions{flex-direction:column;align-items:stretch;}
+  }
+  </style>
+</head>
+<body class="contact-page">
+  <main class="wrap">
+    <div class="card">
+      <h1>Contact Rig-Radio</h1>
+      <p class="muted">Questions, takedowns, partnerships, or support. We read every legit message.</p>
+
+      <form id="contactForm" aria-label="Contact Rig-Radio form" novalidate>
+        <div class="row">
+          <div>
+            <label for="name">Your Name</label>
+            <input id="name" name="name" type="text" maxlength="80" required placeholder="Jane Doe">
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" maxlength="120" required placeholder="you@example.com" autocomplete="email">
+          </div>
+        </div>
+
+        <div>
+          <label for="subject">Subject</label>
+          <input id="subject" name="subject" type="text" maxlength="120" required placeholder="What’s this about?">
+        </div>
+
+        <div>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" maxlength="4000" required placeholder="Give us the details. Links welcome."></textarea>
+        </div>
+
+        <!-- Honeypot -->
+        <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+
+        <div class="actions">
+          <button type="submit" class="btn">Send</button>
+          <button type="button" id="copyBtn" class="btn">Copy Message</button>
+        </div>
+        <div id="status" class="status"></div>
+      </form>
+
+      <p class="muted">Prefer email? Write us at <a href="mailto:submissions@rig-radio.ai">submissions@rig-radio.ai</a>.</p>
+    </div>
+  </main>
+
+  <script src="/contact.js?v=1"></script>
+<footer id="site-legal-footer" class="site-footer">
+  <style>
+    .site-footer{margin:24px 0 40px}
+    .site-footer .wrap{max-width:960px;margin:0 auto;padding:0 16px}
+    .legal-nav{display:flex;gap:10px;align-items:center;opacity:.9}
+    .legal-nav a{color:#fff;text-decoration:none;border-bottom:1px dotted rgba(255,42,42,.5)}
+    .legal-nav a:hover{border-bottom-color:rgba(255,42,42,.9)}
+    .legal-nav .sep{opacity:.6}
+  </style>
+  <div class="wrap">
+    <nav class="legal-nav">
+      <a href="/contact.html">Contact</a>
+      <span class="sep">·</span>
+      <a href="/tos.html">Terms</a>
+      <span class="sep">·</span>
+      <a href="/privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
