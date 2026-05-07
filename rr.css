@@ -725,7 +725,7 @@ body.auth-page > * {
 
 /* ==== DASHBOARD: Fixed-height scroll area for playlist ==== */
 .playlist-scroll {
-  max-height: 420px;              /* ~6–8 items visible; tweak later if needed */
+  max-height: 720px;              /* ~6–8 items visible; tweak later if needed */
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 6px;             /* room for scrollbar */
@@ -1035,7 +1035,7 @@ body.auth-page > * {
 
 /* ==== DASHBOARD: Fixed-height scroll for uploads ==== */
 .uploads-scroll{
-  max-height: 420px;        /* tweak later if you want taller */
+  max-height: 720px;        /* tweak later if you want taller */
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 6px;

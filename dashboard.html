@@ -3,6 +3,22 @@
 <html lang="en">
 <head>
   <!-- Canonical host guard: force www -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+</script>
+
+<script>
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+</script>
+
+
+
   <script>
   (function(){
     var want = 'www.rig-radio.ai';
@@ -221,10 +237,10 @@
 
 /* --- Your Uploads: grid card layout --- */
 #tracks-list{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  align-items: stretch;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:stretch;
 }
 
 /* turn each row into a card */
@@ -303,7 +319,7 @@
     <div class="grid">
       <!-- LEFT: Your uploads (reference list) -->
       <section class="card">
-        <h2>Your Uploads</h2>
+        <h2>Your Uploads <span id="upload-count" class="muted" style="font-weight:600;font-size:.9em;margin-left:8px;"></span></h2>
         <div id="tracks-list" class="uploads-scroll"><div class="muted">Loading…</div></div>
       </section>
 
@@ -353,31 +369,26 @@
   </div>
 
   <script>
-    /* ---------- Supabase bootstrap ---------- */
-    const supabase = window.supabase.createClient(
-      'https://tpzpeoqdpfwqumlsyhpx.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E'
-    );
 
     /* ---------- Helpers for Storage signing ---------- */
     function extractKeyFromPublicUrl(url){
       // Try to find ".../object/.../tracks/<key>"
       try{
-        if (!url) return null;
+        if (!url) return PLACEHOLDER_IMG;
         const u = new URL(url, window.location.origin);
         const m1 = u.pathname.match(/tracks\/(.+)$/);
         if (m1 && m1[1]) return decodeURIComponent(m1[1]);
       }catch{}
-      return null;
+      return PLACEHOLDER_IMG;
     }
 
     async function signTracksKey(key, seconds = 3600){
       try{
-        if (!key) return null;
-        const { data, error } = await supabase.storage.from('tracks').createSignedUrl(key, seconds);
-        if (error) return null;
+        if (!key) return PLACEHOLDER_IMG;
+        const { data, error } = await supabaseClient.storage.from('tracks').createSignedUrl(key, seconds);
+        if (error) return PLACEHOLDER_IMG;
         return data.signedUrl;
-      }catch{ return null; }
+      }catch{ return PLACEHOLDER_IMG; }
     }
 
     async function getSignedCover(row){
@@ -390,9 +401,7 @@
       if (row.artwork_url && typeof row.artwork_url === 'string') {
         const k = extractKeyFromPublicUrl(row.artwork_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
       }
-      if (row.cover_url && typeof row.cover_url === 'string') return row.cover_url;
-      if (row.artwork_url && typeof row.artwork_url === 'string') return row.artwork_url;
-      return null;
+      return PLACEHOLDER_IMG;
     }
 
     async function getSignedAudio(row){
@@ -403,7 +412,7 @@
         const k = extractKeyFromPublicUrl(row.audio_url); if (k){ const s = await signTracksKey(k); if (s) return s; }
       }
       if (row.audio_url && typeof row.audio_url === 'string') return row.audio_url;
-      return null;
+      return PLACEHOLDER_IMG;
     }
 
     const PLACEHOLDER_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -420,15 +429,15 @@
     async function loadMyTracks() {
       const list = document.getElementById("tracks-list");
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await supabaseClient.auth.getUser();
         if (!user) { list.innerHTML = `<div class="muted">Please sign in to see your uploads.</div>`; return; }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from('tracks')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
-          .limit(50);
+          .limit(100);
 
         if (error) { list.innerHTML = `<div class="muted">Couldn't load tracks.</div>`; return; }
         if (!data || data.length === 0) { list.innerHTML = `<div class="muted">No uploads yet. Use “Submit Song”.</div>`; return; }
@@ -461,9 +470,11 @@
           }
           list.appendChild(div);
         }
-      } catch {
-        list.innerHTML = `<div class="muted">Unexpected error loading your tracks.</div>`;
-      }
+} catch (err) {
+  console.error("LOAD TRACKS ERROR:", err);
+  list.innerHTML = `<div class="muted">Unexpected error loading your tracks.</div>`;
+}
+
     }
 
     /* ---------- Playlist builder (single audio element with seek) ---------- */
@@ -683,15 +694,16 @@ function reflectProgress(){
   async function deleteUpload(id, audioKey, coverKey, cardEl){
     try{
       if(!confirm("Delete this upload? This cannot be undone.")) return;
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if(!user){ alert("Please sign in."); return; }
       // remove storage files if keys exist
       const keys = [audioKey, coverKey].filter(k => typeof k === 'string' && k.length);
-      if (keys.length){ await supabase.storage.from('tracks').remove(keys); }
+      if (keys.length){ await supabaseClient.storage.from('tracks').remove(keys); }
       // delete DB row (RLS must allow owner)
-      const { error } = await supabase.from('tracks').delete().eq('id', id);
+      const { error } = await supabaseClient.from('tracks').delete().eq('id', id);
       if (error){ console.error(error); alert('Delete failed.'); return; }
       if (cardEl) cardEl.remove();
+
     } catch(err){ console.error(err); alert('Delete error.'); }
   }
     /* ---------- Shared local playlist helpers ---------- */
@@ -712,8 +724,8 @@ function reflectProgress(){
       let rows = [];
 
       if (plIds.length){
-        const { data: byIds, error: byIdsErr } = await supabase
-          .from('tracks')
+const { data: byIds, error: byIdsErr } = await supabaseClient
+  .from('tracks')
           .select('*')
           .in('id', plIds)
           .order('created_at', { ascending: false })
@@ -728,7 +740,7 @@ function reflectProgress(){
 
       // Fallback to the user’s own uploads if no playlist
         if (ALLOW_UPLOAD_FALLBACK && !rows.length){
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await supabaseClient.auth.getUser();
         if (!user) {
           document.getElementById('nowPlaying').textContent = 'Sign in to see your uploads or add tracks from the Library.';
           return;
@@ -738,7 +750,7 @@ function reflectProgress(){
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
-          .limit(50);
+          .limit(100);
 
         if (error || !data) {
           document.getElementById('nowPlaying').textContent = 'Could not load tracks.';
@@ -759,13 +771,13 @@ function reflectProgress(){
     }
 
     /* --- logout (safety) --- */
-    async function logout(){ await supabase.auth.signOut(); window.location.href="/login.html"; }
+    async function logout(){ await supabaseClient.auth.signOut(); window.location.href="/login.html"; }
 
 
 
 // Welcome text from Auth metadata display_name
 (async () => {
-  const { data: { user } } = await supabase.auth.getUser();
+const { data: { user } } = await supabaseClient.auth.getUser();
   const el = document.getElementById('welcomeUser');
   if (!el) return;
   const name = user?.user_metadata?.display_name
@@ -810,12 +822,10 @@ function reflectProgress(){
   function hide(){ toast.classList.remove("show"); toast.style.display="none"; }
   if(dismiss){ dismiss.addEventListener("click", function(e){ e.stopPropagation(); hide(); }); }
   toast.addEventListener("click", function(){ try{ window.location.href="/library.html"; }catch(_){ } });
+// Use the single Supabase client for this page
+const sb = supabaseClient;
+if(!sb || typeof sb.from !== "function"){ return; }
 
-  // Try to find an existing Supabase client used by this page
-  var sb = (typeof supabase !== "undefined") ? supabase : null;
-  // If not found, try a very naive fallback (some pages attach it on window.supabase)
-  if(!sb && window.supabase && typeof window.supabase.from === "function"){ sb = window.supabase; }
-  if(!sb || typeof sb.from !== "function"){ return; }
 
   // Mark the time we loaded so we only alert for truly NEW tracks
   var lastSeen = Date.now();
@@ -1661,9 +1671,47 @@ function reflectProgress(){
   }, true); // capture
 })();
 </script>
+<script type="module">
+ // const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function updateUploadCount() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const { count } = await supabaseClient
+      .from('tracks')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    const max = 100; // free plan cap
+    const span = document.getElementById('upload-count');
+    if (span) span.textContent = `${count ?? 0}/${max}`;
+  }
+
+  updateUploadCount();
+</script>
 
 
 
+<footer id="site-legal-footer" class="site-footer">
+  <style>
+    .site-footer{margin:24px 0 40px}
+    .site-footer .wrap{max-width:960px;margin:0 auto;padding:0 16px}
+    .legal-nav{display:flex;gap:10px;align-items:center;opacity:.9}
+    .legal-nav a{color:#fff;text-decoration:none;border-bottom:1px dotted rgba(255,42,42,.5)}
+    .legal-nav a:hover{border-bottom-color:rgba(255,42,42,.9)}
+    .legal-nav .sep{opacity:.6}
+  </style>
+  <div class="wrap">
+    <nav class="legal-nav">
+      <a href="/contact.html">Contact</a>
+      <span class="sep">·</span>
+      <a href="/tos.html">Terms</a>
+      <span class="sep">·</span>
+      <a href="/privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>
 
