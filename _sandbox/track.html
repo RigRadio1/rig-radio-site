@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rig-Radio | Track</title>
+
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --rr-red: #ff0000;
+      --rr-red-soft: #ff000099;
+      --card-bg: rgba(20,0,0,0.85);
+    }
+
+    /* Background with your sandbox image blended in */
+    body {
+      margin: 0;
+      font-family: 'Orbitron', system-ui, Arial, sans-serif;
+      color: #fff;
+      min-height: 100vh;
+background:
+  linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.65)),
+  url("/studio-bg.png") center center / cover no-repeat fixed;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    .track-card {
+      width: 100%;
+      max-width: 1080px;
+      background: var(--card-bg);
+      border-radius: 18px;
+      box-shadow: 0 0 60px rgba(255,0,0,0.35);
+      padding: 36px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 36px;
+      animation: pulse 6s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 40px rgba(255,0,0,0.25); }
+      50% { box-shadow: 0 0 80px rgba(255,0,0,0.55); }
+    }
+
+    .cover-wrap {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 0 40px var(--rr-red-soft);
+      background: rgba(255,255,255,0.03);
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cover {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .cover-fallback {
+      opacity: 0.6;
+      font-size: 0.9rem;
+    }
+
+    .meta h1 {
+      margin: 0 0 8px 0;
+      font-size: 2.6rem;
+      letter-spacing: .5px;
+      text-shadow: 0 0 18px var(--rr-red-soft);
+    }
+    .meta .artist {
+      margin: 0 0 18px 0;
+      opacity: .85;
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin: 8px 0 16px 0;
+audio/406e23e8-7ca4-4fa3-96af-46c8d007b60f-Broken_Chains_The_son_Jack_Dread.mp3    }
+    .play-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      background: linear-gradient(90deg, #ff2a2a, #cc0000);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 22px rgba(255,0,0,0.45);
+      transition: transform .12s ease, box-shadow .2s ease;
+    }
+    .play-btn:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(255,0,0,0.75); }
+    audio { width: 100%; max-width: 520px; }
+
+    /* Comments block */
+    .comments {
+      width: 100%;
+      max-width: 1080px;
+      margin-top: 40px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(255,0,0,0.25);
+      padding: 24px;
+    }
+    .comments h3 { margin: 0 0 12px 0; color: #ff4a4a; }
+
+    .emoji-bar {
+      display: flex;
+      gap: 14px;
+      margin: 6px 0 12px 0;
+    }
+    .emoji {
+      font-size: 1.4rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 0 14px rgba(255,0,0,0.35);
+      cursor: pointer;
+      transition: transform .1s ease, box-shadow .2s ease;
+      user-select: none;
+    }
+    .emoji:hover { transform: scale(1.1); box-shadow: 0 0 22px rgba(255,0,0,0.6); }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      resize: none;
+      border-radius: 10px;
+      border: 1px solid rgba(255,0,0,0.3);
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .send-btn {
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      background: linear-gradient(90deg, #ff2a2a, #cc0000);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: .5px;
+      box-shadow: 0 0 20px rgba(255,0,0,0.35);
+    }
+    .send-btn:hover { box-shadow: 0 0 28px rgba(255,0,0,0.6); }
+  </style>
+</head>
+
+<body>
+  <section class="track-card">
+    <div class="cover-wrap">
+      <img class="cover" src="/_sandbox/sample-cover.jpg" alt="Track Cover"
+           onerror="this.onerror=null;this.src='/_sandbox/sample-cover.jpg';this.closest('.cover-wrap').querySelector('.cover-fallback')?.classList.remove('hidden');">
+      <span class="cover-fallback hidden">No cover available</span>
+    </div>
+
+    <div class="meta">
+      <h1 id="tTitle">Loading…</h1>
+      <p class="artist" id="tArtist"></p>
+
+      <div class="controls">
+        <button class="play-btn" id="playBtn">▶ Play</button>
+        <audio id="player" preload="none" controls></audio>
+      </div>
+
+      <!-- You can add stats later -->
+    </div>
+  </section>
+
+  <section class="comments">
+    <h3>Comments</h3>
+    <!-- Emoji picker inserts into textarea (not buttons-as-reactions) -->
+    <div class="emoji-bar" id="emojiBar">
+      <span class="emoji">🔥</span>
+      <span class="emoji">💀</span>
+      <span class="emoji">🎧</span>
+      <span class="emoji">❤️</span>
+      <span class="emoji">👏</span>
+      <span class="emoji">🤘</span>
+    </div>
+
+    <textarea id="commentBox" placeholder="Write a comment…"></textarea>
+    <button class="send-btn">Send</button>
+  </section>
+
+  <!-- Supabase UMD (stable global: window.supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.2/dist/umd/supabase.min.js" crossorigin></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!window.supabase) {
+    console.error("Supabase library failed to load.");
+    return;
+  }
+
+  const { createClient } = window.supabase;
+  const supabaseUrl = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+  const sb = createClient(supabaseUrl, supabaseKey);
+
+  const params = new URLSearchParams(window.location.search);
+  const trackId = params.get("id");
+
+  if (!trackId) {
+    document.querySelector(".meta h1").textContent = "No track selected";
+    return;
+  }
+
+  // helper: handle both URLs and storage paths
+  async function getUrl(value) {
+    if (!value) return null;
+
+    // If it's already a full https URL (public file), use it as-is
+    if (value.startsWith("http")) return value;
+
+    // Otherwise sign it (private file)
+    let path = value.replace(/^\/+/, "");
+    if (!path.startsWith("tracks/")) path = "tracks/" + path;
+
+    const { data, error } = await sb.storage.from("tracks").createSignedUrl(path.replace(/^tracks\//, ""), 3600);
+    if (error) {
+      console.error("Sign error:", error);
+      return null;
+    }
+    return data.signedUrl;
+  }
+
+  const { data, error } = await sb
+    .from("tracks")
+    .select("id, title, artist_name, audio_url, cover_url")
+    .eq("id", trackId)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("Track load error:", error);
+    document.querySelector(".meta h1").textContent = "Track not found";
+    return;
+  }
+
+  // Update UI
+  document.querySelector(".meta h1").textContent = data.title || "Untitled";
+  document.querySelector(".artist").textContent = data.artist_name || "Unknown Artist";
+
+  const coverUrl = await getUrl(data.cover_url);
+  if (coverUrl) document.querySelector(".cover").src = coverUrl;
+
+  const audioUrl = await getUrl(data.audio_url);
+  if (audioUrl) {
+    const player = document.getElementById("player");
+    const btn = document.getElementById("playBtn");
+    player.src = audioUrl;
+
+    btn.addEventListener("click", () => {
+      if (player.paused) { player.play(); btn.textContent = "⏸ Pause"; }
+      else { player.pause(); btn.textContent = "▶ Play"; }
+    });
+    player.addEventListener("ended", () => { btn.textContent = "▶ Play"; });
+  } else {
+    console.warn("No playable audio URL found");
+  }
+});
+</script>
+
+</body>
+</html>

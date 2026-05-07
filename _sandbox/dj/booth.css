@@ -1,0 +1,167 @@
+/* ==== Global ==== */
+.dj-root { background:#0b0b0f; color:#f2f2f2; }
+.dj-header{ display:flex; align-items:center; justify-content:space-between; margin:10px 0 18px; }
+.dj-header .brand{ font-size:1.4rem; color:#ff2a2a; text-shadow:0 0 10px rgba(255,42,42,.8); letter-spacing:.5px; }
+.now-pill{ font-size:.95rem; padding:6px 10px; border:1px solid rgba(255,42,42,.35); border-radius:999px; background:rgba(20,20,25,.9); box-shadow:0 0 10px rgba(255,0,0,.2) inset; }
+
+/* ==== Layout: two-by-two ==== */
+.decks-two{
+  display:grid;
+  grid-template-columns: 1fr 280px 1fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+.bottom-two{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+}
+
+/* ==== Decks ==== */
+.deck.compact{
+  background:rgba(20,20,25,.95);
+  border:1px solid rgba(255,42,42,.3);
+  border-radius:14px; padding:14px;
+  box-shadow:0 0 14px rgba(255,0,0,.22);
+}
+.deck-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.deck h3{ color:#ff2a2a; margin:2px 0; }
+.big-title{ font-size:1rem; font-weight:600; margin-bottom:6px; }
+.deck audio{ width:100%; background:#0f0f14; border-radius:8px; padding:4px; }
+
+/* Crossfader (skinny column) */
+.center-controls.skinny{ display:flex; align-items:center; justify-content:center; }
+.xfader-wrap{
+  width:100%; max-width:240px; background:rgba(16,16,20,.9);
+  border:1px solid rgba(255,42,42,.3); border-radius:12px;
+  padding:12px 14px; text-align:center; box-shadow:0 0 12px rgba(255,0,0,.15) inset;
+}
+.xfader-labels{ display:flex; justify-content:space-between; font-weight:700; margin-bottom:8px; color:#ff2a2a; }
+#crossfader{ width:100%; height:6px; border-radius:999px; background:#1d1d22; outline:none; -webkit-appearance:none; }
+#crossfader::-webkit-slider-thumb{
+  -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+  background:#ff2a2a; border:2px solid #ffc0c0; box-shadow:0 0 12px rgba(255,42,42,.6);
+}
+#crossfader::-moz-range-thumb{
+  width:18px; height:18px; border-radius:50%; background:#ff2a2a; border:2px solid #ffc0c0; box-shadow:0 0 12px rgba(255,42,42,.6);
+}
+
+/* Waveform-style bar */
+.wavebar{
+  margin-top:8px; height:14px; border-radius:999px; background:#15151b; overflow:hidden;
+  border:1px solid rgba(255,42,42,.25);
+}
+.wavefill{
+  height:100%; width:0%;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(255,42,42,.6) 0px,
+    rgba(255,42,42,.6) 6px,
+    rgba(255,120,120,.35) 6px,
+    rgba(255,120,120,.35) 12px
+  );
+  box-shadow:0 0 10px rgba(255,42,42,.35) inset;
+  transition: width .15s linear;
+}
+
+/* ==== Library & Queue ==== */
+.section-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.section-head h2{ margin:0; color:#ff2a2a; }
+.section-head .actions input{
+  background:#121217; border:1px solid rgba(255,42,42,.35); color:#f2f2f2;
+  border-radius:8px; padding:6px 10px; outline:none;
+}
+
+#library, #queue{
+  background:rgba(20,20,25,.95); border:1px solid rgba(255,42,42,.3); border-radius:14px; padding:14px;
+}
+.list{ max-height:56vh; overflow:auto; }
+
+/* Artist folders & letter divider (keep what you already added earlier) */
+.letter-divider{
+  margin: 10px 0 6px; padding: 4px 10px; font-weight:700; color:#f2f2f2; opacity:.9;
+  border-left:3px solid #ff2a2a; background:rgba(20,20,25,.55); border-radius:6px;
+}
+.artist-folder { margin:4px 0; border:1px solid rgba(255,42,42,.25); border-radius:6px; background:rgba(20,20,25,.75); }
+.artist-folder summary{ cursor:pointer; padding:6px 10px; font-weight:600; color:#ff2a2a; list-style:none; }
+.artist-folder summary::-webkit-details-marker, .artist-folder summary::marker{ display:none; }
+
+/* Queue playlist look */
+.url-bar{ display:flex; gap:8px; margin:8px 0 10px; }
+.url-bar input{ flex:1; background:#121217; border:1px solid rgba(255,42,42,.35); color:#f2f2f2; border-radius:8px; padding:6px 10px; outline:none; }
+#addUrlBtn{ flex:0 0 auto; }
+
+.queue-head{
+  display:grid; grid-template-columns: 48px 1fr 210px; align-items:center;
+  font-weight:700; color:#ff2a2a; padding:6px 10px; border:1px solid rgba(255,42,42,.25);
+  border-radius:8px; margin-bottom:6px; background:rgba(16,16,20,.7);
+}
+.playlist{
+  list-style:none; margin:0; padding:0; max-height:48vh; overflow:auto;
+  border:1px solid rgba(255,42,42,.2); border-radius:8px;
+}
+.playlist li{
+  display:grid; grid-template-columns: 48px 1fr auto; align-items:center;
+  padding:8px 10px; border-bottom:1px dashed rgba(255,42,42,.12);
+}
+.playlist li:last-child{ border-bottom:none; }
+.playlist li span{ grid-column:2; }
+.playlist li button{ margin-left:6px; }
+.playlist li::before{ content: counter(row); counter-increment: row; grid-column:1; justify-self:center; opacity:.7; }
+.playlist{ counter-reset: row; }
+
+/* Buttons */
+button{
+  background:#1d1d22; border:1px solid #ff2a2a; color:#f2f2f2;
+  border-radius:8px; padding:6px 12px; cursor:pointer; transition:.18s;
+}
+button:hover{ background:#ff2a2a; color:#0b0b0f; }
+button.ghost{ background:transparent; border:1px dashed rgba(255,42,42,.45); }
+button.ghost:hover{ background:#261316; }
+/* --- Library row spacing (Add button buffer) --- */
+.artist-folder .track-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:6px 10px;
+}
+.artist-folder .track-row span{
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.artist-folder .track-row button{ margin-left:8px; }
+
+/* --- Queue buttons layout (inline, not huge bars) --- */
+.playlist li{
+  display:flex !important;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-bottom:1px dashed rgba(255,42,42,.12);
+}
+.playlist li span{ flex:1; }        /* title column grows */
+.playlist li button{ margin-left:6px; display:inline-block; }
+.playlist li::before{
+  content: counter(row);
+  counter-increment: row;
+  width:36px; text-align:center; opacity:.7;
+}
+
+/* --- Audio players: darker + red accents (browser-dependent) --- */
+.deck audio{ accent-color:#ff2a2a; }
+.deck audio::-webkit-media-controls-panel{ background:#0f0f14; color:#f2f2f2; }
+.deck audio::-webkit-media-controls-enclosure{ background:#0f0f14; border-radius:8px; }
+.deck audio::-webkit-media-controls-current-time-display,
+.deck audio::-webkit-media-controls-time-remaining-display{ color:#f2f2f2; }
+
+/* --- Green LED when deck is playing --- */
+.deck .big-title{ display:flex; align-items:center; gap:8px; }
+.deck .led{
+  width:10px; height:10px; border-radius:50%;
+  background:#333; box-shadow:0 0 4px rgba(0,0,0,.6);
+}
+.deck.playing .led{
+  background:#16ff88;
+  box-shadow:0 0 14px rgba(22,255,136,.7);
+}
+

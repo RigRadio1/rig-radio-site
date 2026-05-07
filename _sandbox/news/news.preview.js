@@ -9,10 +9,20 @@ if (!window.supabase) {
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     // manual refresh for debugging
     window._rrRefresh = () => refreshFeeds(sb);
+// Kick off stats load on boot
+loadSiteStats(sb).then(renderSiteStats);
+
+// Optional: keep stats fresh every 60s
+setInterval(async () => {
+  const stats = await loadSiteStats(sb);
+  renderSiteStats(stats);
+}, 60000);
+
 
   const elLatest = document.getElementById('latest-list');
   const elTrend  = document.getElementById('trending-list');
 
+  const elLive  = document.getElementById('live-list');
   // Try common field names for the cover path stored in the row.
 function pickCoverPath(r) {
   if (!r || !r.cover_path) return null;
@@ -61,6 +71,41 @@ async function getCoverUrl(r) {
     }).join('');
     target.innerHTML = html;
   }
+    // Expose renderList globally so refreshFeeds() outside can call it
+    window.renderList = renderList;
+
+// === Site stats: members & tracks (public) ===
+async function loadSiteStats(sb){
+  // Members
+  let members = 0;
+  try {
+    const { count: mcount, error: merr } = await sb
+      .from('profiles')
+      .select('*', { count: 'exact', head: true });
+    if (!merr && typeof mcount === 'number') members = mcount;
+  } catch(e){ console.warn('STATS members ex:', e); }
+
+  // Public tracks
+  let tracks = 0;
+  try {
+    const { count: tcount, error: terr } = await sb
+      .from('tracks')
+      .select('*', { count: 'exact', head: true })
+      .eq('status','public');
+    if (!terr && typeof tcount === 'number') tracks = tcount;
+  } catch(e){ console.warn('STATS tracks ex:', e); }
+
+  return { members, tracks };
+}
+
+function renderSiteStats(stats){
+  const BOX = document.getElementById('stats-row');
+  if (!BOX) return;
+  BOX.innerHTML = `
+    <span class="chip pill">👥 Members: ${stats.members.toLocaleString()}</span>
+    <span class="chip pill">🎵 Tracks: ${stats.tracks.toLocaleString()}</span>
+  `;
+}
 
   (async () => {
     try {
@@ -75,7 +120,9 @@ async function getCoverUrl(r) {
       if (e1) console.error("NEWS: latest error:", e1.message);
       await renderList(elLatest, latest, "latest uploads");
 
+      await renderList(elLive, latest, "live feed");
       // === Trending: last 7 days window, cap at 3 (deterministic tie-breakers) ===
+    await renderList(document.getElementById('live-list'), latest, 'live feed');
       const since = new Date(Date.now() - 7*24*60*60*1000).toISOString();
       console.log("NEWS: fetching Trending (7-day window, limit 3) …", since);
       const { data: trending, error: e2 } = await sb
@@ -93,6 +140,8 @@ async function getCoverUrl(r) {
       appendTrendingBadges(trending);
       console.log("NEWS: scheduling auto-refresh 60s");
       try { await refreshFeeds(sb); } catch(e) { console.warn("initial refresh failed", e?.message); }
+      // Make renderer available to code outside this block (used by refreshFeeds)
+      window.renderList = renderList;
       setInterval(() => { console.log("NEWS: auto-refresh tick"); refreshFeeds(sb); }, 60000);
       {
         const elTicker = document.getElementById("news-ticker");

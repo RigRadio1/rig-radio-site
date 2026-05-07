@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin — Rig-Radio (Sandbox)</title>
+  <link rel="stylesheet" href="/rr.css"/>
+  <style>
+    .wrap{max-width:1200px;margin:28px auto;padding:0 16px}
+    .card{background:rgba(8,8,10,0.84);border-radius:18px;padding:18px;box-shadow:
+      0 0 0 2px rgba(255,42,42,0.34),
+      0 0 42px rgba(255,0,0,0.14) inset,
+      0 10px 28px rgba(0,0,0,0.40);}
+    h1{margin:0 0 10px}
+    .muted{opacity:.9}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .toolbar input,.toolbar select{
+      background:#0b0b0f;border:1px solid rgba(255,42,42,.35);color:#fff;border-radius:10px;padding:8px 10px;
+    }
+    .grid{overflow:auto;border:1px solid rgba(255,42,42,.18);border-radius:14px}
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    th,td{padding:10px 12px;border-bottom:1px solid rgba(255,42,42,.16);white-space:nowrap}
+    th{position:sticky;top:0;background:#111015;font-weight:700}
+    tr:hover td{background:rgba(255,42,42,.05)}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,42,42,.4)}
+    .pill.ok{border-color:#4cff7a;color:#9bffb3}
+    .pill.draft{border-color:#ffb84d;color:#ffd9a3}
+    .pill.hide{border-color:#ff6b6b;color:#ff9a9a}
+    .statusline{margin-top:10px;font-size:.95rem;opacity:.9}
+    .note{opacity:.8;font-size:.9rem}
+    .actions .btn{opacity:.5;cursor:not-allowed} /* read-only for now */
+<style>
+  .tab{border:1px solid rgba(255,42,42,.35);background:#0b0b0f;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+  .tab.active{box-shadow:0 0 0 2px rgba(255,42,42,.55)}
+</style>
+
+  </style>
+</head>
+<body class="admin-page">
+<main class="wrap">
+  <div class="card">
+    <h1>Admin — Sandbox</h1>
+    <p class="muted">Read-only for now. Write actions (create/ban/promote) will be enabled after we add a tiny backend with a service key and Basic Auth.</p>
+
+    <!-- Tabs -->
+    <nav id="tabs" class="toolbar" style="margin-top:0">
+      <button data-tab="tracks" class="tab active">Tracks</button>
+      <button data-tab="contests" class="tab">Contests</button>
+      <button data-tab="events" class="tab">Events</button>
+      <button data-tab="users" class="tab">Users</button>
+    </nav>
+
+    <!-- TRACKS -->
+    <section id="panel-tracks" class="panel">
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Search title or artist…">
+        <select id="status">
+          <option value="">All statuses</option>
+          <option value="public">public</option>
+          <option value="draft">draft</option>
+          <option value="hidden">hidden</option>
+        </select>
+        <select id="limit">
+          <option>50</option><option>100</option><option>200</option>
+        </select>
+        <button id="refresh">Refresh</button>
+      </div>
+      <div class="grid">
+        <table id="tbl">
+          <thead><tr>
+            <th>ID</th><th>Title</th><th>Artist</th><th>Status</th>
+            <th>Plays</th><th>Likes</th><th>Created</th><th class="actions">Actions</th>
+          </tr></thead>
+          <tbody><tr><td colspan="8">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="statusline" class="statusline"></div>
+    </section>
+
+    <!-- CONTESTS -->
+    <section id="panel-contests" class="panel" style="display:none">
+      <div class="toolbar">
+        <input id="c_q" type="search" placeholder="Search contest title…">
+        <select id="c_status">
+          <option value="">All statuses</option>
+          <option value="draft">draft</option>
+          <option value="live">live</option>
+          <option value="closed">closed</option>
+        </select>
+        <select id="c_limit"><option>50</option><option>100</option></select>
+        <button id="c_refresh">Refresh</button>
+        <button class="btn" disabled title="Write actions coming soon">+ New Contest</button>
+      </div>
+      <div class="grid">
+        <table id="c_tbl">
+          <thead><tr>
+            <th>ID</th><th>Title</th><th>Status</th><th>Start</th><th>End</th><th>Created</th><th class="actions">Actions</th>
+          </tr></thead>
+          <tbody><tr><td colspan="7">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="c_statusline" class="statusline"></div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="panel-events" class="panel" style="display:none">
+      <div class="toolbar">
+        <input id="e_q" type="search" placeholder="Search event title…">
+        <select id="e_status">
+          <option value="">All statuses</option>
+          <option value="draft">draft</option>
+          <option value="published">published</option>
+          <option value="past">past</option>
+        </select>
+        <select id="e_limit"><option>50</option><option>100</option></select>
+        <button id="e_refresh">Refresh</button>
+        <button class="btn" disabled title="Write actions coming soon">+ New Event</button>
+      </div>
+      <div class="grid">
+        <table id="e_tbl">
+          <thead><tr>
+            <th>ID</th><th>Title</th><th>Status</th><th>Start</th><th>End</th><th>Location</th><th>Created</th><th class="actions">Actions</th>
+          </tr></thead>
+          <tbody><tr><td colspan="8">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="e_statusline" class="statusline"></div>
+    </section>
+
+    <!-- USERS -->
+    <section id="panel-users" class="panel" style="display:none">
+      <div class="toolbar">
+        <input id="u_q" type="search" placeholder="Search user (name/email)…">
+        <select id="u_role">
+          <option value="">All roles</option>
+          <option value="user">user</option>
+          <option value="moderator">moderator</option>
+          <option value="admin">admin</option>
+        </select>
+        <select id="u_status">
+          <option value="">All status</option>
+          <option value="active">active</option>
+          <option value="suspended">suspended</option>
+          <option value="banned">banned</option>
+        </select>
+        <select id="u_limit"><option>50</option><option>100</option></select>
+        <button id="u_refresh">Refresh</button>
+        <span class="note">Write actions locked; buttons disabled until backend is added.</span>
+      </div>
+      <div class="grid">
+        <table id="u_tbl">
+          <thead><tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th class="actions">Actions</th>
+          </tr></thead>
+          <tbody><tr><td colspan="7">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="u_statusline" class="statusline"></div>
+    </section>
+
+  </div>
+</main>
+
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./admin.js?v=2"></script>
+</body>
+</html>

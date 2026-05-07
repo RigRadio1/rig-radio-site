@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Membership • RIG-Radio</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/rr.css">
+  <style>
+    body{
+      background:#0a0a0c url../../studio-bg.png') center/cover no-repeat fixed;
+      font-family:'Orbitron',sans-serif;
+      color:#f5f5f5;
+      text-shadow:0 0 6px #000;
+      margin:0;
+      padding:60px 20px;
+    }
+    .wrap{max-width:1100px;margin:auto;text-align:center;}
+    h1{
+      font-size:2.6em;
+      color:#ff1c1c;
+      letter-spacing:2px;
+      text-shadow:0 0 25px #ff0000,0 0 6px #e22;
+      margin-bottom:50px;
+    }
+    .tiers{
+      display:grid;
+      gap:26px;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    }
+    .card{
+  border: 2px solid rgba(255,40,40,0.35);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.8), 0 0 20px rgba(255,20,20,0.2) inset;
+  position: relative;
+  overflow: hidden;
+
+      position:relative;
+      background:rgba(15,15,18,0.9);
+      border:1px solid rgba(255,32,32,0.4);
+      border-radius:10px;
+      padding:26px 18px 36px;
+      overflow:hidden;
+      box-shadow:
+        0 0 30px rgba(255,0,0,0.25) inset,
+        0 0 18px rgba(255,0,0,0.25);
+      transition:transform .25s,box-shadow .25s;
+    }
+    .card:hover{
+      transform:translateY(-4px);
+      box-shadow:
+        0 0 50px rgba(255,20,20,0.45),
+        inset 0 0 25px rgba(255,0,0,0.3);
+    }
+    .card h2{
+      font-size:1.4em;
+      color:#ff3838;
+      text-transform:uppercase;
+      margin-top:0;
+      text-shadow:0 0 15px #f00;
+      letter-spacing:1px;
+    }
+    .price{
+      color:#7df27d;
+      font-size:1.1em;
+      margin:6px 0 18px;
+    }
+    ul{list-style:none;padding:0;margin:0;}
+    li{
+      margin:8px 0;
+      border-left:3px solid #ff2525;
+      padding-left:10px;
+      font-size:.95em;
+      text-align:left;
+    }
+    .btn{
+      display:inline-block;
+      margin-top:20px;
+      padding:10px 28px;
+      border:2px solid #ff3333;
+      color:#ff3333;
+      background:linear-gradient(180deg,rgba(20,20,22,0.9),rgba(8,8,10,0.9));
+      border-radius:6px;
+      text-decoration:none;
+      font-weight:700;
+      letter-spacing:.5px;
+      box-shadow:0 0 12px rgba(255,0,0,0.3);
+      transition:all .2s;
+    }
+    .btn:hover{
+      background:#ff3333;
+      color:#000;
+      text-shadow:none;
+      box-shadow:0 0 20px #f00;
+    }
+    .btn[disabled]{opacity:.4;pointer-events:none;}
+body {
+  background-image: url("/studio-bg.png") !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+.card::bottom-left,.card::bottom-right{content:"";position:absolute;width:10px;height:10px;background:#555;border:1px solid #222;border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,0.4) inset,0 0 3px #000;}
+.card::bottom-left{bottom:10px;left:10px;}
+.card::bottom-right{bottom:10px;right:10px;}
+
+.card::before{top:10px;left:10px;}
+.card::after{top:10px;right:10px;}
+.card::bottom-left,.card::bottom-right{content:"";position:absolute;width:10px;height:10px;background:#555;border:1px solid #222;border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,0.4) inset,0 0 3px #000;}
+.card::bottom-left{bottom:10px;left:10px;}
+.card::bottom-right{bottom:10px;right:10px;}
+
+
+
+.bolt{position:absolute;width:10px;height:10px;background:radial-gradient(circle at 30% 30%,#888 0%,#444 60%,#222 100%);border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,0.8),inset 0 0 3px #000;}
+.bolt.tl{top:8px;left:8px;}
+.bolt.tr{top:8px;right:8px;}
+.bolt.bl{bottom:8px;left:8px;}
+.bolt.br{bottom:8px;right:8px;}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Join the Nation</h1>
+    <div class="tiers">
+      <div class="card">
+<div class="bolts"><span class="bolt tl"></span><span class="bolt tr"></span><span class="bolt bl"></span><span class="bolt br"></span></div>
+        <h2>Free</h2>
+        <div class="price">$0 / month</div>
+        <ul>
+          <li>50 track uploads</li>
+          <li>20-track playlist</li>
+          <li>Dashboard only</li>
+          <li>Chat in rooms (no creation)</li>
+        </ul>
+        <a class="btn" disabled>Current</a>
+      </div>
+      <div class="card">
+<div class="bolts"><span class="bolt tl"></span><span class="bolt tr"></span><span class="bolt bl"></span><span class="bolt br"></span></div>
+        <h2>Artist</h2>
+        <div class="price">$6.99 / month</div>
+        <ul>
+          <li>100 track uploads</li>
+          <li>50-track playlist</li>
+          <li>Artist profile + badge</li>
+          <li>Create chat rooms</li>
+        </ul>
+        <a class="btn" href="#">Upgrade</a>
+      </div>
+      <div class="card">
+<div class="bolts"><span class="bolt tl"></span><span class="bolt tr"></span><span class="bolt bl"></span><span class="bolt br"></span></div>
+        <h2>Platinum Artist</h2>
+        <div class="price">$14.99 / month</div>
+        <ul>
+          <li>200 track uploads</li>
+          <li>Unlimited playlist</li>
+          <li>Upgraded profile + links/donations</li>
+          <li>Exclusive role & perks</li>
+        </ul>
+        <a class="btn" href="#">Upgrade</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

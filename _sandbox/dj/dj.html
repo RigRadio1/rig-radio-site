@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>DJ Booth</title>
+
+  <link rel="stylesheet" href="/rr.css"/>
+  <link rel="stylesheet" href="booth.css"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dj-root">
+  <div class="wrap">
+
+    <!-- Top bar -->
+    <header class="dj-header">
+      <div class="brand">DJ Booth</div>
+      <div class="now-pill"><span id="nowPlayingPill">—</span></div>
+    </header>
+
+    <!-- === TOP: Decks side-by-side === -->
+    <section class="decks-two card panel-match">
+      <!-- Deck A -->
+      <div class="deck compact" id="leftDeck">
+        <div class="deck-head">
+          <h3>Deck A</h3>
+          <button id="clearDeckA" class="ghost">Clear A</button>
+        </div>
+
+<div class="now big-title"><span class="led"></span><span id="deckA_now">(empty)</span></div>
+
+        <audio id="deckA_audio" preload="none" controls></audio>
+
+        <!-- Waveform-style progress -->
+        <div class="wavebar">
+          <div id="waveA" class="wavefill"></div>
+        </div>
+      </div>
+
+      <!-- Center crossfader -->
+      <div class="center-controls skinny">
+        <div class="xfader-wrap">
+          <div class="xfader-labels">
+            <span>A</span><span>Crossfader</span><span>B</span>
+          </div>
+          <input type="range" id="crossfader" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <!-- Deck B -->
+      <div class="deck compact" id="rightDeck">
+        <div class="deck-head">
+          <h3>Deck B</h3>
+          <button id="clearDeckB" class="ghost">Clear B</button>
+        </div>
+
+<div class="now big-title"><span class="led"></span><span id="deckB_now">(empty)</span></div>
+
+        <audio id="deckB_audio" preload="none" controls></audio>
+
+        <!-- Waveform-style progress -->
+        <div class="wavebar">
+          <div id="waveB" class="wavefill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- === BOTTOM: Library under A, Queue under B === -->
+    <main class="bottom-two">
+      <!-- Library -->
+      <section id="library" class="card panel-match">
+        <div class="section-head">
+          <h2>Library</h2>
+          <div class="actions">
+            <input id="libSearch" type="text" placeholder="Search title/artist…"/>
+          </div>
+        </div>
+        <div id="trackList" class="list">Loading…</div>
+      </section>
+
+      <!-- Queue -->
+      <section id="queue" class="card panel-match">
+        <div class="section-head">
+          <h2>Tonight’s Queue</h2>
+          <div class="actions" id="queueControls">
+            <button id="saveQueueBtn">Save</button>
+            <button id="loadQueueBtn">Load</button>
+            <button id="clearQueueBtn">Clear</button>
+          </div>
+        </div>
+
+        <div class="url-bar">
+          <input id="urlInput" type="text" placeholder="Paste YouTube / MP3 URL…"/>
+          <input id="urlLabel" type="text" placeholder="Label (optional)"/>
+          <button id="addUrlBtn">Add URL</button>
+        </div>
+
+        <div class="queue-head">
+          <div class="q-col q-num">#</div>
+          <div class="q-col q-title">Title — Artist</div>
+          <div class="q-col q-actions">Actions</div>
+        </div>
+        <ul id="queueList" class="queue playlist"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="dj.js"></script>
+</body>
+</html>
+
