@@ -1348,3 +1348,34 @@ body {
   text-transform: uppercase;
   cursor: pointer;
 }
+/* PHASE 1 — live chat polish */
+.live-chat-card {
+  min-width: 400px;
+}
+
+.live-chat-card p {
+  line-height: 1.35;
+}
+
+.live-chat-messages {
+  margin-top: 16px;
+  max-height: 360px;
+}
+
+.live-chat-form {
+  margin-top: 16px;
+}
+
+.live-chat-form input {
+  min-width: 220px;
+}
+
+.chat-line {
+  padding: 13px 14px;
+}
+
+.chat-line strong {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
