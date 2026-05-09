@@ -62,22 +62,25 @@
             and connect during broadcasts.
           </p>
 
-          <div class="chat-preview">
-            <div class="chat-line">
-              <strong>Rig-Radio</strong>
-              <span>Welcome to the live room.</span>
-            </div>
+        <p id="live-chat-status" class="chat-status">Loading chat...</p>
 
-            <div class="chat-line">
-              <strong>Creator</strong>
-              <span>Dropping my track when the room opens.</span>
-            </div>
+<div id="live-chat-messages" class="chat-preview live-chat-messages">
+  <div class="chat-line locked">
+    <strong>System</strong>
+    <span>Loading live room...</span>
+  </div>
+</div>
 
-            <div class="chat-line locked">
-              <strong>System</strong>
-              <span>Log in to join the conversation.</span>
-            </div>
-          </div>
+<form id="live-chat-form" class="live-chat-form">
+  <input
+    id="live-chat-input"
+    type="text"
+    maxlength="240"
+    placeholder="Type your message..."
+    autocomplete="off"
+  />
+  <button type="submit">Send</button>
+</form>
 
           <div class="chat-actions">
             <a href="/login/" class="btn-primary">Log In</a>
@@ -87,5 +90,7 @@
       </aside>
     </section>
   </main>
+  <script src="/auth.js"></script>
+<script src="/assets/community/live-chat.js"></script>
 </body>
 </html>

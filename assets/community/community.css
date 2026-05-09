@@ -1287,3 +1287,64 @@ body {
 .chat-actions .btn-secondary {
   white-space: nowrap;
 }
+/* PHASE 1 — live chat wiring */
+.live-chat-messages {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.chat-status {
+  margin: 0 0 14px;
+  color: #ffb089;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.chat-line strong em {
+  color: #8f8f98;
+  font-style: normal;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.live-chat-form {
+  margin-top: 18px;
+  display: none;
+  gap: 10px;
+}
+
+.live-chat-form input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 106, 42, 0.28);
+  border-radius: 999px;
+  background: rgba(5, 5, 7, 0.72);
+  color: #ffffff;
+  outline: none;
+}
+
+.live-chat-form input::placeholder {
+  color: #777782;
+}
+
+.live-chat-form input:focus {
+  border-color: rgba(255, 106, 42, 0.7);
+  box-shadow: 0 0 18px rgba(255, 106, 42, 0.18);
+}
+
+.live-chat-form button {
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #d92f24, #ff6a2a);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
