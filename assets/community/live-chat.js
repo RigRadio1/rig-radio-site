@@ -118,16 +118,19 @@ if (formEl) formEl.style.display = "flex";
 
         inputEl.value = "";
 
-        const { error } = await sb.from(CHAT_TABLE).insert({
-          user_id: currentUser.id,
-          display_name: displayName(currentUser),
-          message,
-        });
+     const { error } = await sb.from(CHAT_TABLE).insert({
+  user_id: currentUser.id,
+  display_name: displayName(currentUser),
+  message,
+});
 
-        if (error) {
-          console.error(error);
-          if (statusEl) statusEl.textContent = "Message failed to send.";
-        }
+if (error) {
+  console.error(error);
+  if (statusEl) statusEl.textContent = "Message failed to send.";
+  return;
+}
+
+await loadMessages();
       });
     }
   }
