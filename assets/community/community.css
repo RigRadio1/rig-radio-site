@@ -497,3 +497,11 @@ footer {
     transform: translateX(-100%);
   }
 }
+.main-nav a {
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.main-nav a:hover {
+  background: rgba(255, 59, 59, 0.12);
+}
