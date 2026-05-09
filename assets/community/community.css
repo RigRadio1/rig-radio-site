@@ -961,3 +961,159 @@ body {
     opacity: 1;
   }
 }
+/* PHASE 1 — Live Radio page */
+.live-radio-page {
+  min-height: 100vh;
+  padding: 34px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.16), transparent 34%),
+    linear-gradient(135deg, #050507, #111017);
+}
+
+.live-radio-hero {
+  max-width: 1180px;
+  margin: 0 auto 28px;
+  padding: 32px;
+  border: 1px solid rgba(255, 106, 42, 0.28);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at right, rgba(255, 106, 42, 0.18), transparent 35%),
+    rgba(20, 19, 24, 0.78);
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.live-radio-hero h1 {
+  margin: 0 0 10px;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 0.95;
+}
+
+.live-radio-hero p {
+  max-width: 680px;
+  color: #a7a7ad;
+  font-size: 18px;
+}
+
+.live-pill {
+  height: fit-content;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 0 22px rgba(255, 59, 59, 0.75);
+}
+
+.live-radio-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(520px, 1.4fr) minmax(340px, 0.8fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.live-radio-player-card,
+.live-chat-card {
+  border: 1px solid rgba(255, 106, 42, 0.28);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.12), transparent 35%),
+    rgba(20, 19, 24, 0.86);
+  box-shadow:
+    0 0 28px rgba(255, 106, 42, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.live-radio-player-card {
+  padding: 28px;
+}
+
+.live-radio-player-card h2,
+.live-chat-card h2 {
+  margin: 0 0 18px;
+  color: #ffffff;
+}
+
+.live-radio-big-player {
+  max-width: 520px;
+}
+
+.live-radio-big-player iframe {
+  width: 100%;
+  border-radius: 16px;
+}
+
+.live-radio-widgets {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.live-chat-card {
+  padding: 28px;
+}
+
+.chat-lock p {
+  color: #a7a7ad;
+}
+
+.chat-preview {
+  margin-top: 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.chat-line {
+  padding: 14px;
+  border: 1px solid rgba(255, 106, 42, 0.18);
+  border-radius: 14px;
+  background: rgba(5, 5, 7, 0.45);
+}
+
+.chat-line strong {
+  display: block;
+  color: #ff6a2a;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.chat-line span {
+  color: #f2f2f2;
+}
+
+.chat-line.locked {
+  opacity: 0.72;
+}
+
+.chat-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .live-radio-page {
+    padding: 18px;
+  }
+
+  .live-radio-hero,
+  .live-radio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .live-radio-hero {
+    flex-direction: column;
+  }
+
+  .live-radio-widgets {
+    grid-template-columns: 1fr;
+  }
+}
