@@ -102,46 +102,45 @@
 </section>
 
    <section class="card uploads">
+ <section class="card uploads">
   <h2>Recent Uploads</h2>
 
-  <div class="upload-list">
-
+  <div id="community-latest-tracks" class="upload-list">
     <div class="upload-item">
       <div class="upload-cover">♪</div>
       <div>
-        <strong>Midnight Signal</strong>
-        <p>by Creator One</p>
+        <strong>Loading latest tracks...</strong>
+        <p>Checking Rig-Radio uploads</p>
       </div>
     </div>
-
-    <div class="upload-item">
-      <div class="upload-cover">♪</div>
-      <div>
-        <strong>Red Dirt Frequency</strong>
-        <p>by West Texas AI</p>
-      </div>
-    </div>
-
-    <div class="upload-item">
-      <div class="upload-cover">♪</div>
-      <div>
-        <strong>Neon County Line</strong>
-        <p>by Drop Zone Crew</p>
-      </div>
-    </div>
-
   </div>
 </section>
 
-    <section class="card stats">
-      <h2>Community Stats</h2>
-      <div class="stats-grid">
-        <div><strong>Members</strong><span>000</span></div>
-        <div><strong>Tracks</strong><span>000</span></div>
-        <div><strong>Live</strong><span>000</span></div>
-        <div><strong>DJs</strong><span>000</span></div>
-      </div>
-    </section>
+<section class="card stats">
+  <h2>Community Stats</h2>
+
+  <div class="stats-grid">
+    <div>
+      <strong>Members</strong>
+      <span id="community-members-total">---</span>
+    </div>
+
+    <div>
+      <strong>Tracks</strong>
+      <span id="community-tracks-total">---</span>
+    </div>
+
+    <div>
+      <strong>Live</strong>
+      <span>ON AIR</span>
+    </div>
+
+    <div>
+      <strong>DJs</strong>
+      <span>Coming Soon</span>
+    </div>
+  </div>
+</section>
 
  <section class="card updates">
   <h2>Live Activity</h2>
@@ -242,5 +241,6 @@
 
   <script src="/assets/community/community.js"></script>
   </div>
+  <script src="/assets/community/community-live-data.js"></script>
 </body>
 </html>
