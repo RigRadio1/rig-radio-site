@@ -457,6 +457,8 @@ footer {
   grid-template-columns: 260px 1fr;
   gap: 24px;
   padding: 40px;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .sidebar {
