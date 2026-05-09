@@ -41,11 +41,11 @@ body {
   text-decoration: none;
 }
 
-.hero {
+ {
   padding: 110px 60px;
   background:
     radial-gradient(circle at top right, rgba(255, 59, 59, 0.28), transparent 35%),
-    linear-gradient(135deg, #111116, #181820);
+    l.heroinear-gradient(135deg, #111116, #181820);
 
   border-bottom: 1px solid #2a2a33;
   position: relative;
@@ -585,6 +585,7 @@ footer {
 
 .footer-links a:hover {
   color: #ff3b3b;
+
 }
 .hero {
   position: relative;
@@ -683,4 +684,28 @@ body {
   background:
     radial-gradient(circle at right, rgba(255, 106, 42, 0.30), transparent 35%),
     linear-gradient(135deg, #07070a, #171117);
+}
+/* PHASE 1 — tighten hero height */
+.hero {
+  padding: 42px 0 34px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 5vw, 56px);
+  margin-bottom: 14px;
+}
+
+.hero p {
+  font-size: 18px;
+  max-width: 760px;
+}
+
+.hero .badge,
+.hero .live-badge {
+  margin-bottom: 14px;
+}
+
+.hero .actions,
+.hero .hero-actions {
+  margin-top: 22px;
 }
