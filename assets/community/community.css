@@ -1117,3 +1117,33 @@ body {
     grid-template-columns: 1fr;
   }
 }
+/* PHASE 1 — Live page button polish */
+.chat-actions a {
+  text-decoration: none;
+}
+
+.chat-actions .btn-primary,
+.chat-actions .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.chat-actions .btn-primary {
+  color: #ffffff;
+  background: linear-gradient(135deg, #d92f24, #ff6a2a);
+  box-shadow: 0 0 20px rgba(255, 106, 42, 0.28);
+}
+
+.chat-actions .btn-secondary {
+  color: #ffb089;
+  border: 1px solid rgba(255, 106, 42, 0.38);
+  background: rgba(5, 5, 7, 0.55);
+}
