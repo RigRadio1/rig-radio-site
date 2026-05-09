@@ -1609,3 +1609,41 @@ body {
   margin-top: 3px;
   font-size: 13px;
 }
+/* PHASE 1 — sidebar radio player layout */
+.sidebar-player {
+  padding: 18px;
+}
+
+.sidebar-player .radio-live-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.sidebar-player .radio-embed-wrap {
+  max-width: 100%;
+  width: 100%;
+}
+
+.sidebar-player .radio-extra-widgets {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.sidebar-player .radio-widget {
+  width: 100%;
+  min-height: auto;
+  padding: 14px;
+}
+
+.sidebar-player .signal-visualizer {
+  height: 64px;
+  padding: 12px;
+}
+
+.sidebar-player iframe {
+  max-width: 100%;
+}
