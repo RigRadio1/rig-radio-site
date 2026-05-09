@@ -739,3 +739,14 @@ body {
   max-width: 520px;
   border-radius: 12px;
 }
+/* PHASE 1 — Radio.co embed sizing */
+.radio-embed-wrap {
+  margin-top: 18px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.radio-embed-wrap iframe {
+  width: 100%;
+  border-radius: 14px;
+}
