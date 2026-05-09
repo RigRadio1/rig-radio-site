@@ -750,3 +750,37 @@ body {
   width: 100%;
   border-radius: 14px;
 }
+/* PHASE 1 — Radio.co extra widgets */
+.radio-extra-widgets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.radio-widget {
+  padding: 16px;
+  border: 1px solid rgba(255, 106, 42, 0.24);
+  border-radius: 16px;
+  background: rgba(5, 5, 7, 0.45);
+}
+
+.radio-widget h3 {
+  margin: 0 0 12px;
+  color: #ff6a2a;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.radio-widget iframe {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 800px) {
+  .radio-extra-widgets {
+    grid-template-columns: 1fr;
+  }
+}
