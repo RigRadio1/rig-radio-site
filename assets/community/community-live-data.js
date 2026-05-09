@@ -32,6 +32,7 @@
     const membersEl = document.getElementById("community-members-total");
     const tracksEl = document.getElementById("community-tracks-total");
     const latestEl = document.getElementById("community-latest-tracks");
+    const activityEl = document.getElementById("community-live-activity");
 
     const { count: memberCount } = await sb
       .from("profiles")
@@ -82,9 +83,42 @@
             </div>
           </div>
         `;
-      })
-      .join("");
-  }
+if (activityEl && latest && latest.length) {
+  const newest = latest[0];
+  const newestTitle = newest.title || "New track";
+  const newestArtist = newest.artist || newest.artist_name || "Unknown Artist";
 
-  window.addEventListener("load", loadCommunityData);
-})();
+  activityEl.innerHTML = `
+    <div class="activity-item">
+      <span class="activity-dot"></span>
+      <div>
+        <strong>Rig-Radio is ON AIR</strong>
+        <p>Live broadcast room is active now</p>
+      </div>
+    </div>
+
+    <div class="activity-item">
+      <span class="activity-dot"></span>
+      <div>
+        <strong>Latest upload added</strong>
+        <p>${newestTitle} by ${newestArtist}</p>
+      </div>
+    </div>
+
+    <div class="activity-item">
+      <span class="activity-dot"></span>
+      <div>
+        <strong>Community library updated</strong>
+        <p>${trackCount.toLocaleString()} public tracks available</p>
+      </div>
+    </div>
+
+    <div class="activity-item">
+      <span class="activity-dot"></span>
+      <div>
+        <strong>Member count updated</strong>
+        <p>${memberCount.toLocaleString()} creators and listeners connected</p>
+      </div>
+    </div>
+  `;
+}
