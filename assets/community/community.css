@@ -1260,3 +1260,30 @@ body {
   font-size: 12px;
   margin-bottom: 9px;
 }
+/* PHASE 1 — fix live page balance */
+.live-radio-grid {
+  max-width: 1120px;
+  grid-template-columns: 760px 360px;
+  gap: 22px;
+}
+
+.live-radio-player-card {
+  grid-template-columns: 420px 260px;
+}
+
+.live-radio-widgets {
+  width: 260px;
+}
+
+.live-chat-card {
+  min-width: 360px;
+}
+
+.chat-actions {
+  flex-direction: row;
+}
+
+.chat-actions .btn-primary,
+.chat-actions .btn-secondary {
+  white-space: nowrap;
+}
