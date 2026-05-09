@@ -259,3 +259,32 @@ footer {
   width: 42%;
   background: #ff3b3b;
 }
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #1d1d25;
+  padding: 14px;
+  border-radius: 10px;
+}
+
+.activity-dot {
+  width: 10px;
+  height: 10px;
+  background: #ff3b3b;
+  border-radius: 50%;
+  margin-top: 6px;
+  box-shadow: 0 0 12px rgba(255, 59, 59, 0.8);
+}
+
+.activity-item p {
+  color: #9ca3af;
+  font-size: 13px;
+  margin-top: 4px;
+}
