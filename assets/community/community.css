@@ -473,3 +473,27 @@ footer {
     order: 2;
   }
 }
+.ticker-wrap {
+  overflow: hidden;
+  background: #08080b;
+  border-bottom: 1px solid #2a2a33;
+  padding: 10px 0;
+}
+
+.ticker {
+  white-space: nowrap;
+  color: #ff3b3b;
+  font-weight: 800;
+  letter-spacing: 1px;
+  animation: tickerMove 18s linear infinite;
+}
+
+@keyframes tickerMove {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
