@@ -514,7 +514,7 @@ footer {
   color: #ff3b3b;
   font-weight: 800;
   letter-spacing: 1px;
-  animation: tickerMove 18s linear infinite;
+  animation: tickerMove 28s linear infinite;
 }
 
 @keyframes tickerMove {
