@@ -126,19 +126,19 @@
           </div>
         </div>
 
-        <div class="activity-item">
+              <div class="activity-item">
           <span class="activity-dot"></span>
           <div>
-            <strong>Community library updated</strong>
-            <p>${safeTrackCount.toLocaleString()} public tracks available</p>
+            <strong>Live room is open</strong>
+            <p>Members can chat, react, and use emotes now</p>
           </div>
         </div>
 
         <div class="activity-item">
           <span class="activity-dot"></span>
           <div>
-            <strong>Member count updated</strong>
-            <p>${safeMemberCount.toLocaleString()} creators and listeners connected</p>
+            <strong>Creator feed updated</strong>
+            <p>Recent public uploads are now showing on the community page</p>
           </div>
         </div>
       `;
