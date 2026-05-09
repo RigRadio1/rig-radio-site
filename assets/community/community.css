@@ -364,3 +364,40 @@ footer {
   margin-top: 8px;
   line-height: 1.5;
 }
+.upload-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.upload-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #1d1d25;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.upload-cover {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff3b3b, #3b0b0b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.upload-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.upload-item p {
+  color: #9ca3af;
+  font-size: 14px;
+}
