@@ -5,6 +5,7 @@
   const formEl = document.getElementById("live-chat-form");
   const inputEl = document.getElementById("live-chat-input");
   const statusEl = document.getElementById("live-chat-status");
+  const emoteButtons = document.querySelectorAll("[data-emote]");
 
   let currentUser = null;
   let sb = null;
@@ -112,6 +113,15 @@ if (formEl) formEl.style.display = "flex";
     if (formEl) {
       formEl.addEventListener("submit", async function (event) {
         event.preventDefault();
+        emoteButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    if (!inputEl) return;
+
+    const emote = button.getAttribute("data-emote") || "";
+    inputEl.value = (inputEl.value + " " + emote).trim() + " ";
+    inputEl.focus();
+  });
+});
 
         const message = (inputEl.value || "").trim();
         if (!message || !currentUser) return;
