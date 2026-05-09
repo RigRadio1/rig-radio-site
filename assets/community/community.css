@@ -208,3 +208,54 @@ footer {
     box-shadow: 0 0 0 rgba(255, 59, 59, 0.5);
   }
 }
+.player-display {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+}
+
+.track-details h3 {
+  font-size: 28px;
+  margin: 10px 0 6px;
+}
+
+.track-details p {
+  color: #9ca3af;
+  margin-bottom: 18px;
+}
+
+.live-status {
+  color: #ff3b3b;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.player-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.player-controls button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #ff3b3b;
+  background: #1d1d25;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.progress-wrap {
+  height: 8px;
+  background: #1d1d25;
+  border-radius: 999px;
+  margin-top: 22px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 42%;
+  background: #ff3b3b;
+}
