@@ -1237,3 +1237,26 @@ body {
 .live-radio-widgets {
   align-self: start;
 }
+/* PHASE 1 — widen live radio widgets */
+.live-radio-player-card {
+  grid-template-columns: 420px 220px;
+}
+
+.live-radio-widgets {
+  width: 220px;
+}
+
+.live-radio-widgets .radio-widget {
+  width: 100%;
+}
+
+.live-radio-widgets .radio-widget,
+.live-radio-widgets .radio-widget * {
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.live-radio-widgets .radio-widget h3 {
+  font-size: 12px;
+  margin-bottom: 9px;
+}
