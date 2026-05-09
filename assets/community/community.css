@@ -709,3 +709,60 @@ body {
 .hero .hero-actions {
   margin-top: 22px;
 }
+/* PHASE 1 — stronger live radio panel */
+.radio-card,
+.player-card,
+.live-player,
+.radio-player,
+.player {
+  position: relative;
+  border: 1px solid rgba(255, 106, 42, 0.35);
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(20, 19, 24, 0.96), rgba(5, 5, 7, 0.98));
+  box-shadow:
+    0 0 28px rgba(255, 106, 42, 0.16),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.radio-card h2,
+.player-card h2,
+.live-player h2,
+.radio-player h2,
+.player h2 {
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.radio-card::before,
+.player-card::before,
+.live-player::before,
+.radio-player::before,
+.player::before {
+  content: "RIG-RADIO LIVE SIGNAL";
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  position: absolute;
+  top: 18px;
+  left: 18px;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  color: #ffb089;
+  text-transform: uppercase;
+}
+
+.radio-card iframe,
+.player-card iframe,
+.live-player iframe,
+.radio-player iframe,
+.player iframe {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 38px;
+  border-radius: 14px;
+  overflow: hidden;
+}
