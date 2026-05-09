@@ -1199,3 +1199,41 @@ body {
     max-width: 100%;
   }
 }
+/* PHASE 1 — tighten live page spacing */
+.live-radio-page {
+  padding-top: 42px;
+}
+
+.live-radio-hero {
+  max-width: 1080px;
+  margin-bottom: 24px;
+  padding: 26px 30px;
+}
+
+.live-radio-hero h1 {
+  font-size: clamp(46px, 5vw, 64px);
+}
+
+.live-radio-grid {
+  max-width: 1080px;
+  grid-template-columns: 1.45fr 0.85fr;
+  gap: 22px;
+}
+
+.live-radio-player-card,
+.live-chat-card {
+  border-color: rgba(255, 106, 42, 0.34);
+}
+
+.live-radio-player-card {
+  padding: 24px;
+}
+
+.live-radio-player-card h2 {
+  color: #ffefe8;
+  letter-spacing: 0.2px;
+}
+
+.live-radio-widgets {
+  align-self: start;
+}
