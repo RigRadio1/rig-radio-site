@@ -401,3 +401,16 @@ footer {
   color: #9ca3af;
   font-size: 14px;
 }
+.stats-grid div {
+  border: 1px solid rgba(255, 59, 59, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stats-grid div:hover {
+  transform: scale(1.03);
+  border-color: rgba(255, 59, 59, 0.7);
+}
+
+.stats-grid span {
+  text-shadow: 0 0 16px rgba(255, 59, 59, 0.45);
+}
