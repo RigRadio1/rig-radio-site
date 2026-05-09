@@ -1486,3 +1486,60 @@ body {
   grid-column: 1 / -1;
   margin-bottom: 10px;
 }
+/* PHASE 1 — community live room preview */
+.community-chat-preview {
+  padding: 22px;
+  border: 1px solid rgba(255, 106, 42, 0.26);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.12), transparent 38%),
+    rgba(5, 5, 7, 0.55);
+}
+
+.community-chat-preview h3 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.community-chat-preview p {
+  color: #b7b7bf;
+  line-height: 1.45;
+}
+
+.preview-chat-lines {
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.preview-chat-line {
+  padding: 13px 14px;
+  border: 1px solid rgba(255, 106, 42, 0.18);
+  border-radius: 14px;
+  background: rgba(5, 5, 7, 0.62);
+}
+
+.preview-chat-line strong {
+  display: block;
+  color: #ff6a2a;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.preview-chat-line span {
+  color: #f1f1f1;
+}
+
+.preview-chat-line.locked {
+  opacity: 0.78;
+}
+
+.live-room-link {
+  margin-top: 18px;
+  display: inline-flex;
+  text-decoration: none;
+}
