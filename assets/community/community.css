@@ -42,12 +42,28 @@ body {
 }
 
 .hero {
-  padding: 80px 40px;
+  padding: 110px 60px;
   background:
-    radial-gradient(circle at top right, rgba(255, 59, 59, 0.25), transparent 35%),
+    radial-gradient(circle at top right, rgba(255, 59, 59, 0.28), transparent 35%),
     linear-gradient(135deg, #111116, #181820);
-}
 
+  border-bottom: 1px solid #2a2a33;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+  background-size: 40px 40px;
+
+  pointer-events: none;
+}
 .live-pill {
   display: inline-block;
   background: #ff3b3b;
