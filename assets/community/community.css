@@ -554,3 +554,30 @@ footer {
 .footer-links a:hover {
   color: #ff3b3b;
 }
+.hero {
+  position: relative;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: rgba(255, 59, 59, 0.18);
+  border-radius: 50%;
+  filter: blur(120px);
+
+  top: -120px;
+  right: -120px;
+
+  animation: glowMove 8s ease-in-out infinite alternate;
+}
+
+@keyframes glowMove {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(40px);
+  }
+}
