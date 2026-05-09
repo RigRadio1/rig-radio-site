@@ -1,6 +1,6 @@
 (function () {
   const SUPABASE_URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwenBlb3FkcGZ3cXVtbHN5aHB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDM5NTEsImV4cCI6MjA3MjU3OTk1MX0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
 
   async function ensureSupabase() {
     if (window.supabase && window.supabase.createClient) return;
@@ -43,10 +43,11 @@
       .select("*", { count: "exact", head: true })
       .eq("status", "public");
 
-    if (membersEl) membersEl.textContent = (memberCount || 0).toLocaleString();
-    if (tracksEl) tracksEl.textContent = (trackCount || 0).toLocaleString();
+    const safeMemberCount = memberCount || 0;
+    const safeTrackCount = trackCount || 0;
 
-    if (!latestEl) return;
+    if (membersEl) membersEl.textContent = safeMemberCount.toLocaleString();
+    if (tracksEl) tracksEl.textContent = safeTrackCount.toLocaleString();
 
     const { data: latest, error } = await sb
       .from("tracks")
@@ -56,7 +57,22 @@
       .limit(3);
 
     if (error || !latest || latest.length === 0) {
-      latestEl.innerHTML = `<div class="status">No recent uploads yet.</div>`;
+      if (latestEl) {
+        latestEl.innerHTML = `<div class="status">No recent uploads yet.</div>`;
+      }
+
+      if (activityEl) {
+        activityEl.innerHTML = `
+          <div class="activity-item">
+            <span class="activity-dot"></span>
+            <div>
+              <strong>Rig-Radio is ON AIR</strong>
+              <p>Live broadcast room is active now</p>
+            </div>
+          </div>
+        `;
+      }
+
       return;
     }
 
@@ -64,61 +80,70 @@
       latest.map((track) => getCoverUrl(sb, track.cover_path))
     );
 
-    latestEl.innerHTML = latest
-      .map((track, index) => {
-        const title = track.title || "Untitled";
-        const artist = track.artist || track.artist_name || "Unknown Artist";
-        const cover = covers[index];
+    if (latestEl) {
+      latestEl.innerHTML = latest
+        .map((track, index) => {
+          const title = track.title || "Untitled";
+          const artist = track.artist || track.artist_name || "Unknown Artist";
+          const cover = covers[index];
 
-        return `
-          <div class="community-track-card">
-            ${
-              cover
-                ? `<img src="${cover}" alt="">`
-                : `<div class="community-track-placeholder">RR</div>`
-            }
-            <div>
-              <strong>${title}</strong>
-              <span>${artist}</span>
+          return `
+            <div class="community-track-card">
+              ${
+                cover
+                  ? `<img src="${cover}" alt="">`
+                  : `<div class="community-track-placeholder">RR</div>`
+              }
+              <div>
+                <strong>${title}</strong>
+                <span>${artist}</span>
+              </div>
             </div>
+          `;
+        })
+        .join("");
+    }
+
+    if (activityEl) {
+      const newest = latest[0];
+      const newestTitle = newest.title || "New track";
+      const newestArtist = newest.artist || newest.artist_name || "Unknown Artist";
+
+      activityEl.innerHTML = `
+        <div class="activity-item">
+          <span class="activity-dot"></span>
+          <div>
+            <strong>Rig-Radio is ON AIR</strong>
+            <p>Live broadcast room is active now</p>
           </div>
-        `;
-if (activityEl && latest && latest.length) {
-  const newest = latest[0];
-  const newestTitle = newest.title || "New track";
-  const newestArtist = newest.artist || newest.artist_name || "Unknown Artist";
+        </div>
 
-  activityEl.innerHTML = `
-    <div class="activity-item">
-      <span class="activity-dot"></span>
-      <div>
-        <strong>Rig-Radio is ON AIR</strong>
-        <p>Live broadcast room is active now</p>
-      </div>
-    </div>
+        <div class="activity-item">
+          <span class="activity-dot"></span>
+          <div>
+            <strong>Latest upload added</strong>
+            <p>${newestTitle} by ${newestArtist}</p>
+          </div>
+        </div>
 
-    <div class="activity-item">
-      <span class="activity-dot"></span>
-      <div>
-        <strong>Latest upload added</strong>
-        <p>${newestTitle} by ${newestArtist}</p>
-      </div>
-    </div>
+        <div class="activity-item">
+          <span class="activity-dot"></span>
+          <div>
+            <strong>Community library updated</strong>
+            <p>${safeTrackCount.toLocaleString()} public tracks available</p>
+          </div>
+        </div>
 
-    <div class="activity-item">
-      <span class="activity-dot"></span>
-      <div>
-        <strong>Community library updated</strong>
-        <p>${trackCount.toLocaleString()} public tracks available</p>
-      </div>
-    </div>
+        <div class="activity-item">
+          <span class="activity-dot"></span>
+          <div>
+            <strong>Member count updated</strong>
+            <p>${safeMemberCount.toLocaleString()} creators and listeners connected</p>
+          </div>
+        </div>
+      `;
+    }
+  }
 
-    <div class="activity-item">
-      <span class="activity-dot"></span>
-      <div>
-        <strong>Member count updated</strong>
-        <p>${memberCount.toLocaleString()} creators and listeners connected</p>
-      </div>
-    </div>
-  `;
-}
+  window.addEventListener("load", loadCommunityData);
+})();
