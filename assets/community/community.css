@@ -1466,3 +1466,23 @@ body {
     radial-gradient(circle at top right, rgba(255, 106, 42, 0.08), transparent 40%),
     rgba(5, 5, 7, 0.62);
 }
+/* PHASE 1 — tighten live radio card */
+.live-radio-player-card {
+  grid-template-columns: 360px 260px;
+  justify-content: center;
+  column-gap: 42px;
+  min-height: 420px;
+}
+
+.live-radio-big-player {
+  max-width: 360px;
+}
+
+.live-radio-widgets {
+  width: 260px;
+}
+
+.live-radio-player-card h2 {
+  grid-column: 1 / -1;
+  margin-bottom: 10px;
+}
