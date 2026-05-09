@@ -279,13 +279,24 @@ footer {
 }
 
 .player-controls button {
-  width: 44px;
-  height: 44px;
-  border: 1px solid #ff3b3b;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 59, 59, 0.5);
   background: #1d1d25;
   color: white;
   border-radius: 50%;
   cursor: pointer;
+  font-size: 16px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+.player-controls button:hover {
+  transform: scale(1.08);
+  background: rgba(255, 59, 59, 0.15);
+  border-color: #ff3b3b;
 }
 
 .progress-wrap {
