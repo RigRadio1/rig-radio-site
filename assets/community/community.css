@@ -872,3 +872,29 @@ body {
 .radio-widget li {
   margin-bottom: 4px;
 }
+.radio-live-layout {
+  grid-template-columns: 360px minmax(260px, 1fr);
+}
+
+.radio-extra-widgets {
+  max-width: 100%;
+}
+
+.radio-widget {
+  padding: 16px 18px;
+}
+
+.radio-widget,
+.radio-widget * {
+  font-size: 13px;
+  line-height: 1.18;
+}
+
+.radio-widget h3 {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.radio-widget li {
+  margin-bottom: 3px;
+}
