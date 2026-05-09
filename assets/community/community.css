@@ -855,3 +855,20 @@ body {
     max-width: 100%;
   }
 }
+.radio-live-layout {
+  grid-template-columns: 360px 1fr;
+}
+
+.radio-embed-wrap {
+  max-width: 360px;
+}
+
+.radio-widget,
+.radio-widget * {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.radio-widget li {
+  margin-bottom: 4px;
+}
