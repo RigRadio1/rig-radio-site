@@ -898,3 +898,16 @@ body {
 .radio-widget li {
   margin-bottom: 3px;
 }
+.radio-live-layout {
+  grid-template-columns: 360px 280px;
+  gap: 36px;
+  justify-content: start;
+}
+
+.radio-extra-widgets {
+  width: 280px;
+}
+
+.radio-widget {
+  width: 100%;
+}
