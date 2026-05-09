@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Radio | Rig-Radio</title>
+  <link rel="stylesheet" href="/assets/community/community.css" />
+</head>
+
+<body>
+  <header class="top-nav">
+    <div class="brand">RIG-RADIO</div>
+
+    <nav>
+      <a href="/">Home</a>
+      <a href="/community/">Community</a>
+      <a href="/live/">Live Radio</a>
+      <a href="/uploads/">Uploads</a>
+      <a href="/dashboard/">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="live-radio-page">
+    <section class="live-radio-hero">
+      <div>
+        <p class="eyebrow">LIVE BROADCAST</p>
+        <h1>Live Radio Room</h1>
+        <p>Listen live, see what’s playing, and join the room when you’re logged in.</p>
+      </div>
+
+      <span class="live-pill">LIVE</span>
+    </section>
+
+    <section class="live-radio-grid">
+      <div class="live-radio-player-card">
+        <h2>Rig-Radio Live</h2>
+
+        <div class="live-radio-big-player">
+          <script src="https://embed.radio.co/player/cfe62f9.js"></script>
+        </div>
+
+        <div class="live-radio-widgets">
+          <div class="radio-widget">
+            <h3>Next Track</h3>
+            <script src="https://embed.radio.co/embed/sf54b83b42/next.js"></script>
+          </div>
+
+          <div class="radio-widget">
+            <h3>Song History</h3>
+            <script src="https://embed.radio.co/embed/sf54b83b42/history.js?l=5"></script>
+          </div>
+        </div>
+      </div>
+
+      <aside class="live-chat-card">
+        <div class="chat-lock">
+          <p class="eyebrow">MEMBER ROOM</p>
+          <h2>Live Chat</h2>
+
+          <p>
+            Guests can listen live. Members can join the chat, drop links, vote,
+            and connect during broadcasts.
+          </p>
+
+          <div class="chat-preview">
+            <div class="chat-line">
+              <strong>Rig-Radio</strong>
+              <span>Welcome to the live room.</span>
+            </div>
+
+            <div class="chat-line">
+              <strong>Creator</strong>
+              <span>Dropping my track when the room opens.</span>
+            </div>
+
+            <div class="chat-line locked">
+              <strong>System</strong>
+              <span>Log in to join the conversation.</span>
+            </div>
+          </div>
+
+          <div class="chat-actions">
+            <a href="/login/" class="btn-primary">Log In</a>
+            <a href="/signup/" class="btn-secondary">Create Account</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>
