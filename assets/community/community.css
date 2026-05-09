@@ -1166,3 +1166,36 @@ body {
 .live-radio-widgets {
   max-width: 100%;
 }
+/* PHASE 1 — Live page compact radio layout */
+.live-radio-player-card {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.live-radio-player-card h2 {
+  grid-column: 1 / -1;
+}
+
+.live-radio-big-player {
+  max-width: 420px;
+  margin: 0;
+}
+
+.live-radio-widgets {
+  margin-top: 0;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .live-radio-player-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .live-radio-big-player {
+    max-width: 100%;
+  }
+}
