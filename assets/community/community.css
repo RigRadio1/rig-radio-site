@@ -638,3 +638,49 @@ footer {
     transparent 4px
   );
 }
+:root {
+  --rig-red: #d92f24;
+  --rig-orange: #ff6a2a;
+  --rig-deep-red: #7a1414;
+  --rig-black: #050507;
+  --rig-panel: #141318;
+  --rig-panel-soft: #1d1b22;
+  --rig-border: rgba(255, 106, 42, 0.28);
+  --rig-glow: rgba(255, 106, 42, 0.22);
+}
+
+body {
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.10), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(217, 47, 36, 0.08), transparent 30%),
+    #050507;
+}
+
+.brand,
+.card h2,
+.side-card h3,
+.footer-brand {
+  color: var(--rig-orange);
+}
+
+.live-pill,
+.primary-btn,
+.avatar,
+.stream-tag,
+.player::after,
+.upload-cover,
+.progress-bar {
+  background: linear-gradient(135deg, var(--rig-orange), var(--rig-red));
+}
+
+.card,
+.side-card {
+  border-color: var(--rig-border);
+  box-shadow: 0 0 28px var(--rig-glow);
+}
+
+.hero {
+  background:
+    radial-gradient(circle at right, rgba(255, 106, 42, 0.30), transparent 35%),
+    linear-gradient(135deg, #07070a, #171117);
+}
