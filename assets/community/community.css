@@ -324,3 +324,43 @@ footer {
   border-color: #ff3b3b;
   color: #ff3b3b;
 }
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-message {
+  display: flex;
+  gap: 14px;
+  background: #1d1d25;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ff3b3b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.message-content strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.message-content span {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.message-content p {
+  margin-top: 8px;
+  line-height: 1.5;
+}
