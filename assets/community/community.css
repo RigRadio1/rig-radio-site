@@ -477,6 +477,11 @@ footer {
   border-radius: 18px;
   padding: 20px;
   box-shadow: 0 0 20px rgba(255, 59, 59, 0.06);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.side-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 59, 59, 0.6);
 }
 
 .side-card h3 {
