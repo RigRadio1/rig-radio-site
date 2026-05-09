@@ -74,7 +74,6 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  padding: 40px;
 }
 
 .card {
@@ -418,4 +417,43 @@ footer {
 
 .stats-grid span {
   text-shadow: 0 0 16px rgba(255, 59, 59, 0.45);
+}
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  padding: 40px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.side-card {
+  background: rgba(20, 20, 26, 0.92);
+  border: 1px solid #2a2a33;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(255, 59, 59, 0.06);
+}
+
+.side-card h3 {
+  color: #ff3b3b;
+  margin-bottom: 10px;
+}
+
+.side-card p {
+  color: #d1d5db;
+}
+
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
 }
