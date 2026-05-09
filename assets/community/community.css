@@ -1147,3 +1147,22 @@ body {
   border: 1px solid rgba(255, 106, 42, 0.38);
   background: rgba(5, 5, 7, 0.55);
 }
+/* PHASE 1 — Live page player layout polish */
+.live-radio-player-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.live-radio-big-player {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 0;
+}
+
+.live-radio-big-player iframe {
+  width: 100%;
+}
+
+.live-radio-widgets {
+  max-width: 100%;
+}
