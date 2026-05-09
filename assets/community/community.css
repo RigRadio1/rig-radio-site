@@ -1403,3 +1403,34 @@ body {
   border-color: rgba(255, 106, 42, 0.65);
   background: rgba(255, 106, 42, 0.14);
 }
+/* PHASE 1 — make live chat room breathe */
+.live-chat-card {
+  min-height: 560px;
+}
+
+.live-chat-messages {
+  max-height: 300px;
+  padding-right: 8px;
+}
+
+.chat-line {
+  margin-bottom: 10px;
+}
+
+.emote-picker {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 106, 42, 0.14);
+}
+
+.live-chat-form {
+  margin-top: 14px;
+}
+
+.live-chat-form input {
+  height: 46px;
+}
+
+.live-chat-form button {
+  height: 46px;
+}
