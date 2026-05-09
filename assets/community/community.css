@@ -288,3 +288,39 @@ footer {
   font-size: 13px;
   margin-top: 4px;
 }
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 14px 24px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.primary-btn {
+  background: #ff3b3b;
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 59, 59, 0.3);
+}
+
+.secondary-btn {
+  background: transparent;
+  color: white;
+  border: 1px solid #444;
+}
+
+.primary-btn:hover {
+  background: #ff5252;
+}
+
+.secondary-btn:hover {
+  border-color: #ff3b3b;
+  color: #ff3b3b;
+}
