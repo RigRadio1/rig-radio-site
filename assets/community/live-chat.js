@@ -88,12 +88,12 @@
     currentUser = data && data.session && data.session.user;
 
     if (!currentUser) {
-      if (statusEl) statusEl.textContent = "Log in to join the chat.";
-      if (formEl) formEl.style.display = "none";
-    } else {
-      if (statusEl) statusEl.textContent = "You are live in the room.";
-      if (formEl) formEl.style.display = "flex";
-    }
+  window.location.href = "/login.html";
+  return;
+}
+
+if (statusEl) statusEl.textContent = "You are live in the room.";
+if (formEl) formEl.style.display = "flex";
 
     await loadMessages();
 
