@@ -593,6 +593,157 @@ function bindSongRowPlayback(rowEl) {
   });
 }
 
+
+/* CHOOSE FEATURED TRACK */
+async function getFeaturedTrackForProfile(loadedTracks = [], userId = "") {
+  const featuredId = currentProfile?.featured_track_id;
+
+  if (!featuredId) {
+    return loadedTracks[0] || null;
+  }
+
+  const loadedMatch = loadedTracks.find((track) => String(track.id) === String(featuredId));
+  if (loadedMatch) {
+    return loadedMatch;
+  }
+
+  const { data, error } = await window.supabaseClient
+    .from("tracks")
+    .select("*")
+    .eq("id", featuredId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("FEATURED TRACK LOAD ERROR:", error);
+    return loadedTracks[0] || null;
+  }
+
+  return data || loadedTracks[0] || null;
+}
+
+function closeFeaturedPicker() {
+  document.getElementById("featuredPickerModal")?.remove();
+}
+
+async function openFeaturedPicker() {
+  if (!window.supabaseClient) return;
+
+  const { data: { user } } = await window.supabaseClient.auth.getUser();
+
+  if (!user) {
+    alert("Please log in first.");
+    return;
+  }
+
+  const { data, error } = await window.supabaseClient
+    .from("tracks")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.error("FEATURED PICKER LOAD ERROR:", error);
+    alert("Could not load your songs.");
+    return;
+  }
+
+  const tracks = data || [];
+
+  closeFeaturedPicker();
+
+  const modal = document.createElement("section");
+  modal.id = "featuredPickerModal";
+  modal.className = "featured-picker-modal";
+  modal.innerHTML = `
+    <div class="featured-picker-backdrop" data-close-featured-picker="1"></div>
+    <div class="featured-picker-panel">
+      <div class="featured-picker-header">
+        <div>
+          <p class="profile-kicker">Featured Track</p>
+          <h2>Choose Featured Song</h2>
+        </div>
+        <button type="button" class="featured-picker-close" data-close-featured-picker="1">×</button>
+      </div>
+
+      <div class="featured-picker-list">
+        ${
+          tracks.length
+            ? tracks.map((track) => {
+                const title = escapeHtml(track.title || track.name || (track.audio_filename ? track.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track"));
+                const sub = escapeHtml(track.artist || track.artist_name || track.genre || track.style || track.description || "Uploaded track");
+                const plays = escapeHtml(track.plays ?? 0);
+                const isCurrent = String(track.id) === String(currentProfile?.featured_track_id || "");
+
+                return `
+                  <button class="featured-picker-row" type="button" data-featured-track-id="${escapeHtml(track.id)}">
+                    <span>
+                      <strong>${title}</strong>
+                      <small>${plays} plays · ${sub}</small>
+                    </span>
+                    <em>${isCurrent ? "Current" : "Choose"}</em>
+                  </button>
+                `;
+              }).join("")
+            : `<p class="featured-picker-empty">No uploaded songs found.</p>`
+        }
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+async function saveFeaturedTrack(trackId) {
+  if (!trackId || !window.supabaseClient) return;
+
+  const { data: { user } } = await window.supabaseClient.auth.getUser();
+
+  if (!user) {
+    alert("Please log in first.");
+    return;
+  }
+
+  const { data, error } = await window.supabaseClient
+    .from("member_profiles")
+    .upsert(
+      {
+        id: user.id,
+        featured_track_id: trackId,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: "id" }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    console.error("FEATURED TRACK SAVE ERROR:", error);
+    alert("Could not save featured track.");
+    return;
+  }
+
+  currentProfile = data;
+
+  const { data: track, error: trackError } = await window.supabaseClient
+    .from("tracks")
+    .select("*")
+    .eq("id", trackId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (trackError) {
+    console.error("FEATURED TRACK REFRESH ERROR:", trackError);
+  }
+
+  if (track) {
+    await updateFeaturedTrack(track);
+  }
+
+  closeFeaturedPicker();
+}
+/* END CHOOSE FEATURED TRACK */
 async function loadMemberSongs(showAll = false) {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -639,7 +790,8 @@ async function loadMemberSongs(showAll = false) {
       return;
     }
 
-    await updateFeaturedTrack(data[0]);
+    const featuredTrack = await getFeaturedTrackForProfile(data, user.id);
+    await updateFeaturedTrack(featuredTrack);
 
     list.innerHTML = "";
 
@@ -687,8 +839,10 @@ async function loadMemberSongs(showAll = false) {
 document.addEventListener("DOMContentLoaded", () => {
   let showingAllSongs = false;
 
-  loadProfileIdentity();
-  loadMemberSongs(showingAllSongs);
+  (async () => {
+    await loadProfileIdentity();
+    await loadMemberSongs(showingAllSongs);
+  })();
 
   document.addEventListener("click", (event) => {
     const viewAllBtn = event.target.closest("#viewAllSongs");
@@ -698,21 +852,38 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (event.target.closest("#changeFeaturedBtn")) {
+      openFeaturedPicker();
+      return;
+    }
+
+    const featuredChoice = event.target.closest("[data-featured-track-id]");
+    if (featuredChoice) {
+      saveFeaturedTrack(featuredChoice.dataset.featuredTrackId);
+      return;
+    }
+
+    if (event.target.closest("[data-close-featured-picker]")) {
+      closeFeaturedPicker();
+      return;
+    }
+
     if (event.target.closest("#saveEditProfile")) {
       saveProfile();
+      return;
     }
 
     if (event.target.closest("#bannerUploadButton")) {
       document.getElementById("bannerUploadInput")?.click();
+      return;
     }
 
     if (event.target.closest("#avatarUploadButton")) {
       document.getElementById("avatarUploadInput")?.click();
+      return;
     }
   });
 });
-
-
 
 /* FORCE SOCIAL LINKS RENDERER */
 function renderSocialLinks(socials = {}) {
@@ -876,5 +1047,8 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
+
+
 
 

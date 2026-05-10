@@ -767,5 +767,110 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 }
 /* END MEMBER TOP NAV */
 
+/* FEATURED PICKER MODAL */
+.featured-picker-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
 
+.featured-picker-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.featured-picker-panel {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(720px, 86vh);
+  overflow: auto;
+  border: 1px solid rgba(255, 122, 24, 0.32);
+  border-radius: 22px;
+  background: rgba(10, 10, 14, 0.96);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.58);
+  padding: 22px;
+}
+
+.featured-picker-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.featured-picker-header h2 {
+  margin: 4px 0 0;
+  color: #fff;
+  font-size: 1.55rem;
+  letter-spacing: 0.03em;
+}
+
+.featured-picker-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 24, 0.35);
+  background: rgba(255, 122, 24, 0.10);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.featured-picker-list {
+  display: grid;
+  gap: 10px;
+}
+
+.featured-picker-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.featured-picker-row:hover {
+  border-color: rgba(255, 122, 24, 0.58);
+  background: rgba(255, 122, 24, 0.12);
+}
+
+.featured-picker-row strong {
+  display: block;
+  font-size: 0.98rem;
+}
+
+.featured-picker-row small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.featured-picker-row em {
+  flex: 0 0 auto;
+  font-style: normal;
+  font-weight: 900;
+  color: #ff7a18;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+}
+
+.featured-picker-empty {
+  color: rgba(255, 255, 255, 0.7);
+}
+/* END FEATURED PICKER MODAL */
 
