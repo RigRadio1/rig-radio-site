@@ -815,6 +815,7 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 
 .member-top-links a,
 .member-top-links button {
+  height: 36px;
   min-height: 36px;
   padding: 0 18px;
   border-radius: 999px;
@@ -824,10 +825,16 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
   font: inherit;
   font-size: 0.82rem;
   font-weight: 900;
+  line-height: 1;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
 .member-top-links a:hover,
@@ -853,4 +860,5 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
   }
 }
 /* END MEMBER TOP NAV */
+
 
