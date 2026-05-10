@@ -640,3 +640,44 @@
   height: 22px;
   display: block;
 }
+/* FINAL SOCIAL ICON FIX */
+.profile-socials {
+  max-width: 760px;
+  margin: 8px auto 0;
+  text-align: center;
+  padding: 18px 22px;
+}
+
+.social-links {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.social-links a {
+  width: 46px !important;
+  height: 46px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  color: #f4f1ea;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 47, 0.35);
+  background: rgba(255, 122, 47, 0.1);
+}
+
+.social-links a svg {
+  width: 23px !important;
+  height: 23px !important;
+  display: block !important;
+}
+
+.social-links a:hover {
+  background: rgba(255, 122, 47, 0.2);
+  border-color: rgba(255, 122, 47, 0.6);
+}
