@@ -285,3 +285,44 @@
     height: 130px;
   }
 }
+.playlist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.playlist-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  min-height: 124px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.playlist-thumb {
+  width: 96px;
+  height: 96px;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .playlist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .playlist-card {
+    grid-template-columns: 82px 1fr;
+  }
+
+  .playlist-thumb {
+    width: 82px;
+    height: 82px;
+  }
+}
