@@ -882,6 +882,124 @@ async function saveFeaturedTrack(trackId) {
   closeFeaturedPicker();
 }
 /* END CHOOSE FEATURED TRACK */
+
+async function loadMemberPlaylists() {
+  const grid = document.getElementById("profilePlaylists");
+  if (!grid || !window.supabaseClient) return;
+
+  const ownerId = profileOwnerId || currentUser?.id;
+
+  if (!ownerId) {
+    grid.innerHTML = `
+      <div class="playlist-card">
+        <div class="playlist-thumb placeholder-thumb"></div>
+        <div>
+          <h3>No profile selected</h3>
+          <p>Playlists could not be loaded.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = `
+    <div class="playlist-card">
+      <div class="playlist-thumb placeholder-thumb"></div>
+      <div>
+        <h3>Loading playlists...</h3>
+        <p>Please wait</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    let query = window.supabaseClient
+      .from("playlists")
+      .select("id,title,description,playlist_type,source,suno_url,cover_url,is_public,likes_count,created_at")
+      .eq("user_id", ownerId)
+      .order("created_at", { ascending: false })
+      .limit(6);
+
+    if (!viewingOwnProfile) {
+      query = query.eq("is_public", true);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      grid.innerHTML = `
+        <div class="playlist-card">
+          <div class="playlist-thumb placeholder-thumb"></div>
+          <div>
+            <h3>No playlists yet</h3>
+            <p>${viewingOwnProfile ? "Create your first playlist soon." : "This member has no public playlists yet."}</p>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const playlistIds = data.map((playlist) => playlist.id);
+    const itemCounts = new Map();
+
+    if (playlistIds.length) {
+      const { data: items, error: itemError } = await window.supabaseClient
+        .from("playlist_items")
+        .select("playlist_id")
+        .in("playlist_id", playlistIds);
+
+      if (itemError) {
+        console.warn("PLAYLIST ITEMS COUNT ERROR:", itemError);
+      }
+
+      (items || []).forEach((item) => {
+        itemCounts.set(item.playlist_id, (itemCounts.get(item.playlist_id) || 0) + 1);
+      });
+    }
+
+    grid.innerHTML = "";
+
+    data.forEach((playlist) => {
+      const card = document.createElement("div");
+      card.className = "playlist-card";
+
+      const count = itemCounts.get(playlist.id) || 0;
+      const typeLabel = playlist.playlist_type === "show" ? "Show Playlist" : "Private Playlist";
+      const visibility = playlist.is_public ? "Public" : "Private";
+
+      card.innerHTML = `
+        <div class="playlist-thumb placeholder-thumb"></div>
+        <div>
+          <h3>${escapeHtml(playlist.title || "Untitled playlist")}</h3>
+          <p>${escapeHtml(count)} songs · ${escapeHtml(typeLabel)}${viewingOwnProfile ? " · " + escapeHtml(visibility) : ""}</p>
+        </div>
+      `;
+
+      const thumb = card.querySelector(".playlist-thumb");
+      if (thumb && playlist.cover_url) {
+        thumb.style.backgroundImage = `url("${playlist.cover_url}")`;
+        thumb.style.backgroundSize = "cover";
+        thumb.style.backgroundPosition = "center";
+        thumb.style.borderStyle = "solid";
+      }
+
+      grid.appendChild(card);
+    });
+  } catch (err) {
+    console.error("PLAYLIST LOAD ERROR:", err);
+    grid.innerHTML = `
+      <div class="playlist-card">
+        <div class="playlist-thumb placeholder-thumb"></div>
+        <div>
+          <h3>Could not load playlists</h3>
+          <p>Check Supabase permissions or console.</p>
+        </div>
+      </div>
+    `;
+  }
+}
 async function loadMemberSongs(showAll = false) {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -983,6 +1101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await updateFollowStats();
     await updateFollowButton();
     await loadMemberSongs(showingAllSongs);
+    await loadMemberPlaylists();
   })();
 
   document.addEventListener("click", (event) => {
@@ -1204,6 +1323,7 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
 
 
 
