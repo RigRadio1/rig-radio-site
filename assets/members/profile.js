@@ -9,6 +9,8 @@ let activeButton = null;
 let activeRow = null;
 let currentUser = null;
 let currentProfile = null;
+let profileOwnerId = null;
+let viewingOwnProfile = true;
 
 const memberTracks = new Map();
 const audioUrlCache = new Map();
@@ -392,30 +394,67 @@ async function applyProfileImages(profile) {
   }
 }
 
+
+function setOwnerControls() {
+  const ownerOnlySelectors = [
+    "#openEditProfile",
+    "#changeFeaturedBtn",
+    "#bannerUploadButton",
+    "#avatarUploadButton"
+  ];
+
+  ownerOnlySelectors.forEach((selector) => {
+    const el = document.querySelector(selector);
+    if (el) el.style.display = viewingOwnProfile ? "" : "none";
+  });
+}
 async function loadProfileIdentity() {
   if (!window.supabaseClient) return;
 
   try {
+    const params = new URLSearchParams(window.location.search);
+    const requestedHandle = (params.get("handle") || "").trim().replace(/^@/, "").toLowerCase();
+
     const { data: { user } } = await window.supabaseClient.auth.getUser();
-    if (!user) return;
+    currentUser = user || null;
 
-    currentUser = user;
-
-    const { data, error } = await window.supabaseClient
+    let query = window.supabaseClient
       .from("member_profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
+      .select("*");
+
+    if (requestedHandle) {
+      query = query.eq("handle", requestedHandle);
+    } else {
+      if (!user) return;
+      query = query.eq("id", user.id);
+    }
+
+    const { data, error } = await query.maybeSingle();
 
     if (error) {
       console.warn("PROFILE TABLE LOAD ERROR:", error);
     }
 
     currentProfile = data || null;
+    profileOwnerId = currentProfile?.id || (!requestedHandle ? user?.id : null) || null;
+    viewingOwnProfile = !!user && !!profileOwnerId && String(user.id) === String(profileOwnerId);
 
-      applyProfileToPage(currentProfile, user);
-  renderSocialLinks(currentProfile?.socials || {});
-  await applyProfileImages(currentProfile);
+    setOwnerControls();
+
+    if (!currentProfile && requestedHandle) {
+      const nameEl = document.querySelector(".profile-identity h1");
+      const handleEl = document.querySelector(".profile-handle");
+      const aboutText = document.querySelector(".profile-about p:last-child");
+
+      if (nameEl) nameEl.textContent = "Member not found";
+      if (handleEl) handleEl.textContent = "@" + requestedHandle;
+      if (aboutText) aboutText.textContent = "This profile could not be found.";
+      return;
+    }
+
+    applyProfileToPage(currentProfile, user);
+    renderSocialLinks(currentProfile?.socials || {});
+    await applyProfileImages(currentProfile);
   } catch (err) {
     console.error("PROFILE IDENTITY LOAD ERROR:", err);
   }
@@ -639,7 +678,7 @@ async function openFeaturedPicker() {
   const { data, error } = await window.supabaseClient
     .from("tracks")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("user_id", ownerId)
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -757,16 +796,17 @@ async function loadMemberSongs(showAll = false) {
 
   try {
     const { data: { user } } = await window.supabaseClient.auth.getUser();
+    const ownerId = profileOwnerId || user?.id;
 
-    if (!user) {
-      list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Sign in required</h3><p>Log in to see your uploaded tracks.</p></div></div>`;
+    if (!ownerId) {
+      list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>No profile selected</h3><p>This member profile could not be loaded.</p></div></div>`;
       return;
     }
 
     const { count } = await window.supabaseClient
       .from("tracks")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
+      .eq("user_id", ownerId);
 
     if (stats) stats.textContent = `${count ?? 0} songs`;
 
@@ -779,7 +819,7 @@ async function loadMemberSongs(showAll = false) {
     const { data, error } = await window.supabaseClient
       .from("tracks")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", ownerId)
       .order("created_at", { ascending: false })
       .limit(showAll ? 100 : 6);
 
@@ -790,7 +830,7 @@ async function loadMemberSongs(showAll = false) {
       return;
     }
 
-    const featuredTrack = await getFeaturedTrackForProfile(data, user.id);
+    const featuredTrack = await getFeaturedTrackForProfile(data, ownerId);
     await updateFeaturedTrack(featuredTrack);
 
     list.innerHTML = "";
@@ -1047,6 +1087,9 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
+
+
 
 
 
