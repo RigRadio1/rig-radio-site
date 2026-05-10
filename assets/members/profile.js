@@ -353,6 +353,7 @@ function applyProfileToPage(profile, user) {
   const editNameInput = document.getElementById("displayName");
   const editHandleInput = document.getElementById("handleName");
   const editBioInput = document.getElementById("bioText");
+  const publicProfileLink = document.getElementById("viewPublicProfile");
 
   if (nameEl) nameEl.textContent = displayName;
   if (handleEl) handleEl.textContent = handle;
@@ -361,7 +362,11 @@ function applyProfileToPage(profile, user) {
 
   if (editNameInput) editNameInput.value = displayName;
   if (editHandleInput) editHandleInput.value = handle;
-    if (editBioInput) editBioInput.value = bio;
+  if (editBioInput) editBioInput.value = bio;
+
+  if (publicProfileLink) {
+    publicProfileLink.href = `/members/?handle=${encodeURIComponent(handle.replace(/^@/, ""))}`;
+  }
 
   fillSocialInputs(profile?.socials || {});
   renderSocialLinks(profile?.socials || {});
@@ -398,6 +403,7 @@ async function applyProfileImages(profile) {
 function setOwnerControls() {
   const ownerOnlySelectors = [
     "#openEditProfile",
+    "#viewPublicProfile",
     "#changeFeaturedBtn",
     "#bannerUploadButton",
     "#avatarUploadButton"
@@ -1087,6 +1093,9 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
+
+
 
 
 
