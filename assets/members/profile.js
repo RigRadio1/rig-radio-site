@@ -214,6 +214,66 @@ function normalizeHandle(value, fallback) {
   return `@${raw || "member"}`;
 }
 
+
+function cleanUrl(value) {
+  const url = String(value || "").trim();
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `https://${url}`;
+}
+
+function collectSocials() {
+  return {
+    spotify: cleanUrl(document.getElementById("socialSpotify")?.value),
+    instagram: cleanUrl(document.getElementById("socialInstagram")?.value),
+    tiktok: cleanUrl(document.getElementById("socialTikTok")?.value),
+    soundcloud: cleanUrl(document.getElementById("socialSoundCloud")?.value),
+    youtube: cleanUrl(document.getElementById("socialYouTube")?.value),
+    x: cleanUrl(document.getElementById("socialX")?.value)
+  };
+}
+
+function fillSocialInputs(socials = {}) {
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value || "";
+  };
+
+  set("socialSpotify", socials.spotify);
+  set("socialInstagram", socials.instagram);
+  set("socialTikTok", socials.tiktok);
+  set("socialSoundCloud", socials.soundcloud);
+  set("socialYouTube", socials.youtube);
+  set("socialX", socials.x);
+}
+
+function renderSocialLinks(socials = {}) {
+  const wrap = document.getElementById("profileSocials");
+  const links = document.getElementById("socialLinks");
+  if (!wrap || !links) return;
+
+  const items = [
+    ["spotify", "Spotify"],
+    ["instagram", "Instagram"],
+    ["tiktok", "TikTok"],
+    ["soundcloud", "SoundCloud"],
+    ["youtube", "YouTube"],
+    ["x", "X"]
+  ].filter(([key]) => socials[key]);
+
+  if (!items.length) {
+    wrap.style.display = "none";
+    links.innerHTML = "";
+    return;
+  }
+
+  wrap.style.display = "";
+  links.innerHTML = items.map(([key, label]) => {
+    const url = escapeHtml(socials[key]);
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  }).join("");
+}
+
 function applyProfileToPage(profile, user) {
   const fallbackName = fallbackNameFromUser(user);
   const displayName = profile?.display_name || user?.user_metadata?.display_name || fallbackName;
@@ -236,7 +296,10 @@ function applyProfileToPage(profile, user) {
 
   if (editNameInput) editNameInput.value = displayName;
   if (editHandleInput) editHandleInput.value = handle;
-  if (editBioInput) editBioInput.value = bio;
+    if (editBioInput) editBioInput.value = bio;
+
+  fillSocialInputs(profile?.socials || {});
+  renderSocialLinks(profile?.socials || {});
 }
 
 async function applyProfileImages(profile) {
@@ -371,7 +434,7 @@ async function saveProfile() {
     banner_path: bannerPath,
     avatar_path: avatarPath,
     genres: [],
-    socials: {},
+    socials: collectSocials(),
     updated_at: new Date().toISOString()
   };
 
@@ -583,3 +646,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+

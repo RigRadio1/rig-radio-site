@@ -570,3 +570,32 @@
 .section-link:hover {
   color: #ff9b5c;
 }
+
+/* PROFILE SOCIAL LINKS */
+.profile-socials {
+  max-width: 760px;
+  margin: 8px auto 0;
+  text-align: center;
+  padding: 22px;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.social-links a {
+  color: #f4f1ea;
+  text-decoration: none;
+  font-weight: 900;
+  padding: 9px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 47, 0.35);
+  background: rgba(255, 122, 47, 0.1);
+}
+
+.social-links a:hover {
+  background: rgba(255, 122, 47, 0.2);
+}
