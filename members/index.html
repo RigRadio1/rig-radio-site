@@ -40,7 +40,7 @@
         </div>
 
         <div class="profile-actions">
-          <button class="secondary-btn">Edit Profile</button>
+          <button class="secondary-btn" id="openEditProfile">Edit Profile</button>
           <button class="primary-btn">Play</button>
         </div>
       </div>
@@ -155,8 +155,65 @@
       </section>
 
     </section>
+    <section class="edit-profile-modal" id="editProfileModal" aria-hidden="true">
+      <div class="edit-profile-backdrop" id="closeEditProfileBackdrop"></div>
+
+      <div class="edit-profile-panel">
+        <div class="edit-profile-header">
+          <h2>Edit Profile</h2>
+          <button class="edit-profile-close" id="closeEditProfile">×</button>
+        </div>
+
+        <div class="edit-profile-body">
+
+          <label class="edit-label">Profile Banner</label>
+          <div class="edit-upload-box banner-upload">
+            <span>Upload Banner</span>
+            <p>JPEG/PNG · Max 5MB · 1280 × 740 px max</p>
+          </div>
+
+          <label class="edit-label">Profile Image</label>
+          <div class="edit-avatar-row">
+            <div class="edit-avatar-preview">Profile<br>Image</div>
+            <button class="secondary-btn">Change Image</button>
+          </div>
+
+          <label class="edit-label" for="displayName">Display Name</label>
+          <input id="displayName" class="edit-input" type="text" value="RIG-RADIO" />
+
+          <label class="edit-label" for="handleName">Handle</label>
+          <input id="handleName" class="edit-input" type="text" value="@rig_radio" />
+
+          <label class="edit-label" for="bioText">Bio</label>
+          <textarea id="bioText" class="edit-textarea">Rig-Radio is home for independent music, live shows, creator drops, reviews, playlists, and artist spotlights.</textarea>
+
+          <label class="edit-label">Genre Tags</label>
+          <div class="edit-genre-tags">
+            <span>arena rock ×</span>
+            <span>christian rock ×</span>
+            <span>hard rock ×</span>
+            <span>cinematic ×</span>
+            <span>outlaw country ×</span>
+          </div>
+
+          <label class="edit-label">Social Links</label>
+          <input class="edit-input" type="text" placeholder="Spotify profile URL" />
+          <input class="edit-input" type="text" placeholder="Instagram profile URL" />
+          <input class="edit-input" type="text" placeholder="TikTok profile URL" />
+          <input class="edit-input" type="text" placeholder="SoundCloud profile URL" />
+          <input class="edit-input" type="text" placeholder="YouTube profile URL" />
+          <input class="edit-input" type="text" placeholder="X profile URL" />
+
+        </div>
+
+        <div class="edit-profile-footer">
+          <button class="secondary-btn" id="cancelEditProfile">Cancel</button>
+          <button class="primary-btn">Save</button>
+        </div>
+      </div>
+    </section>
 
   </main>
-
+  <script src="/assets/members/profile.js"></script>
 </body>
 </html>
