@@ -1,4 +1,23 @@
+const modal = document.getElementById("editProfileModal");
+const openBtn = document.getElementById("openEditProfile");
+const closeBtn = document.getElementById("closeEditProfile");
+const cancelBtn = document.getElementById("cancelEditProfile");
+const backdrop = document.getElementById("closeEditProfileBackdrop");
 
+let activeAudio = null;
+let activeButton = null;
+let activeRow = null;
+let currentUser = null;
+let currentProfile = null;
+
+const memberTracks = new Map();
+const audioUrlCache = new Map();
+
+function openEditProfile() {
+  modal?.classList.add("is-open");
+  modal?.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
 
 function closeEditProfile() {
   modal?.classList.remove("is-open");
@@ -228,6 +247,95 @@ function fillSocialInputs(socials = {}) {
   set("socialX", socials.x);
 }
 
+function renderSocialLinks(socials = {}) {
+  let wrap = document.getElementById("profileSocials");
+  let links = document.getElementById("socialLinks");
+
+  if (!wrap) {
+    wrap = document.createElement("section");
+    wrap.className = "profile-socials card";
+    wrap.id = "profileSocials";
+    wrap.innerHTML = `
+      <p class="profile-kicker">Links</p>
+      <div class="social-links" id="socialLinks"></div>
+    `;
+
+    const about = document.querySelector(".profile-about");
+    if (about) {
+      about.insertAdjacentElement("afterend", wrap);
+    } else {
+      document.querySelector(".profile-main")?.appendChild(wrap);
+    }
+
+    links = document.getElementById("socialLinks");
+  }
+
+  if (!links) return;
+
+  const icons = {
+    spotify: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M12 1.5A10.5 10.5 0 1 0 22.5 12 10.51 10.51 0 0 0 12 1.5Zm4.82 15.14a.94.94 0 0 1-1.3.31 9.48 9.48 0 0 0-9.57-.57.94.94 0 1 1-.84-1.68 11.35 11.35 0 0 1 11.47.68.94.94 0 0 1 .24 1.26Zm1.31-2.92a1.17 1.17 0 0 1-1.61.39 11.76 11.76 0 0 0-11.9-.71 1.17 1.17 0 1 1-1.04-2.1 14.1 14.1 0 0 1 14.25.86 1.17 1.17 0 0 1 .3 1.56Zm.16-3.04A14.14 14.14 0 0 0 4.2 9.8a1.41 1.41 0 1 1-1.24-2.53 16.97 16.97 0 0 1 17.16.96 1.41 1.41 0 1 1-1.52 2.45Z"/>
+      </svg>
+    `,
+    instagram: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5Zm8.88 1.13a1.12 1.12 0 1 1-1.13 1.12 1.12 1.12 0 0 1 1.13-1.12ZM12 6.5A5.5 5.5 0 1 1 6.5 12 5.51 5.51 0 0 1 12 6.5Zm0 1.5A4 4 0 1 0 16 12a4 4 0 0 0-4-4Z"/>
+      </svg>
+    `,
+    tiktok: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M14.5 2c.4 1.9 1.5 3.4 3.2 4.2.9.4 1.8.6 2.8.6v3.1c-1.6 0-3.2-.4-4.6-1.2v6.2a6.1 6.1 0 1 1-6.1-6.1c.4 0 .8 0 1.2.1v3.2a3.1 3.1 0 1 0 1.8 2.8V2Z"/>
+      </svg>
+    `,
+    soundcloud: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M10.2 8.2a4.7 4.7 0 0 1 5.3 1.1 3.7 3.7 0 1 1 .9 7.3H4.5a2.5 2.5 0 0 1-.3-5 5.9 5.9 0 0 1 6-3.4Zm-5.7 8.3h.9V10h-.9Zm1.7 0h.9V9.3h-.9Zm1.7 0h.9V8.9h-.9Zm1.7 0h.9V8.7h-.9Zm1.7 0h.9V8.9h-.9Zm1.7 0h.9v-6h-.9Z"/>
+      </svg>
+    `,
+    youtube: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M23 12.2s0-3.1-.4-4.6a3 3 0 0 0-2.1-2.1C19 5 12 5 12 5s-7 0-8.5.5A3 3 0 0 0 1.4 7.6C1 9.1 1 12.2 1 12.2s0 3.1.4 4.6a3 3 0 0 0 2.1 2.1C5 19.4 12 19.4 12 19.4s7 0 8.5-.5a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.6.4-4.6ZM9.3 15.7V8.7l6.1 3.5Z"/>
+      </svg>
+    `,
+    x: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.8L6.1 22H3l7.2-8.2L1 2h6.5l4.4 6.2Zm-1.1 18h1.7L6.6 3.9H4.8Z"/>
+      </svg>
+    `
+  };
+
+  const labels = {
+    spotify: "Spotify",
+    instagram: "Instagram",
+    tiktok: "TikTok",
+    soundcloud: "SoundCloud",
+    youtube: "YouTube",
+    x: "X"
+  };
+
+  const items = Object.keys(labels).filter((key) => socials && socials[key]);
+
+  if (!items.length) {
+    wrap.style.display = "none";
+    links.innerHTML = "";
+    return;
+  }
+
+  wrap.style.display = "";
+  wrap.hidden = false;
+
+  links.innerHTML = items.map((key) => {
+    const url = escapeHtml(socials[key]);
+    const label = labels[key];
+    const icon = icons[key] || label;
+    return `
+      <a href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${label}" title="${label}">
+        ${icon}
+      </a>
+    `;
+  }).join("");
+}
 
 function applyProfileToPage(profile, user) {
   const fallbackName = fallbackNameFromUser(user);
@@ -606,7 +714,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-) {
+/* FORCE SOCIAL LINKS RENDERER */
+function renderSocialLinks(socials = {}) {
   let wrap = document.getElementById("profileSocials");
   let links = document.getElementById("socialLinks");
 
@@ -767,5 +876,4 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
-
 
