@@ -605,26 +605,38 @@
   max-width: 760px;
   margin: 8px auto 0;
   text-align: center;
-  padding: 22px;
+  padding: 18px 22px;
 }
 
 .social-links {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .social-links a {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #f4f1ea;
   text-decoration: none;
-  font-weight: 900;
-  padding: 9px 13px;
   border-radius: 999px;
   border: 1px solid rgba(255, 122, 47, 0.35);
   background: rgba(255, 122, 47, 0.1);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .social-links a:hover {
   background: rgba(255, 122, 47, 0.2);
+  border-color: rgba(255, 122, 47, 0.6);
+  transform: translateY(-2px);
+}
+
+.social-links a svg {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
