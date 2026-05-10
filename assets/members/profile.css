@@ -510,3 +510,45 @@
     flex-direction: column;
   }
 }
+
+/* PLAYABLE SONG ROWS */
+.playable-song-row {
+  grid-template-columns: 54px 1fr auto;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.playable-song-row:hover,
+.playable-song-row.is-playing {
+  border-color: rgba(255, 122, 47, 0.52);
+  background: rgba(255, 122, 47, 0.09);
+}
+
+.playable-song-row.is-playing {
+  box-shadow: 0 0 24px rgba(255, 90, 24, 0.12);
+}
+
+.song-play-btn {
+  border: 1px solid rgba(255, 122, 47, 0.45);
+  background: rgba(255, 122, 47, 0.12);
+  color: #f4f1ea;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.song-play-btn:hover {
+  background: rgba(255, 122, 47, 0.2);
+}
+
+@media (max-width: 700px) {
+  .playable-song-row {
+    grid-template-columns: 54px 1fr;
+  }
+
+  .song-play-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

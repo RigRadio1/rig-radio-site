@@ -4,9 +4,9 @@ const closeBtn = document.getElementById("closeEditProfile");
 const cancelBtn = document.getElementById("cancelEditProfile");
 const backdrop = document.getElementById("closeEditProfileBackdrop");
 
-let featuredAudio = null;
-let featuredPlaying = false;
-let featuredTrack = null;
+let activeAudio = null;
+let activeButton = null;
+let activeRow = null;
 
 function openEditProfile() {
   modal?.classList.add("is-open");
@@ -112,23 +112,62 @@ async function getSignedAudio(row) {
   return "";
 }
 
-function resetFeaturedButton() {
-  const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
-  if (btn) btn.textContent = "Play Track";
-
-  if (featuredAudio) {
-    featuredAudio.pause();
-    featuredAudio = null;
+function stopActiveAudio() {
+  if (activeAudio) {
+    activeAudio.pause();
+    activeAudio = null;
   }
 
-  featuredPlaying = false;
+  if (activeButton) {
+    activeButton.textContent = activeButton.dataset.defaultText || "Play";
+  }
+
+  if (activeRow) {
+    activeRow.classList.remove("is-playing");
+  }
+
+  activeButton = null;
+  activeRow = null;
+}
+
+function playAudio(url, button, row = null) {
+  if (!url) {
+    button.textContent = "No Audio";
+    setTimeout(() => {
+      button.textContent = button.dataset.defaultText || "Play";
+    }, 1200);
+    return;
+  }
+
+  if (activeAudio && activeButton === button && !activeAudio.paused) {
+    stopActiveAudio();
+    return;
+  }
+
+  stopActiveAudio();
+
+  activeAudio = new Audio(url);
+  activeButton = button;
+  activeRow = row;
+
+  activeAudio.addEventListener("ended", stopActiveAudio);
+
+  activeAudio.play()
+    .then(() => {
+      button.textContent = "Pause";
+      if (row) row.classList.add("is-playing");
+    })
+    .catch((err) => {
+      console.error("AUDIO PLAY ERROR:", err);
+      button.textContent = "Play Error";
+      setTimeout(() => {
+        button.textContent = button.dataset.defaultText || "Play";
+      }, 1200);
+    });
 }
 
 async function updateFeaturedTrack(row) {
   if (!row) return;
-
-  featuredTrack = row;
-  resetFeaturedButton();
 
   const card = document.querySelector(".featured-track-card");
   if (!card) return;
@@ -145,15 +184,6 @@ async function updateFeaturedTrack(row) {
   const cover = await getSignedCover(row);
   const audio = await getSignedAudio(row);
 
-  console.log("FEATURED TRACK SELECTED:", {
-    id: row.id,
-    title,
-    track_path: row.track_path,
-    audio_path: row.audio_path,
-    audio_url: row.audio_url,
-    signed_audio: audio
-  });
-
   if (kickerEl) kickerEl.textContent = "Featured Track";
   if (titleEl) titleEl.textContent = title;
   if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
@@ -168,57 +198,32 @@ async function updateFeaturedTrack(row) {
 
   if (btn) {
     btn.dataset.audioUrl = audio || "";
-    btn.dataset.trackId = row.id || "";
-    btn.dataset.trackTitle = title || "";
+    btn.dataset.defaultText = "Play Track";
+    btn.textContent = "Play Track";
+
+    if (btn.dataset.bound !== "1") {
+      btn.dataset.bound = "1";
+      btn.addEventListener("click", () => {
+        playAudio(btn.dataset.audioUrl || "", btn);
+      });
+    }
   }
 }
 
-function setupFeaturedPlayButton() {
-  const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
+function bindSongRowPlayback(rowEl) {
+  const btn = rowEl.querySelector(".song-play-btn");
   if (!btn || btn.dataset.bound === "1") return;
 
   btn.dataset.bound = "1";
+  btn.dataset.defaultText = "Play";
 
-  btn.addEventListener("click", async () => {
-    const url = btn.dataset.audioUrl || "";
-    const expectedTitle = btn.dataset.trackTitle || "";
+  btn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    playAudio(btn.dataset.audioUrl || "", btn, rowEl);
+  });
 
-    if (!url) {
-      btn.textContent = "No Audio";
-      setTimeout(() => btn.textContent = "Play Track", 1200);
-      return;
-    }
-
-    if (featuredAudio && featuredPlaying) {
-      featuredAudio.pause();
-      featuredPlaying = false;
-      btn.textContent = "Play Track";
-      return;
-    }
-
-    if (featuredAudio) {
-      featuredAudio.pause();
-      featuredAudio = null;
-    }
-
-    console.log("PLAYING FEATURED TRACK:", expectedTitle, url);
-
-    featuredAudio = new Audio(url);
-
-    featuredAudio.addEventListener("ended", () => {
-      featuredPlaying = false;
-      btn.textContent = "Play Track";
-    });
-
-    try {
-      await featuredAudio.play();
-      featuredPlaying = true;
-      btn.textContent = "Pause Track";
-    } catch (err) {
-      console.error("FEATURED AUDIO PLAY ERROR:", err);
-      btn.textContent = "Play Error";
-      setTimeout(() => btn.textContent = "Play Track", 1200);
-    }
+  rowEl.addEventListener("click", () => {
+    playAudio(btn.dataset.audioUrl || "", btn, rowEl);
   });
 }
 
@@ -267,10 +272,11 @@ async function loadMemberSongs() {
       const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
       const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
       const cover = await getSignedCover(row);
+      const audio = await getSignedAudio(row);
       const plays = row.plays ?? 0;
 
       const item = document.createElement("div");
-      item.className = "song-row";
+      item.className = "song-row playable-song-row";
 
       item.innerHTML = `
         <div class="song-thumb placeholder-thumb"></div>
@@ -278,6 +284,7 @@ async function loadMemberSongs() {
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}</p>
         </div>
+        <button class="song-play-btn" type="button">Play</button>
       `;
 
       if (cover) {
@@ -288,17 +295,16 @@ async function loadMemberSongs() {
         thumb.style.borderStyle = "solid";
       }
 
+      const btn = item.querySelector(".song-play-btn");
+      if (btn) btn.dataset.audioUrl = audio || "";
+
+      bindSongRowPlayback(item);
       list.appendChild(item);
     }
-
-    setupFeaturedPlayButton();
   } catch (err) {
     console.error("MEMBER SONG LOAD ERROR:", err);
     list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Could not load songs</h3><p>Check console or Supabase permissions.</p></div></div>`;
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  setupFeaturedPlayButton();
-  loadMemberSongs();
-});
+document.addEventListener("DOMContentLoaded", loadMemberSongs);
