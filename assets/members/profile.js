@@ -694,7 +694,8 @@ async function toggleFollowMember() {
   if (!followBtn || !window.supabaseClient || !profileOwnerId || viewingOwnProfile) return;
 
   if (!currentUser) {
-    alert("Please log in to follow members.");
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    window.location.href = `/login.html?redirect=${encodeURIComponent(returnTo)}`;
     return;
   }
 
@@ -1203,6 +1204,7 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
 
 
 
