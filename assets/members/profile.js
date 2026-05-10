@@ -89,7 +89,7 @@ async function updateFeaturedTrack(row) {
   if (!card) return;
 
   const titleEl = card.querySelector(".featured-track-info h2");
-  const metaEl = card.querySelector(".featured-track-info p");
+  const metaEl = card.querySelector(".featured-track-info p:not(.profile-kicker)");
   const coverEl = card.querySelector(".featured-cover");
 
   const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
@@ -188,6 +188,7 @@ async function loadMemberSongs() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMemberSongs);
+
 
 
 
