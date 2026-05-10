@@ -97,6 +97,15 @@ async function loadMemberSongs() {
       return;
     }
 
+    const { count } = await supabaseClient
+      .from("tracks")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
+
+    if (stats) {
+      stats.textContent = `${count ?? 0} songs`;
+    }
+
     const { data, error } = await supabaseClient
       .from("tracks")
       .select("*")
@@ -105,10 +114,6 @@ async function loadMemberSongs() {
       .limit(6);
 
     if (error) throw error;
-
-    if (stats) {
-      stats.textContent = `${data?.length || 0} songs`;
-    }
 
     if (!data || data.length === 0) {
       list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>No uploads yet</h3><p>Upload songs from the dashboard.</p></div></div>`;
@@ -130,7 +135,7 @@ async function loadMemberSongs() {
         <div class="song-thumb placeholder-thumb"></div>
         <div>
           <h3>${escapeHtml(title)}</h3>
-          <p>${escapeHtml(plays)} plays · ${escapeHtml(sub)}</p>
+          <p>${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}</p>
         </div>
       `;
 
@@ -151,3 +156,4 @@ async function loadMemberSongs() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMemberSongs);
+
