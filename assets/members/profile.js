@@ -905,7 +905,7 @@ function openCreatePlaylistModal() {
           <p class="profile-kicker">New Playlist</p>
           <h2>Create Private Playlist</h2>
         </div>
-        <button type="button" class="create-playlist-close" data-close-create-playlist="1">×</button>
+        <button type="button" class="create-playlist-close" data-close-create-playlist="1">X</button>
       </div>
 
       <label class="edit-label" for="newPlaylistTitle">Playlist Name</label>
