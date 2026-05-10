@@ -874,3 +874,69 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 }
 /* END FEATURED PICKER MODAL */
 
+/* CREATE PLAYLIST MODAL */
+.create-playlist-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.create-playlist-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(7px);
+}
+
+.create-playlist-panel {
+  position: relative;
+  width: min(560px, 100%);
+  border: 1px solid rgba(255, 122, 24, 0.34);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(18, 18, 22, 0.98), rgba(34, 13, 4, 0.96));
+  box-shadow: 0 26px 90px rgba(0, 0, 0, 0.62);
+  padding: 24px;
+}
+
+.create-playlist-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.create-playlist-header h2 {
+  margin: 4px 0 0;
+  color: #fff;
+  font-size: 1.55rem;
+  letter-spacing: 0.03em;
+}
+
+.create-playlist-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 24, 0.35);
+  background: rgba(255, 122, 24, 0.10);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.create-playlist-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.create-playlist-actions button {
+  min-width: 132px;
+}
+/* END CREATE PLAYLIST MODAL */
+

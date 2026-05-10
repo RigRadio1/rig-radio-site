@@ -885,18 +885,69 @@ async function saveFeaturedTrack(trackId) {
 /* END CHOOSE FEATURED TRACK */
 
 
+function closeCreatePlaylistModal() {
+  document.getElementById("createPlaylistModal")?.remove();
+}
+
+function openCreatePlaylistModal() {
+  if (!currentUser || !viewingOwnProfile) return;
+
+  closeCreatePlaylistModal();
+
+  const modal = document.createElement("section");
+  modal.id = "createPlaylistModal";
+  modal.className = "create-playlist-modal";
+  modal.innerHTML = `
+    <div class="create-playlist-backdrop" data-close-create-playlist="1"></div>
+    <div class="create-playlist-panel">
+      <div class="create-playlist-header">
+        <div>
+          <p class="profile-kicker">New Playlist</p>
+          <h2>Create Private Playlist</h2>
+        </div>
+        <button type="button" class="create-playlist-close" data-close-create-playlist="1">×</button>
+      </div>
+
+      <label class="edit-label" for="newPlaylistTitle">Playlist Name</label>
+      <input id="newPlaylistTitle" class="edit-input" type="text" placeholder="Example: Saturday Night Drops" maxlength="80" />
+
+      <div class="create-playlist-actions">
+        <button type="button" class="secondary-btn" data-close-create-playlist="1">Cancel</button>
+        <button type="button" class="primary-btn" id="saveCreatePlaylist">Create Playlist</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  setTimeout(() => {
+    document.getElementById("newPlaylistTitle")?.focus();
+  }, 50);
+}
+
 async function createPrivatePlaylist() {
   if (!window.supabaseClient || !currentUser || !viewingOwnProfile) return;
 
-  const title = prompt("Playlist name?");
-  if (!title || !title.trim()) return;
+  const input = document.getElementById("newPlaylistTitle");
+  const title = input?.value?.trim();
+
+  if (!title) {
+    input?.focus();
+    return;
+  }
+
+  const saveBtn = document.getElementById("saveCreatePlaylist");
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Creating...";
+  }
 
   try {
     const { error } = await window.supabaseClient
       .from("playlists")
       .insert({
         user_id: currentUser.id,
-        title: title.trim(),
+        title,
         playlist_type: "private",
         source: "rig-radio",
         is_public: false
@@ -904,10 +955,16 @@ async function createPrivatePlaylist() {
 
     if (error) throw error;
 
+    closeCreatePlaylistModal();
     await loadMemberPlaylists();
   } catch (err) {
     console.error("CREATE PLAYLIST ERROR:", err);
     alert("Could not create playlist.");
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Create Playlist";
+    }
   }
 }
 async function loadMemberPlaylists() {
@@ -1133,7 +1190,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("click", (event) => {
     if (event.target.closest("#createPlaylistBtn")) {
+      openCreatePlaylistModal();
+      return;
+    }
+
+    if (event.target.closest("#saveCreatePlaylist")) {
       createPrivatePlaylist();
+      return;
+    }
+
+    if (event.target.closest("[data-close-create-playlist]")) {
+      closeCreatePlaylistModal();
       return;
     }
 
@@ -1355,20 +1422,3 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
