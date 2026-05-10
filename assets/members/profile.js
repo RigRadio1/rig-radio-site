@@ -350,8 +350,9 @@ async function loadProfileIdentity() {
 
     currentProfile = data || null;
 
-    applyProfileToPage(currentProfile, user);
-    await applyProfileImages(currentProfile);
+      applyProfileToPage(currentProfile, user);
+  renderSocialLinks(currentProfile?.socials || {});
+  await applyProfileImages(currentProfile);
   } catch (err) {
     console.error("PROFILE IDENTITY LOAD ERROR:", err);
   }
@@ -459,7 +460,8 @@ async function saveProfile() {
   });
 
   currentProfile = data;
-  applyProfileToPage(currentProfile, user);
+    applyProfileToPage(currentProfile, user);
+  renderSocialLinks(currentProfile?.socials || {});
   await applyProfileImages(currentProfile);
 
   if (saveBtn) saveBtn.textContent = "Save";
@@ -646,4 +648,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
 
