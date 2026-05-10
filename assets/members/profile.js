@@ -650,3 +650,72 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+/* FORCE SOCIAL LINKS RENDERER */
+function renderSocialLinks(socials = {}) {
+  let wrap = document.getElementById("profileSocials");
+  let links = document.getElementById("socialLinks");
+
+  if (!wrap) {
+    wrap = document.createElement("section");
+    wrap.className = "profile-socials card";
+    wrap.id = "profileSocials";
+    wrap.innerHTML = `
+      <p class="profile-kicker">Links</p>
+      <div class="social-links" id="socialLinks"></div>
+    `;
+
+    const about = document.querySelector(".profile-about");
+    if (about) {
+      about.insertAdjacentElement("afterend", wrap);
+    } else {
+      document.querySelector(".profile-main")?.appendChild(wrap);
+    }
+
+    links = document.getElementById("socialLinks");
+  }
+
+  if (!links) return;
+
+  const labels = {
+    spotify: "Spotify",
+    instagram: "Instagram",
+    tiktok: "TikTok",
+    soundcloud: "SoundCloud",
+    youtube: "YouTube",
+    x: "X"
+  };
+
+  const items = Object.entries(labels).filter(([key]) => socials && socials[key]);
+
+  if (!items.length) {
+    wrap.style.display = "none";
+    links.innerHTML = "";
+    return;
+  }
+
+  wrap.style.display = "";
+  wrap.hidden = false;
+
+  links.innerHTML = items.map(([key, label]) => {
+    const url = escapeHtml(socials[key]);
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  }).join("");
+}
+
+/* FORCE SOCIAL INPUTS TO REFILL AFTER LOAD */
+function fillSocialInputs(socials = {}) {
+  const pairs = {
+    socialSpotify: socials.spotify,
+    socialInstagram: socials.instagram,
+    socialTikTok: socials.tiktok,
+    socialSoundCloud: socials.soundcloud,
+    socialYouTube: socials.youtube,
+    socialX: socials.x
+  };
+
+  Object.entries(pairs).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value || "";
+  });
+}
