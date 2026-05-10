@@ -81,6 +81,34 @@ async function getSignedCover(row) {
   return PLACEHOLDER_IMG;
 }
 
+
+async function updateFeaturedTrack(row) {
+  if (!row) return;
+
+  const card = document.querySelector(".featured-track-card");
+  if (!card) return;
+
+  const titleEl = card.querySelector(".featured-track-info h2");
+  const metaEl = card.querySelector(".featured-track-info p");
+  const coverEl = card.querySelector(".featured-cover");
+
+  const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
+  const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
+  const plays = row.plays ?? 0;
+  const cover = await getSignedCover(row);
+
+  if (titleEl) titleEl.textContent = title;
+  if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
+
+  if (coverEl && cover) {
+    coverEl.innerHTML = "";
+    coverEl.style.backgroundImage = `url('${cover}')`;
+    coverEl.style.backgroundSize = "cover";
+    coverEl.style.backgroundPosition = "center";
+    coverEl.style.borderStyle = "solid";
+  }
+}
+
 async function loadMemberSongs() {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -114,6 +142,10 @@ async function loadMemberSongs() {
       .limit(6);
 
     if (error) throw error;
+
+    if (data && data.length > 0) {
+      await updateFeaturedTrack(data[0]);
+    }
 
     if (!data || data.length === 0) {
       list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>No uploads yet</h3><p>Upload songs from the dashboard.</p></div></div>`;
@@ -156,4 +188,6 @@ async function loadMemberSongs() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMemberSongs);
+
+
 
