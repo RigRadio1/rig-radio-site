@@ -256,6 +256,32 @@ function bindSongRowPlayback(rowEl) {
   });
 }
 
+
+async function loadProfileIdentity() {
+  if (!window.supabaseClient) return;
+
+  try {
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const fallbackName = user.email ? user.email.split("@")[0] : "Member";
+    const displayName = user.user_metadata?.display_name || fallbackName;
+    const handle = user.user_metadata?.handle || `@${fallbackName}`;
+
+    const nameEl = document.querySelector(".profile-identity h1");
+    const handleEl = document.querySelector(".profile-handle");
+    const editNameInput = document.getElementById("displayName");
+    const editHandleInput = document.getElementById("handleName");
+
+    if (nameEl) nameEl.textContent = displayName;
+    if (handleEl) handleEl.textContent = handle;
+    if (editNameInput) editNameInput.value = displayName;
+    if (editHandleInput) editHandleInput.value = handle;
+  } catch (err) {
+    console.error("PROFILE IDENTITY LOAD ERROR:", err);
+  }
+}
+
 async function loadMemberSongs(showAll = false) {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -350,6 +376,7 @@ async function loadMemberSongs(showAll = false) {
 document.addEventListener("DOMContentLoaded", () => {
   let showingAllSongs = false;
 
+  loadProfileIdentity();
   loadMemberSongs(showingAllSongs);
 
   document.addEventListener("click", (event) => {
@@ -357,6 +384,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!btn) return;
 
     showingAllSongs = !showingAllSongs;
-    loadMemberSongs(showingAllSongs);
+    loadProfileIdentity();
+  loadMemberSongs(showingAllSongs);
   });
 });
+
