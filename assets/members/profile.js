@@ -8,6 +8,9 @@ let activeAudio = null;
 let activeButton = null;
 let activeRow = null;
 
+const memberTracks = new Map();
+const audioUrlCache = new Map();
+
 function openEditProfile() {
   modal?.classList.add("is-open");
   modal?.setAttribute("aria-hidden", "false");
@@ -99,17 +102,26 @@ async function getSignedCover(row) {
 async function getSignedAudio(row) {
   if (!row) return "";
 
-  if (row.track_path) return await signTracksKey(row.track_path);
-
-  if (row.audio_path) return await signTracksKey(row.audio_path);
-
-  if (row.audio_url) {
-    const key = cleanStorageKey(row.audio_url);
-    if (key && key !== row.audio_url) return await signTracksKey(key);
-    return row.audio_url;
+  const cacheKey = String(row.id || row.track_path || row.audio_path || row.audio_url || "");
+  if (cacheKey && audioUrlCache.has(cacheKey)) {
+    return audioUrlCache.get(cacheKey);
   }
 
-  return "";
+  let audio = "";
+
+  if (row.track_path) audio = await signTracksKey(row.track_path);
+  else if (row.audio_path) audio = await signTracksKey(row.audio_path);
+  else if (row.audio_url) {
+    const key = cleanStorageKey(row.audio_url);
+    if (key && key !== row.audio_url) audio = await signTracksKey(key);
+    else audio = row.audio_url;
+  }
+
+  if (cacheKey && audio) {
+    audioUrlCache.set(cacheKey, audio);
+  }
+
+  return audio;
 }
 
 function stopActiveAudio() {
@@ -130,9 +142,12 @@ function stopActiveAudio() {
   activeRow = null;
 }
 
-function playAudio(url, button, row = null) {
-  if (!url) {
-    button.textContent = "No Audio";
+async function playTrackFromButton(button, row = null) {
+  const trackId = button.dataset.trackId || "";
+  const track = memberTracks.get(trackId);
+
+  if (!track) {
+    button.textContent = "No Track";
     setTimeout(() => {
       button.textContent = button.dataset.defaultText || "Play";
     }, 1200);
@@ -144,9 +159,22 @@ function playAudio(url, button, row = null) {
     return;
   }
 
+  const oldText = button.dataset.defaultText || "Play";
+  button.textContent = "Loading...";
+
+  const audioUrl = await getSignedAudio(track);
+
+  if (!audioUrl) {
+    button.textContent = "No Audio";
+    setTimeout(() => {
+      button.textContent = oldText;
+    }, 1200);
+    return;
+  }
+
   stopActiveAudio();
 
-  activeAudio = new Audio(url);
+  activeAudio = new Audio(audioUrl);
   activeButton = button;
   activeRow = row;
 
@@ -161,13 +189,15 @@ function playAudio(url, button, row = null) {
       console.error("AUDIO PLAY ERROR:", err);
       button.textContent = "Play Error";
       setTimeout(() => {
-        button.textContent = button.dataset.defaultText || "Play";
+        button.textContent = oldText;
       }, 1200);
     });
 }
 
 async function updateFeaturedTrack(row) {
   if (!row) return;
+
+  memberTracks.set("featured", row);
 
   const card = document.querySelector(".featured-track-card");
   if (!card) return;
@@ -182,7 +212,6 @@ async function updateFeaturedTrack(row) {
   const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
   const plays = row.plays ?? 0;
   const cover = await getSignedCover(row);
-  const audio = await getSignedAudio(row);
 
   if (kickerEl) kickerEl.textContent = "Featured Track";
   if (titleEl) titleEl.textContent = title;
@@ -197,14 +226,14 @@ async function updateFeaturedTrack(row) {
   }
 
   if (btn) {
-    btn.dataset.audioUrl = audio || "";
+    btn.dataset.trackId = "featured";
     btn.dataset.defaultText = "Play Track";
     btn.textContent = "Play Track";
 
     if (btn.dataset.bound !== "1") {
       btn.dataset.bound = "1";
       btn.addEventListener("click", () => {
-        playAudio(btn.dataset.audioUrl || "", btn);
+        playTrackFromButton(btn);
       });
     }
   }
@@ -219,11 +248,11 @@ function bindSongRowPlayback(rowEl) {
 
   btn.addEventListener("click", (event) => {
     event.stopPropagation();
-    playAudio(btn.dataset.audioUrl || "", btn, rowEl);
+    playTrackFromButton(btn, rowEl);
   });
 
   rowEl.addEventListener("click", () => {
-    playAudio(btn.dataset.audioUrl || "", btn, rowEl);
+    playTrackFromButton(btn, rowEl);
   });
 }
 
@@ -232,6 +261,9 @@ async function loadMemberSongs(showAll = false) {
   const stats = document.querySelector(".profile-stats span:first-child");
 
   if (!list || !window.supabaseClient) return;
+
+  stopActiveAudio();
+  memberTracks.clear();
 
   list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Loading songs...</h3><p>Please wait</p></div></div>`;
 
@@ -275,10 +307,12 @@ async function loadMemberSongs(showAll = false) {
     list.innerHTML = "";
 
     for (const row of data) {
+      const trackId = String(row.id);
+      memberTracks.set(trackId, row);
+
       const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
       const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
       const cover = await getSignedCover(row);
-      const audio = await getSignedAudio(row);
       const plays = row.plays ?? 0;
 
       const item = document.createElement("div");
@@ -302,7 +336,7 @@ async function loadMemberSongs(showAll = false) {
       }
 
       const btn = item.querySelector(".song-play-btn");
-      if (btn) btn.dataset.audioUrl = audio || "";
+      if (btn) btn.dataset.trackId = trackId;
 
       bindSongRowPlayback(item);
       list.appendChild(item);
@@ -323,9 +357,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!btn) return;
 
     showingAllSongs = !showingAllSongs;
-    stopActiveAudio();
     loadMemberSongs(showingAllSongs);
   });
 });
-
-
