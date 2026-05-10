@@ -173,15 +173,17 @@
         <div class="edit-profile-body">
 
           <label class="edit-label">Profile Banner</label>
-          <div class="edit-upload-box banner-upload">
+                    <div class="edit-upload-box banner-upload" id="bannerUploadButton">
             <span>Upload Banner</span>
             <p>JPEG/PNG · Max 5MB · 1280 × 740 px max</p>
+            <input id="bannerUploadInput" type="file" accept="image/jpeg,image/png" hidden>
           </div>
 
           <label class="edit-label">Profile Image</label>
           <div class="edit-avatar-row">
             <div class="edit-avatar-preview">Profile<br>Image</div>
-            <button class="secondary-btn">Change Image</button>
+                        <button class="secondary-btn" id="avatarUploadButton" type="button">Change Image</button>
+            <input id="avatarUploadInput" type="file" accept="image/jpeg,image/png" hidden>
           </div>
 
           <label class="edit-label" for="displayName">Display Name</label>
@@ -214,7 +216,7 @@
 
         <div class="edit-profile-footer">
           <button class="secondary-btn" id="cancelEditProfile">Cancel</button>
-          <button class="primary-btn">Save</button>
+          <button class="primary-btn" id="saveEditProfile" type="button">Save</button>
         </div>
       </div>
     </section>
@@ -223,6 +225,7 @@
   <script src="/assets/members/profile.js"></script>
 </body>
 </html>
+
 
 
 

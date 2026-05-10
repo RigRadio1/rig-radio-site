@@ -7,6 +7,8 @@ const backdrop = document.getElementById("closeEditProfileBackdrop");
 let activeAudio = null;
 let activeButton = null;
 let activeRow = null;
+let currentUser = null;
+let currentProfile = null;
 
 const memberTracks = new Map();
 const audioUrlCache = new Map();
@@ -57,15 +59,13 @@ function cleanStorageKey(value) {
   return value;
 }
 
-async function signTracksKey(key, seconds = 3600) {
+async function signBucketKey(bucket, key, seconds = 3600) {
   try {
     if (!key || !window.supabaseClient) return "";
 
-    const cleanKey = cleanStorageKey(key);
-
     const { data, error } = await window.supabaseClient.storage
-      .from("tracks")
-      .createSignedUrl(cleanKey, seconds);
+      .from(bucket)
+      .createSignedUrl(key, seconds);
 
     if (error) {
       console.warn("SIGNED URL ERROR:", error);
@@ -74,9 +74,13 @@ async function signTracksKey(key, seconds = 3600) {
 
     return data?.signedUrl || "";
   } catch (err) {
-    console.warn("SIGN TRACK KEY ERROR:", err);
+    console.warn("SIGN KEY ERROR:", err);
     return "";
   }
+}
+
+async function signTracksKey(key, seconds = 3600) {
+  return signBucketKey("tracks", cleanStorageKey(key), seconds);
 }
 
 async function getSignedCover(row) {
@@ -194,6 +198,211 @@ async function playTrackFromButton(button, row = null) {
     });
 }
 
+function fallbackNameFromUser(user) {
+  return user?.email ? user.email.split("@")[0] : "Member";
+}
+
+function normalizeHandle(value, fallback) {
+  const raw = String(value || fallback || "member")
+    .trim()
+    .replace(/^@+/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+  return `@${raw || "member"}`;
+}
+
+function applyProfileToPage(profile, user) {
+  const fallbackName = fallbackNameFromUser(user);
+  const displayName = profile?.display_name || user?.user_metadata?.display_name || fallbackName;
+  const handle = normalizeHandle(profile?.handle || user?.user_metadata?.handle, fallbackName);
+  const bio = profile?.bio || "Tell people who you are, what you create, and what your music is about.";
+
+  const nameEl = document.querySelector(".profile-identity h1");
+  const handleEl = document.querySelector(".profile-handle");
+  const aboutTitle = document.querySelector(".profile-about h2");
+  const aboutText = document.querySelector(".profile-about p:last-child");
+
+  const editNameInput = document.getElementById("displayName");
+  const editHandleInput = document.getElementById("handleName");
+  const editBioInput = document.getElementById("bioText");
+
+  if (nameEl) nameEl.textContent = displayName;
+  if (handleEl) handleEl.textContent = handle;
+  if (aboutTitle) aboutTitle.textContent = displayName;
+  if (aboutText) aboutText.textContent = bio;
+
+  if (editNameInput) editNameInput.value = displayName;
+  if (editHandleInput) editHandleInput.value = handle;
+  if (editBioInput) editBioInput.value = bio;
+}
+
+async function applyProfileImages(profile) {
+  const banner = document.querySelector(".profile-banner");
+  const avatar = document.querySelector(".profile-avatar");
+
+  if (profile?.banner_path && banner) {
+    const url = await signBucketKey("profiles", profile.banner_path);
+    if (url) {
+      banner.innerHTML = "";
+      banner.style.backgroundImage = `url("${url}")`;
+      banner.style.backgroundSize = "cover";
+      banner.style.backgroundPosition = "center";
+      banner.classList.remove("placeholder-banner");
+    }
+  }
+
+  if (profile?.avatar_path && avatar) {
+    const url = await signBucketKey("profiles", profile.avatar_path);
+    if (url) {
+      avatar.innerHTML = "";
+      avatar.style.backgroundImage = `url("${url}")`;
+      avatar.style.backgroundSize = "cover";
+      avatar.style.backgroundPosition = "center";
+      avatar.classList.remove("placeholder-avatar");
+    }
+  }
+}
+
+async function loadProfileIdentity() {
+  if (!window.supabaseClient) return;
+
+  try {
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) return;
+
+    currentUser = user;
+
+    const { data, error } = await window.supabaseClient
+      .from("member_profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.warn("PROFILE TABLE LOAD ERROR:", error);
+    }
+
+    currentProfile = data || null;
+
+    applyProfileToPage(currentProfile, user);
+    await applyProfileImages(currentProfile);
+  } catch (err) {
+    console.error("PROFILE IDENTITY LOAD ERROR:", err);
+  }
+}
+
+async function uploadProfileFile(file, type) {
+  if (!file || !currentUser) return "";
+
+  const isBanner = type === "banner";
+  const maxBytes = 5 * 1024 * 1024;
+
+  if (!["image/jpeg", "image/png"].includes(file.type)) {
+    alert("Use JPEG or PNG only.");
+    return "";
+  }
+
+  if (file.size > maxBytes) {
+    alert("Image must be 5MB or less.");
+    return "";
+  }
+
+  const ext = file.type === "image/png" ? "png" : "jpg";
+  const path = `${currentUser.id}/${type}-${Date.now()}.${ext}`;
+
+  const { error } = await window.supabaseClient.storage
+    .from("profiles")
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: true
+    });
+
+  if (error) {
+    console.error("PROFILE IMAGE UPLOAD ERROR:", error);
+    alert("Image upload failed.");
+    return "";
+  }
+
+  return path;
+}
+
+async function saveProfile() {
+  if (!window.supabaseClient) return;
+
+  const { data: { user } } = await window.supabaseClient.auth.getUser();
+  if (!user) {
+    alert("Please sign in.");
+    return;
+  }
+
+  currentUser = user;
+
+  const saveBtn = document.getElementById("saveEditProfile");
+  if (saveBtn) saveBtn.textContent = "Saving...";
+
+  const displayName = document.getElementById("displayName")?.value?.trim() || fallbackNameFromUser(user);
+  const handle = normalizeHandle(document.getElementById("handleName")?.value, fallbackNameFromUser(user));
+  const bio = document.getElementById("bioText")?.value?.trim() || "";
+
+  const bannerFile = document.getElementById("bannerUploadInput")?.files?.[0] || null;
+  const avatarFile = document.getElementById("avatarUploadInput")?.files?.[0] || null;
+
+  let bannerPath = currentProfile?.banner_path || null;
+  let avatarPath = currentProfile?.avatar_path || null;
+
+  if (bannerFile) {
+    const uploaded = await uploadProfileFile(bannerFile, "banner");
+    if (uploaded) bannerPath = uploaded;
+  }
+
+  if (avatarFile) {
+    const uploaded = await uploadProfileFile(avatarFile, "avatar");
+    if (uploaded) avatarPath = uploaded;
+  }
+
+  const profilePayload = {
+    id: user.id,
+    display_name: displayName,
+    handle,
+    bio,
+    banner_path: bannerPath,
+    avatar_path: avatarPath,
+    genres: [],
+    socials: {},
+    updated_at: new Date().toISOString()
+  };
+
+  const { data, error } = await window.supabaseClient
+    .from("member_profiles")
+    .upsert(profilePayload, { onConflict: "id" })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("PROFILE SAVE ERROR:", error);
+    alert("Profile save failed. Check handle or Supabase setup.");
+    if (saveBtn) saveBtn.textContent = "Save";
+    return;
+  }
+
+  await window.supabaseClient.auth.updateUser({
+    data: {
+      display_name: displayName,
+      handle
+    }
+  });
+
+  currentProfile = data;
+  applyProfileToPage(currentProfile, user);
+  await applyProfileImages(currentProfile);
+
+  if (saveBtn) saveBtn.textContent = "Save";
+  closeEditProfile();
+}
+
 async function updateFeaturedTrack(row) {
   if (!row) return;
 
@@ -254,32 +463,6 @@ function bindSongRowPlayback(rowEl) {
   rowEl.addEventListener("click", () => {
     playTrackFromButton(btn, rowEl);
   });
-}
-
-
-async function loadProfileIdentity() {
-  if (!window.supabaseClient) return;
-
-  try {
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
-    if (!user) return;
-
-    const fallbackName = user.email ? user.email.split("@")[0] : "Member";
-    const displayName = user.user_metadata?.display_name || fallbackName;
-    const handle = user.user_metadata?.handle || `@${fallbackName}`;
-
-    const nameEl = document.querySelector(".profile-identity h1");
-    const handleEl = document.querySelector(".profile-handle");
-    const editNameInput = document.getElementById("displayName");
-    const editHandleInput = document.getElementById("handleName");
-
-    if (nameEl) nameEl.textContent = displayName;
-    if (handleEl) handleEl.textContent = handle;
-    if (editNameInput) editNameInput.value = displayName;
-    if (editHandleInput) editHandleInput.value = handle;
-  } catch (err) {
-    console.error("PROFILE IDENTITY LOAD ERROR:", err);
-  }
 }
 
 async function loadMemberSongs(showAll = false) {
@@ -380,12 +563,23 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMemberSongs(showingAllSongs);
 
   document.addEventListener("click", (event) => {
-    const btn = event.target.closest("#viewAllSongs");
-    if (!btn) return;
+    const viewAllBtn = event.target.closest("#viewAllSongs");
+    if (viewAllBtn) {
+      showingAllSongs = !showingAllSongs;
+      loadMemberSongs(showingAllSongs);
+      return;
+    }
 
-    showingAllSongs = !showingAllSongs;
-    loadProfileIdentity();
-  loadMemberSongs(showingAllSongs);
+    if (event.target.closest("#saveEditProfile")) {
+      saveProfile();
+    }
+
+    if (event.target.closest("#bannerUploadButton")) {
+      document.getElementById("bannerUploadInput")?.click();
+    }
+
+    if (event.target.closest("#avatarUploadButton")) {
+      document.getElementById("avatarUploadInput")?.click();
+    }
   });
 });
-
