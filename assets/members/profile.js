@@ -353,7 +353,7 @@ function applyProfileToPage(profile, user) {
   const editNameInput = document.getElementById("displayName");
   const editHandleInput = document.getElementById("handleName");
   const editBioInput = document.getElementById("bioText");
-  const publicProfileLink = document.getElementById("viewPublicProfile");
+  const publicProfileLink = document.getElementById("copyPublicProfile");
 
   if (nameEl) nameEl.textContent = displayName;
   if (handleEl) handleEl.textContent = handle;
@@ -365,7 +365,7 @@ function applyProfileToPage(profile, user) {
   if (editBioInput) editBioInput.value = bio;
 
   if (publicProfileLink) {
-    publicProfileLink.href = `/members/?handle=${encodeURIComponent(handle.replace(/^@/, ""))}`;
+    publicProfileLink.dataset.profileUrl = `${window.location.origin}/members/?handle=${encodeURIComponent(handle.replace(/^@/, ""))}`;
   }
 
   fillSocialInputs(profile?.socials || {});
@@ -403,7 +403,7 @@ async function applyProfileImages(profile) {
 function setOwnerControls() {
   const ownerOnlySelectors = [
     "#openEditProfile",
-    "#viewPublicProfile",
+    "#copyPublicProfile",
     "#changeFeaturedBtn",
     "#bannerUploadButton",
     "#avatarUploadButton"
@@ -903,6 +903,17 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const copyPublicBtn = event.target.closest("#copyPublicProfile");
+    if (copyPublicBtn) {
+      const profileUrl = copyPublicBtn.dataset.profileUrl || window.location.href;
+      navigator.clipboard.writeText(profileUrl);
+      copyPublicBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copyPublicBtn.textContent = "Copy Public Link";
+      }, 1400);
+      return;
+    }
+
     const featuredChoice = event.target.closest("[data-featured-track-id]");
     if (featuredChoice) {
       saveFeaturedTrack(featuredChoice.dataset.featuredTrackId);
@@ -1093,6 +1104,7 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
 
 
 
