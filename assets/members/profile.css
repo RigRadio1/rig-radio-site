@@ -729,4 +729,66 @@
   }
 }
 /* END FINAL PROFILE NAV FIX */
+$cssPath = "assets/members/profile.css"
+$css = Get-Content $cssPath -Raw
 
+$css = [regex]::Replace(
+  $css,
+  "(?s)\r?\n?/\* PROFILE NAV BUTTONS \*/.*?/\* END PROFILE NAV BUTTONS \*/\r?\n?",
+  ""
+)
+
+$cssPatch = @'
+
+/* PROFILE NAV BUTTONS */
+.profile-nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 18px 0 22px;
+  padding: 12px;
+  border: 1px solid rgba(255, 122, 24, 0.22);
+  border-radius: 18px;
+  background: rgba(8, 8, 12, 0.72);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.profile-nav-buttons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 24, 0.28);
+  background: rgba(255, 122, 24, 0.08);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.profile-nav-buttons a:hover {
+  border-color: rgba(255, 122, 24, 0.7);
+  background: rgba(255, 122, 24, 0.18);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  .profile-nav-buttons {
+    justify-content: center;
+  }
+
+  .profile-nav-buttons a {
+    flex: 1 1 42%;
+  }
+}
+/* END PROFILE NAV BUTTONS */
+'@
+
+Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
+
+git status
