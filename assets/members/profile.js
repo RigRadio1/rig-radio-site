@@ -434,7 +434,7 @@ async function loadProfileIdentity() {
       .select("*");
 
     if (requestedHandle) {
-      query = query.eq("handle", requestedHandle);
+      query = query.or(`handle.ilike.${requestedHandle},handle.ilike.@${requestedHandle}`);
     } else {
       if (!user) return;
       query = query.eq("id", user.id);
@@ -1203,6 +1203,7 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
 
 
 
