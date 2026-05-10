@@ -82,6 +82,70 @@ async function getSignedCover(row) {
 }
 
 
+
+let featuredAudio = null;
+let featuredAudioUrl = "";
+let featuredPlaying = false;
+
+async function getSignedAudio(row) {
+  if (!row) return "";
+
+  if (row.track_path && typeof row.track_path === "string") {
+    return await signTracksKey(row.track_path);
+  }
+
+  if (row.audio_url && typeof row.audio_url === "string") {
+    const key = extractKeyFromPublicUrl(row.audio_url);
+    if (key) {
+      const signed = await signTracksKey(key);
+      if (signed) return signed;
+    }
+    return row.audio_url;
+  }
+
+  return "";
+}
+
+function setupFeaturedPlayButton() {
+  const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
+  if (!btn || btn.dataset.bound === "1") return;
+
+  btn.dataset.bound = "1";
+
+  btn.addEventListener("click", async () => {
+    if (!featuredAudioUrl) {
+      btn.textContent = "No Audio";
+      setTimeout(() => btn.textContent = "Play Track", 1200);
+      return;
+    }
+
+    if (!featuredAudio) {
+      featuredAudio = new Audio(featuredAudioUrl);
+      featuredAudio.addEventListener("ended", () => {
+        featuredPlaying = false;
+        btn.textContent = "Play Track";
+      });
+    }
+
+    if (featuredPlaying) {
+      featuredAudio.pause();
+      featuredPlaying = false;
+      btn.textContent = "Play Track";
+      return;
+    }
+
+    try {
+      await featuredAudio.play();
+      featuredPlaying = true;
+      btn.textContent = "Pause Track";
+    } catch (err) {
+      console.error("FEATURED AUDIO PLAY ERROR:", err);
+      btn.textContent = "Play Error";
+      setTimeout(() => btn.textContent = "Play Track", 1200);
+    }
+  });
+}
+
 async function updateFeaturedTrack(row) {
   if (!row) return;
 
@@ -95,7 +159,11 @@ async function updateFeaturedTrack(row) {
   const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
   const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
   const plays = row.plays ?? 0;
-  const cover = await getSignedCover(row);
+    const cover = await getSignedCover(row);
+  featuredAudioUrl = await getSignedAudio(row);
+  featuredAudio = null;
+  featuredPlaying = false;
+  setupFeaturedPlayButton();
 
   if (titleEl) titleEl.textContent = title;
   if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
@@ -157,7 +225,11 @@ async function loadMemberSongs() {
     for (const row of data) {
       const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
       const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
-      const cover = await getSignedCover(row);
+        const cover = await getSignedCover(row);
+  featuredAudioUrl = await getSignedAudio(row);
+  featuredAudio = null;
+  featuredPlaying = false;
+  setupFeaturedPlayButton();
       const plays = row.plays ?? 0;
 
       const item = document.createElement("div");
@@ -188,6 +260,7 @@ async function loadMemberSongs() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMemberSongs);
+
 
 
 
