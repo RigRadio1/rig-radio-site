@@ -793,77 +793,84 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 
 /* MEMBER TOP NAV */
 .member-top-nav {
-  width: min(860px, calc(100% - 32px));
-  margin: 18px auto 24px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  border: 1px solid rgba(255, 122, 24, 0.22);
-  border-radius: 18px;
-  background: rgba(8, 8, 12, 0.78);
-  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.32);
+  box-sizing: border-box !important;
+  width: min(860px, calc(100vw - 32px)) !important;
+  max-width: 860px !important;
+  margin: 18px auto 24px auto !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  border: 1px solid rgba(255, 122, 24, 0.22) !important;
+  border-radius: 18px !important;
+  background: rgba(8, 8, 12, 0.78) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.32) !important;
   backdrop-filter: blur(10px);
-  position: relative;
-  z-index: 20;
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  z-index: 20 !important;
+  overflow: hidden !important;
 }
 
 .member-top-brand {
-  color: #fff;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  white-space: nowrap;
+  color: #fff !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+  margin-left: 0 !important;
 }
 
 .member-top-links {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
 }
 
 .member-top-links a,
 .member-top-links button {
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 122, 24, 0.26);
-  background: rgba(255, 122, 24, 0.08);
-  color: #fff;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
+  min-height: 36px !important;
+  padding: 0 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 122, 24, 0.26) !important;
+  background: rgba(255, 122, 24, 0.08) !important;
+  color: #fff !important;
+  font: inherit !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
 }
 
 .member-top-links a:hover,
 .member-top-links button:hover {
-  border-color: rgba(255, 122, 24, 0.75);
-  background: rgba(255, 122, 24, 0.18);
-  transform: translateY(-1px);
+  border-color: rgba(255, 122, 24, 0.75) !important;
+  background: rgba(255, 122, 24, 0.18) !important;
+  transform: translateY(-1px) !important;
 }
 
 @media (max-width: 700px) {
   .member-top-nav {
-    align-items: stretch;
-    flex-direction: column;
+    align-items: stretch !important;
+    flex-direction: column !important;
   }
 
   .member-top-links {
-    justify-content: center;
+    justify-content: center !important;
   }
 
   .member-top-links a,
   .member-top-links button {
-    flex: 1 1 42%;
+    flex: 1 1 42% !important;
   }
 }
 /* END MEMBER TOP NAV */
-
 
