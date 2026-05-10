@@ -791,8 +791,6 @@ $cssPatch = @'
 
 Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 
-git status
-
 /* MEMBER TOP NAV */
 .member-top-nav {
   width: min(1180px, calc(100% - 32px));
