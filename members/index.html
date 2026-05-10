@@ -8,6 +8,12 @@
 
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://tpzpeoqdpfwqumlsyhpx.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmVmIiwicmVmIjoidHB6cGVvcWRwZndxdW1sc3locHgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1NzAwMzk1MSwiZXhwIjoyMDcyNTc5OTUxFn0.nP8W_G_N9GKucj6tlzyvSAOjhiqTBD-F564i0gNhp8E";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
 </head>
 
 <body class="member-profile-page">
@@ -217,3 +223,4 @@
   <script src="/assets/members/profile.js"></script>
 </body>
 </html>
+
