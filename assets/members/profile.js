@@ -413,6 +413,11 @@ function setOwnerControls() {
     const el = document.querySelector(selector);
     if (el) el.style.display = viewingOwnProfile ? "" : "none";
   });
+
+  const followBtn = document.getElementById("followMemberBtn");
+  if (followBtn) {
+    followBtn.style.display = (!viewingOwnProfile && profileOwnerId) ? "" : "none";
+  }
 }
 async function loadProfileIdentity() {
   if (!window.supabaseClient) return;
@@ -639,6 +644,93 @@ function bindSongRowPlayback(rowEl) {
 }
 
 
+
+async function updateFollowStats() {
+  if (!window.supabaseClient || !profileOwnerId) return;
+
+  const followersEl = document.querySelector(".profile-stats span:nth-child(2)");
+  const followingEl = document.querySelector(".profile-stats span:nth-child(3)");
+
+  const { count: followersCount } = await window.supabaseClient
+    .from("member_follows")
+    .select("*", { count: "exact", head: true })
+    .eq("following_id", profileOwnerId);
+
+  const { count: followingCount } = await window.supabaseClient
+    .from("member_follows")
+    .select("*", { count: "exact", head: true })
+    .eq("follower_id", profileOwnerId);
+
+  if (followersEl) followersEl.textContent = `${followersCount ?? 0} followers`;
+  if (followingEl) followingEl.textContent = `${followingCount ?? 0} following`;
+}
+
+async function updateFollowButton() {
+  const followBtn = document.getElementById("followMemberBtn");
+  if (!followBtn || !window.supabaseClient || !profileOwnerId || viewingOwnProfile) return;
+
+  if (!currentUser) {
+    followBtn.textContent = "Log in to Follow";
+    return;
+  }
+
+  const { data, error } = await window.supabaseClient
+    .from("member_follows")
+    .select("follower_id")
+    .eq("follower_id", currentUser.id)
+    .eq("following_id", profileOwnerId)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("FOLLOW STATE ERROR:", error);
+  }
+
+  followBtn.textContent = data ? "Following" : "Follow";
+  followBtn.dataset.following = data ? "1" : "0";
+}
+
+async function toggleFollowMember() {
+  const followBtn = document.getElementById("followMemberBtn");
+  if (!followBtn || !window.supabaseClient || !profileOwnerId || viewingOwnProfile) return;
+
+  if (!currentUser) {
+    alert("Please log in to follow members.");
+    return;
+  }
+
+  followBtn.disabled = true;
+
+  try {
+    const isFollowing = followBtn.dataset.following === "1";
+
+    if (isFollowing) {
+      const { error } = await window.supabaseClient
+        .from("member_follows")
+        .delete()
+        .eq("follower_id", currentUser.id)
+        .eq("following_id", profileOwnerId);
+
+      if (error) throw error;
+    } else {
+      const { error } = await window.supabaseClient
+        .from("member_follows")
+        .insert({
+          follower_id: currentUser.id,
+          following_id: profileOwnerId
+        });
+
+      if (error) throw error;
+    }
+
+    await updateFollowStats();
+    await updateFollowButton();
+  } catch (err) {
+    console.error("FOLLOW TOGGLE ERROR:", err);
+    alert("Could not update follow.");
+  } finally {
+    followBtn.disabled = false;
+  }
+}
 /* CHOOSE FEATURED TRACK */
 async function getFeaturedTrackForProfile(loadedTracks = [], userId = "") {
   const featuredId = currentProfile?.featured_track_id;
@@ -887,6 +979,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   (async () => {
     await loadProfileIdentity();
+    await updateFollowStats();
+    await updateFollowButton();
     await loadMemberSongs(showingAllSongs);
   })();
 
@@ -900,6 +994,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (event.target.closest("#changeFeaturedBtn")) {
       openFeaturedPicker();
+      return;
+    }
+
+    if (event.target.closest("#followMemberBtn")) {
+      toggleFollowMember();
       return;
     }
 
@@ -1104,6 +1203,7 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
 
 
 
