@@ -4,6 +4,10 @@ const closeBtn = document.getElementById("closeEditProfile");
 const cancelBtn = document.getElementById("cancelEditProfile");
 const backdrop = document.getElementById("closeEditProfileBackdrop");
 
+let featuredAudio = null;
+let featuredPlaying = false;
+let featuredTrack = null;
+
 function openEditProfile() {
   modal?.classList.add("is-open");
   modal?.setAttribute("aria-hidden", "false");
@@ -25,8 +29,6 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeEditProfile();
 });
 
-const PLACEHOLDER_IMG = "";
-
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -36,74 +38,139 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function extractKeyFromPublicUrl(url) {
+function cleanStorageKey(value) {
+  if (!value || typeof value !== "string") return "";
+
   try {
-    if (!url) return "";
-    const u = new URL(url, window.location.origin);
-    const match = u.pathname.match(/tracks\/(.+)$/);
-    return match && match[1] ? decodeURIComponent(match[1]) : "";
-  } catch {
-    return "";
-  }
+    const url = new URL(value, window.location.origin);
+    const marker = "/tracks/";
+    const index = url.pathname.indexOf(marker);
+
+    if (index >= 0) {
+      return decodeURIComponent(url.pathname.slice(index + marker.length));
+    }
+  } catch {}
+
+  return value;
 }
 
 async function signTracksKey(key, seconds = 3600) {
   try {
     if (!key || !window.supabaseClient) return "";
-    const { data, error } = await supabaseClient.storage
-      .from("tracks")
-      .createSignedUrl(key, seconds);
 
-    if (error) return "";
+    const cleanKey = cleanStorageKey(key);
+
+    const { data, error } = await window.supabaseClient.storage
+      .from("tracks")
+      .createSignedUrl(cleanKey, seconds);
+
+    if (error) {
+      console.warn("SIGNED URL ERROR:", error);
+      return "";
+    }
+
     return data?.signedUrl || "";
-  } catch {
+  } catch (err) {
+    console.warn("SIGN TRACK KEY ERROR:", err);
     return "";
   }
 }
 
 async function getSignedCover(row) {
-  if (row.cover_path && typeof row.cover_path === "string") {
-    return await signTracksKey(row.cover_path);
-  }
+  if (!row) return "";
 
-  if (row.cover_url && typeof row.cover_url === "string") {
-    const key = extractKeyFromPublicUrl(row.cover_url);
-    if (key) return await signTracksKey(key);
+  if (row.cover_path) return await signTracksKey(row.cover_path);
+
+  if (row.cover_url) {
+    const key = cleanStorageKey(row.cover_url);
+    if (key && key !== row.cover_url) return await signTracksKey(key);
     return row.cover_url;
   }
 
-  if (row.artwork_url && typeof row.artwork_url === "string") {
-    const key = extractKeyFromPublicUrl(row.artwork_url);
-    if (key) return await signTracksKey(key);
+  if (row.artwork_url) {
+    const key = cleanStorageKey(row.artwork_url);
+    if (key && key !== row.artwork_url) return await signTracksKey(key);
     return row.artwork_url;
   }
 
-  return PLACEHOLDER_IMG;
+  return "";
 }
-
-
-
-let featuredAudio = null;
-let featuredAudioUrl = "";
-let featuredPlaying = false;
 
 async function getSignedAudio(row) {
   if (!row) return "";
 
-  if (row.track_path && typeof row.track_path === "string") {
-    return await signTracksKey(row.track_path);
-  }
+  if (row.track_path) return await signTracksKey(row.track_path);
 
-  if (row.audio_url && typeof row.audio_url === "string") {
-    const key = extractKeyFromPublicUrl(row.audio_url);
-    if (key) {
-      const signed = await signTracksKey(key);
-      if (signed) return signed;
-    }
+  if (row.audio_path) return await signTracksKey(row.audio_path);
+
+  if (row.audio_url) {
+    const key = cleanStorageKey(row.audio_url);
+    if (key && key !== row.audio_url) return await signTracksKey(key);
     return row.audio_url;
   }
 
   return "";
+}
+
+function resetFeaturedButton() {
+  const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
+  if (btn) btn.textContent = "Play Track";
+
+  if (featuredAudio) {
+    featuredAudio.pause();
+    featuredAudio = null;
+  }
+
+  featuredPlaying = false;
+}
+
+async function updateFeaturedTrack(row) {
+  if (!row) return;
+
+  featuredTrack = row;
+  resetFeaturedButton();
+
+  const card = document.querySelector(".featured-track-card");
+  if (!card) return;
+
+  const kickerEl = card.querySelector(".profile-kicker");
+  const titleEl = card.querySelector(".featured-track-info h2");
+  const metaEl = card.querySelector(".featured-track-info p:not(.profile-kicker)");
+  const coverEl = card.querySelector(".featured-cover");
+  const btn = card.querySelector(".track-actions .primary-btn");
+
+  const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
+  const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
+  const plays = row.plays ?? 0;
+  const cover = await getSignedCover(row);
+  const audio = await getSignedAudio(row);
+
+  console.log("FEATURED TRACK SELECTED:", {
+    id: row.id,
+    title,
+    track_path: row.track_path,
+    audio_path: row.audio_path,
+    audio_url: row.audio_url,
+    signed_audio: audio
+  });
+
+  if (kickerEl) kickerEl.textContent = "Featured Track";
+  if (titleEl) titleEl.textContent = title;
+  if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
+
+  if (coverEl && cover) {
+    coverEl.innerHTML = "";
+    coverEl.style.backgroundImage = `url("${cover}")`;
+    coverEl.style.backgroundSize = "cover";
+    coverEl.style.backgroundPosition = "center";
+    coverEl.style.borderStyle = "solid";
+  }
+
+  if (btn) {
+    btn.dataset.audioUrl = audio || "";
+    btn.dataset.trackId = row.id || "";
+    btn.dataset.trackTitle = title || "";
+  }
 }
 
 function setupFeaturedPlayButton() {
@@ -114,6 +181,7 @@ function setupFeaturedPlayButton() {
 
   btn.addEventListener("click", async () => {
     const url = btn.dataset.audioUrl || "";
+    const expectedTitle = btn.dataset.trackTitle || "";
 
     if (!url) {
       btn.textContent = "No Audio";
@@ -121,7 +189,7 @@ function setupFeaturedPlayButton() {
       return;
     }
 
-    if (featuredAudio && !featuredAudio.paused && featuredAudio.src === url) {
+    if (featuredAudio && featuredPlaying) {
       featuredAudio.pause();
       featuredPlaying = false;
       btn.textContent = "Play Track";
@@ -133,7 +201,10 @@ function setupFeaturedPlayButton() {
       featuredAudio = null;
     }
 
+    console.log("PLAYING FEATURED TRACK:", expectedTitle, url);
+
     featuredAudio = new Audio(url);
+
     featuredAudio.addEventListener("ended", () => {
       featuredPlaying = false;
       btn.textContent = "Play Track";
@@ -151,43 +222,6 @@ function setupFeaturedPlayButton() {
   });
 }
 
-async function updateFeaturedTrack(row) {
-  if (!row) return;
-
-  const card = document.querySelector(".featured-track-card");
-  if (!card) return;
-
-  const titleEl = card.querySelector(".featured-track-info h2");
-  const metaEl = card.querySelector(".featured-track-info p:not(.profile-kicker)");
-  const coverEl = card.querySelector(".featured-cover");
-
-  const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
-  const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
-  const plays = row.plays ?? 0;
-    const cover = await getSignedCover(row);
-  featuredAudioUrl = await getSignedAudio(row);
-  featuredAudio = null;
-  featuredPlaying = false;
-    const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
-  if (btn) {
-    btn.dataset.audioUrl = featuredAudioUrl;
-    btn.textContent = "Play Track";
-  }
-
-  setupFeaturedPlayButton();
-
-  if (titleEl) titleEl.textContent = title;
-  if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
-
-  if (coverEl && cover) {
-    coverEl.innerHTML = "";
-    coverEl.style.backgroundImage = `url('${cover}')`;
-    coverEl.style.backgroundSize = "cover";
-    coverEl.style.backgroundPosition = "center";
-    coverEl.style.borderStyle = "solid";
-  }
-}
-
 async function loadMemberSongs() {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -197,23 +231,21 @@ async function loadMemberSongs() {
   list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Loading songs...</h3><p>Please wait</p></div></div>`;
 
   try {
-    const { data: { user } } = await supabaseClient.auth.getUser();
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
 
     if (!user) {
       list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Sign in required</h3><p>Log in to see your uploaded tracks.</p></div></div>`;
       return;
     }
 
-    const { count } = await supabaseClient
+    const { count } = await window.supabaseClient
       .from("tracks")
       .select("*", { count: "exact", head: true })
       .eq("user_id", user.id);
 
-    if (stats) {
-      stats.textContent = `${count ?? 0} songs`;
-    }
+    if (stats) stats.textContent = `${count ?? 0} songs`;
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await window.supabaseClient
       .from("tracks")
       .select("*")
       .eq("user_id", user.id)
@@ -222,31 +254,19 @@ async function loadMemberSongs() {
 
     if (error) throw error;
 
-    if (data && data.length > 0) {
-      await updateFeaturedTrack(data[0]);
-    }
-
     if (!data || data.length === 0) {
       list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>No uploads yet</h3><p>Upload songs from the dashboard.</p></div></div>`;
       return;
     }
+
+    await updateFeaturedTrack(data[0]);
 
     list.innerHTML = "";
 
     for (const row of data) {
       const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
       const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
-        const cover = await getSignedCover(row);
-  featuredAudioUrl = await getSignedAudio(row);
-  featuredAudio = null;
-  featuredPlaying = false;
-    const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
-  if (btn) {
-    btn.dataset.audioUrl = featuredAudioUrl;
-    btn.textContent = "Play Track";
-  }
-
-  setupFeaturedPlayButton();
+      const cover = await getSignedCover(row);
       const plays = row.plays ?? 0;
 
       const item = document.createElement("div");
@@ -262,7 +282,7 @@ async function loadMemberSongs() {
 
       if (cover) {
         const thumb = item.querySelector(".song-thumb");
-        thumb.style.backgroundImage = `url('${cover}')`;
+        thumb.style.backgroundImage = `url("${cover}")`;
         thumb.style.backgroundSize = "cover";
         thumb.style.backgroundPosition = "center";
         thumb.style.borderStyle = "solid";
@@ -270,16 +290,15 @@ async function loadMemberSongs() {
 
       list.appendChild(item);
     }
+
+    setupFeaturedPlayButton();
   } catch (err) {
     console.error("MEMBER SONG LOAD ERROR:", err);
     list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Could not load songs</h3><p>Check console or Supabase permissions.</p></div></div>`;
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadMemberSongs);
-
-
-
-
-
-
+document.addEventListener("DOMContentLoaded", () => {
+  setupFeaturedPlayButton();
+  loadMemberSongs();
+});
