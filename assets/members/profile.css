@@ -552,3 +552,21 @@
     width: 100%;
   }
 }
+
+/* SECTION LINK BUTTON */
+.section-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #ff7a2f;
+  text-decoration: none;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.section-link:hover {
+  color: #ff9b5c;
+}

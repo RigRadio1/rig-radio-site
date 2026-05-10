@@ -227,7 +227,7 @@ function bindSongRowPlayback(rowEl) {
   });
 }
 
-async function loadMemberSongs() {
+async function loadMemberSongs(showAll = false) {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
 
@@ -250,12 +250,18 @@ async function loadMemberSongs() {
 
     if (stats) stats.textContent = `${count ?? 0} songs`;
 
+    const viewAllBtn = document.getElementById("viewAllSongs");
+    if (viewAllBtn) {
+      viewAllBtn.style.display = (count && count > 6) ? "inline-flex" : "none";
+      viewAllBtn.textContent = showAll ? "Show latest 6" : "View all";
+    }
+
     const { data, error } = await window.supabaseClient
       .from("tracks")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(100);
+      .limit(showAll ? 100 : 6);
 
     if (error) throw error;
 
@@ -307,5 +313,19 @@ async function loadMemberSongs() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadMemberSongs);
+document.addEventListener("DOMContentLoaded", () => {
+  let showingAllSongs = false;
+
+  loadMemberSongs(showingAllSongs);
+
+  document.addEventListener("click", (event) => {
+    const btn = event.target.closest("#viewAllSongs");
+    if (!btn) return;
+
+    showingAllSongs = !showingAllSongs;
+    stopActiveAudio();
+    loadMemberSongs(showingAllSongs);
+  });
+});
+
 
