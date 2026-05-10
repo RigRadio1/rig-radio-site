@@ -404,6 +404,7 @@ function setOwnerControls() {
   const ownerOnlySelectors = [
     "#openEditProfile",
     "#copyPublicProfile",
+    "#createPlaylistBtn",
     "#changeFeaturedBtn",
     "#bannerUploadButton",
     "#avatarUploadButton"
@@ -883,6 +884,32 @@ async function saveFeaturedTrack(trackId) {
 }
 /* END CHOOSE FEATURED TRACK */
 
+
+async function createPrivatePlaylist() {
+  if (!window.supabaseClient || !currentUser || !viewingOwnProfile) return;
+
+  const title = prompt("Playlist name?");
+  if (!title || !title.trim()) return;
+
+  try {
+    const { error } = await window.supabaseClient
+      .from("playlists")
+      .insert({
+        user_id: currentUser.id,
+        title: title.trim(),
+        playlist_type: "private",
+        source: "rig-radio",
+        is_public: false
+      });
+
+    if (error) throw error;
+
+    await loadMemberPlaylists();
+  } catch (err) {
+    console.error("CREATE PLAYLIST ERROR:", err);
+    alert("Could not create playlist.");
+  }
+}
 async function loadMemberPlaylists() {
   const grid = document.getElementById("profilePlaylists");
   if (!grid || !window.supabaseClient) return;
@@ -1105,6 +1132,11 @@ document.addEventListener("DOMContentLoaded", () => {
   })();
 
   document.addEventListener("click", (event) => {
+    if (event.target.closest("#createPlaylistBtn")) {
+      createPrivatePlaylist();
+      return;
+    }
+
     const viewAllBtn = event.target.closest("#viewAllSongs");
     if (viewAllBtn) {
       showingAllSongs = !showingAllSongs;
@@ -1323,6 +1355,7 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
 
 
 
