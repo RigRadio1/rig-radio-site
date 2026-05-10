@@ -255,7 +255,7 @@ async function loadMemberSongs() {
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(6);
+      .limit(100);
 
     if (error) throw error;
 
@@ -308,3 +308,4 @@ async function loadMemberSongs() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMemberSongs);
+
