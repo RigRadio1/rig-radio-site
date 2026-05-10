@@ -113,26 +113,31 @@ function setupFeaturedPlayButton() {
   btn.dataset.bound = "1";
 
   btn.addEventListener("click", async () => {
-    if (!featuredAudioUrl) {
+    const url = btn.dataset.audioUrl || "";
+
+    if (!url) {
       btn.textContent = "No Audio";
       setTimeout(() => btn.textContent = "Play Track", 1200);
       return;
     }
 
-    if (!featuredAudio) {
-      featuredAudio = new Audio(featuredAudioUrl);
-      featuredAudio.addEventListener("ended", () => {
-        featuredPlaying = false;
-        btn.textContent = "Play Track";
-      });
-    }
-
-    if (featuredPlaying) {
+    if (featuredAudio && !featuredAudio.paused && featuredAudio.src === url) {
       featuredAudio.pause();
       featuredPlaying = false;
       btn.textContent = "Play Track";
       return;
     }
+
+    if (featuredAudio) {
+      featuredAudio.pause();
+      featuredAudio = null;
+    }
+
+    featuredAudio = new Audio(url);
+    featuredAudio.addEventListener("ended", () => {
+      featuredPlaying = false;
+      btn.textContent = "Play Track";
+    });
 
     try {
       await featuredAudio.play();
@@ -163,6 +168,12 @@ async function updateFeaturedTrack(row) {
   featuredAudioUrl = await getSignedAudio(row);
   featuredAudio = null;
   featuredPlaying = false;
+    const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
+  if (btn) {
+    btn.dataset.audioUrl = featuredAudioUrl;
+    btn.textContent = "Play Track";
+  }
+
   setupFeaturedPlayButton();
 
   if (titleEl) titleEl.textContent = title;
@@ -229,6 +240,12 @@ async function loadMemberSongs() {
   featuredAudioUrl = await getSignedAudio(row);
   featuredAudio = null;
   featuredPlaying = false;
+    const btn = document.querySelector(".featured-track-card .track-actions .primary-btn");
+  if (btn) {
+    btn.dataset.audioUrl = featuredAudioUrl;
+    btn.textContent = "Play Track";
+  }
+
   setupFeaturedPlayButton();
       const plays = row.plays ?? 0;
 
@@ -260,6 +277,7 @@ async function loadMemberSongs() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMemberSongs);
+
 
 
 
