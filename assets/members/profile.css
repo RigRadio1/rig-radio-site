@@ -792,3 +792,79 @@ $cssPatch = @'
 Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 
 git status
+
+/* MEMBER TOP NAV */
+.member-top-nav {
+  width: min(1180px, calc(100% - 32px));
+  margin: 18px auto 0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid rgba(255, 122, 24, 0.22);
+  border-radius: 18px;
+  background: rgba(8, 8, 12, 0.78);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 20;
+}
+
+.member-top-brand {
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.member-top-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.member-top-links a,
+.member-top-links button {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 24, 0.26);
+  background: rgba(255, 122, 24, 0.08);
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.member-top-links a:hover,
+.member-top-links button:hover {
+  border-color: rgba(255, 122, 24, 0.75);
+  background: rgba(255, 122, 24, 0.18);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  .member-top-nav {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .member-top-links {
+    justify-content: center;
+  }
+
+  .member-top-links a,
+  .member-top-links button {
+    flex: 1 1 42%;
+  }
+}
+/* END MEMBER TOP NAV */
+

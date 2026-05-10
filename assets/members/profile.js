@@ -966,3 +966,34 @@ function renderSocialLinks(socials = {}) {
 })();
 /* END FINAL OVERRIDE — PROFILE NAV AND TOP ACTIONS */
 
+/* MEMBER TOP NAV LOGOUT */
+(function () {
+  function bindMemberLogout() {
+    const btn = document.getElementById("memberLogoutBtn");
+    if (!btn || btn.dataset.bound === "1") return;
+
+    btn.dataset.bound = "1";
+
+    btn.addEventListener("click", async () => {
+      btn.textContent = "Logging out...";
+
+      try {
+        if (window.supabaseClient?.auth) {
+          await window.supabaseClient.auth.signOut();
+        }
+      } catch (err) {
+        console.error("LOGOUT ERROR:", err);
+      }
+
+      window.location.href = "/login.html";
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindMemberLogout);
+  } else {
+    bindMemberLogout();
+  }
+})();
+/* END MEMBER TOP NAV LOGOUT */
+
