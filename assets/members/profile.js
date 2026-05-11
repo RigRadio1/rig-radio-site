@@ -1326,6 +1326,8 @@ async function openPlaylistDetail(playlistId) {
       if (cover) {
         const songThumb = songRow.querySelector(".song-thumb");
         songThumb.style.backgroundImage = `url("${cover}")`;
+        songThumb.style.backgroundSize = "cover";
+        songThumb.style.backgroundRepeat = "no-repeat";
         songThumb.style.backgroundPosition = "center";
         songThumb.style.borderStyle = "solid";
       }
