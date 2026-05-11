@@ -1131,6 +1131,7 @@ async function loadMemberPlaylists() {
     for (const playlist of data) {
       const card = document.createElement("div");
       card.className = "playlist-card";
+      card.dataset.playlistDetail = playlist.id;
 
       const count = itemCounts.get(playlist.id) || 0;
       const typeLabel = playlist.playlist_type === "show" ? "Show Playlist" : "Private Playlist";
@@ -1168,6 +1169,119 @@ async function loadMemberPlaylists() {
     `;
   }
 }
+
+async function openPlaylistDetail(playlistId) {
+  const detail = document.getElementById("playlistDetail");
+  if (!detail || !window.supabaseClient || !playlistId) return;
+
+  stopActiveAudio();
+
+  detail.hidden = false;
+  detail.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Loading playlist...</h3><p>Please wait</p></div></div>`;
+
+  try {
+    const { data: playlist, error: playlistError } = await window.supabaseClient
+      .from("playlists")
+      .select("id,title,description,playlist_type,cover_url,is_public,user_id")
+      .eq("id", playlistId)
+      .single();
+
+    if (playlistError) throw playlistError;
+
+    const { data: items, error: itemsError } = await window.supabaseClient
+      .from("playlist_items")
+      .select("*")
+      .eq("playlist_id", playlistId)
+      .order("position", { ascending: true });
+
+    if (itemsError) throw itemsError;
+
+    const trackIds = (items || []).map((item) => item.track_id).filter(Boolean);
+    let tracksById = new Map();
+
+    if (trackIds.length) {
+      const { data: tracks, error: tracksError } = await window.supabaseClient
+        .from("tracks")
+        .select("*")
+        .in("id", trackIds);
+
+      if (tracksError) throw tracksError;
+
+      tracksById = new Map((tracks || []).map((track) => [String(track.id), track]));
+    }
+
+    const coverUrl = await getPlaylistCoverDisplayUrl(playlist.cover_url);
+    const count = (items || []).length;
+    const visibility = playlist.is_public ? "Public" : "Private";
+
+    detail.innerHTML = `
+      <div class="playlist-detail-header">
+        <div class="playlist-thumb placeholder-thumb" id="playlistDetailThumb"></div>
+        <div>
+          <h3>${escapeHtml(playlist.title || "Untitled playlist")}</h3>
+          <p>${escapeHtml(count)} songs &middot; ${escapeHtml(visibility)}</p>
+        </div>
+      </div>
+      <div class="playlist-detail-songs" id="playlistDetailSongs"></div>
+    `;
+
+    const thumb = document.getElementById("playlistDetailThumb");
+    if (thumb && coverUrl) {
+      thumb.style.backgroundImage = `url("${coverUrl}")`;
+      thumb.style.backgroundPosition = "center";
+      thumb.style.borderStyle = "solid";
+    }
+
+    const songList = document.getElementById("playlistDetailSongs");
+
+    if (!items || items.length === 0) {
+      songList.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>No songs yet</h3><p>This playlist is empty.</p></div></div>`;
+      return;
+    }
+
+    songList.innerHTML = "";
+
+    for (const item of items) {
+      const track = item.track_id ? tracksById.get(String(item.track_id)) : null;
+      const row = track || item;
+      const trackId = String(track?.id || item.track_id || item.id);
+
+      memberTracks.set(trackId, row);
+
+      const title = row.title || row.name || item.title || "Untitled track";
+      const sub = row.artist || row.artist_name || item.artist || row.genre || row.style || row.description || "Playlist track";
+      const cover = track ? await getSignedCover(track) : "";
+
+      const songRow = document.createElement("div");
+      songRow.className = "song-row";
+      songRow.innerHTML = `
+        <div class="song-thumb placeholder-thumb"></div>
+        <div>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(sub)}</p>
+        </div>
+        <button class="song-play-btn" type="button">Play</button>
+      `;
+
+      if (cover) {
+        const songThumb = songRow.querySelector(".song-thumb");
+        songThumb.style.backgroundImage = `url("${cover}")`;
+        songThumb.style.backgroundPosition = "center";
+        songThumb.style.borderStyle = "solid";
+      }
+
+      const btn = songRow.querySelector(".song-play-btn");
+      if (btn) btn.dataset.trackId = trackId;
+
+      bindSongRowPlayback(songRow);
+      songList.appendChild(songRow);
+    }
+  } catch (err) {
+    console.error("OPEN PLAYLIST DETAIL ERROR:", err);
+    detail.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Could not open playlist</h3><p>Please try again.</p></div></div>`;
+  }
+}
+
 async function loadMemberSongs(showAll = false) {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -1292,6 +1406,12 @@ document.addEventListener("DOMContentLoaded", () => {
       handlePlaylistCoverUpload(playlistCoverBtn.dataset.playlistCover);
       return;
     }
+    const playlistCard = event.target.closest("[data-playlist-detail]");
+    if (playlistCard) {
+      openPlaylistDetail(playlistCard.dataset.playlistDetail);
+      return;
+    }
+
     const viewAllBtn = event.target.closest("#viewAllSongs");
     if (viewAllBtn) {
       showingAllSongs = !showingAllSongs;
