@@ -1282,18 +1282,16 @@ document.addEventListener("DOMContentLoaded", () => {
       createPrivatePlaylist();
       return;
     }
-
     if (event.target.closest("[data-close-create-playlist]")) {
       closeCreatePlaylistModal();
+      return;
+    }
 
     const playlistCoverBtn = event.target.closest("[data-playlist-cover]");
     if (playlistCoverBtn) {
       handlePlaylistCoverUpload(playlistCoverBtn.dataset.playlistCover);
       return;
     }
-      return;
-    }
-
     const viewAllBtn = event.target.closest("#viewAllSongs");
     if (viewAllBtn) {
       showingAllSongs = !showingAllSongs;
