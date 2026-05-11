@@ -1252,6 +1252,7 @@ async function openPlaylistDetail(playlistId) {
       const title = row.title || row.name || item.title || "Untitled track";
       const sub = row.artist || row.artist_name || item.artist || row.genre || row.style || row.description || "Playlist track";
       const cover = track ? await getSignedCover(track) : "";
+      const audioUrl = await getSignedAudio(row);
 
       const songRow = document.createElement("div");
       songRow.className = "song-row";
@@ -1261,7 +1262,7 @@ async function openPlaylistDetail(playlistId) {
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(sub)}</p>
         </div>
-        <button class="song-play-btn" type="button">Play</button>
+        ${audioUrl ? `<audio class="playlist-audio-player" controls preload="none" src="${escapeHtml(audioUrl)}"></audio>` : `<span class="playlist-no-audio">No audio</span>`}
       `;
 
       if (cover) {

@@ -940,3 +940,32 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 }
 /* END CREATE PLAYLIST MODAL */
 
+
+
+.playlist-detail {
+  margin-top: 16px;
+}
+
+.playlist-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.playlist-detail-songs .song-row {
+  display: grid;
+  grid-template-columns: 54px 1fr minmax(260px, 420px);
+  align-items: center;
+  gap: 14px;
+}
+
+.playlist-audio-player {
+  width: 100%;
+  max-width: 420px;
+}
+
+.playlist-no-audio {
+  opacity: 0.7;
+  font-size: 13px;
+}
