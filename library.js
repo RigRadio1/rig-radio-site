@@ -93,7 +93,7 @@ function rowHTML(r){
 
         <!-- Add/Remove from My Playlist (local only) -->
         <div class="plwrap">
-          <button class="plbtn" data-pl="${r.id}">+ Add to My Playlist</button>
+          <button class="plbtn" data-pl="${r.id}">Add to Playlist</button>
         </div>
 <div class="stats" style="margin-top:6px; display:flex; gap:10px; align-items:center;">
   <button class="like-btn" data-like="${r.id}" style="padding:6px 10px;border:1px solid #f44;border-radius:6px;background:#140000;color:#fff;cursor:pointer;">
@@ -360,7 +360,7 @@ for (const r of view){
   const render = () => {
     const on = inPL(r.id);
     btn.classList.toggle("in", on);
-    btn.textContent = on ? "✓ In My Playlist — Remove" : "+ Add to My Playlist";
+    btn.textContent = on ? "In My Playlist - Remove" : "Add to Playlist";
   };
   render();
   btn.addEventListener("click", () => { togglePL(r.id); render(); });
