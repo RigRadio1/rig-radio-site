@@ -1311,13 +1311,16 @@ async function openPlaylistDetail(playlistId) {
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(sub)}</p>
         </div>
-        <button class="song-play-btn playlist-playbar" type="button">
-          <span class="playlist-play-label">Play</span>
-          <span class="playlist-play-time">0:00 / 0:00</span>
-          <span class="playlist-play-track">
-            <span class="playlist-play-fill"></span>
-          </span>
-        </button>
+        <div class="playlist-row-actions">
+          <button class="song-play-btn playlist-playbar" type="button">
+            <span class="playlist-play-label">Play</span>
+            <span class="playlist-play-time">0:00 / 0:00</span>
+            <span class="playlist-play-track">
+              <span class="playlist-play-fill"></span>
+            </span>
+          </button>
+          ${viewingOwnProfile ? `<button class="playlist-delete-btn" type="button" data-delete-playlist-item="${escapeHtml(item.id)}" data-delete-playlist-id="${escapeHtml(playlistId)}">Delete</button>` : ""}
+        </div>
       `;
 
       if (cover) {
@@ -1337,6 +1340,28 @@ async function openPlaylistDetail(playlistId) {
     console.error("OPEN PLAYLIST DETAIL ERROR:", err);
     detail.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Could not open playlist</h3><p>Please try again.</p></div></div>`;
   }
+}
+
+async function deletePlaylistItem(itemId, playlistId) {
+  if (!window.supabaseClient || !itemId || !playlistId) return;
+
+  if (!confirm("Remove this song from the playlist?")) return;
+
+  stopActiveAudio();
+
+  const { error } = await window.supabaseClient
+    .from("playlist_items")
+    .delete()
+    .eq("id", itemId);
+
+  if (error) {
+    console.error("DELETE PLAYLIST ITEM ERROR:", error);
+    alert("Could not remove song from playlist.");
+    return;
+  }
+
+  await loadMemberPlaylists();
+  await openPlaylistDetail(playlistId);
 }
 
 async function loadMemberSongs(showAll = false) {
@@ -1463,6 +1488,15 @@ document.addEventListener("DOMContentLoaded", () => {
       handlePlaylistCoverUpload(playlistCoverBtn.dataset.playlistCover);
       return;
     }
+    const deletePlaylistItemBtn = event.target.closest("[data-delete-playlist-item]");
+    if (deletePlaylistItemBtn) {
+      deletePlaylistItem(
+        deletePlaylistItemBtn.dataset.deletePlaylistItem,
+        deletePlaylistItemBtn.dataset.deletePlaylistId
+      );
+      return;
+    }
+
     const closePlaylistDetailBtn = event.target.closest("#closePlaylistDetail");
     if (closePlaylistDetailBtn) {
       stopActiveAudio();

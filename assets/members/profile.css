@@ -1087,3 +1087,31 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
   border-radius: inherit;
   background: linear-gradient(90deg, #ff6a2b, #ffffff);
 }
+
+
+/* Playlist delete action */
+.playlist-row-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.playlist-delete-btn {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 106, 43, 0.55);
+  border-radius: 999px;
+  background: rgba(255, 106, 43, 0.08);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.playlist-delete-btn:hover {
+  border-color: rgba(255, 106, 43, 0.95);
+  background: rgba(255, 106, 43, 0.18);
+}
