@@ -1354,6 +1354,8 @@ async function openPlaylistDetail(playlistId) {
     const thumb = document.getElementById("playlistDetailThumb");
     if (thumb && coverUrl) {
       thumb.style.backgroundImage = `url("${coverUrl}")`;
+      thumb.style.backgroundSize = "cover";
+      thumb.style.backgroundRepeat = "no-repeat";
       thumb.style.backgroundPosition = "center";
       thumb.style.borderStyle = "solid";
     }
