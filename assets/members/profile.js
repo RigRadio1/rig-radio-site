@@ -967,6 +967,89 @@ async function createPrivatePlaylist() {
     }
   }
 }
+async function getPlaylistCoverDisplayUrl(coverUrl) {
+  if (!coverUrl) return "";
+
+  const key = cleanStorageKey(coverUrl);
+  if (key && key !== coverUrl) {
+    return await signBucketKey("profiles", key);
+  }
+
+  if (!coverUrl.startsWith("http")) {
+    return await signBucketKey("profiles", coverUrl);
+  }
+
+  return coverUrl;
+}
+
+async function uploadPlaylistCoverFile(file, playlistId) {
+  if (!file || !currentUser || !playlistId) return "";
+
+  const maxBytes = 5 * 1024 * 1024;
+
+  if (!["image/jpeg", "image/png"].includes(file.type)) {
+    alert("Use JPEG or PNG only.");
+    return "";
+  }
+
+  if (file.size > maxBytes) {
+    alert("Image must be under 5MB.");
+    return "";
+  }
+
+  const ext = file.type === "image/png" ? "png" : "jpg";
+  const path = `playlists/${currentUser.id}/${playlistId}-${Date.now()}.${ext}`;
+
+  const { error } = await window.supabaseClient.storage
+    .from("profiles")
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: true
+    });
+
+  if (error) {
+    console.error("PLAYLIST COVER UPLOAD ERROR:", error);
+    alert("Playlist cover upload failed.");
+    return "";
+  }
+
+  return path;
+}
+
+async function handlePlaylistCoverUpload(playlistId) {
+  if (!currentUser || !viewingOwnProfile || !playlistId) return;
+
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/jpeg,image/png";
+
+  input.addEventListener("change", async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const coverPath = await uploadPlaylistCoverFile(file, playlistId);
+    if (!coverPath) return;
+
+    const { error } = await window.supabaseClient
+      .from("playlists")
+      .update({
+        cover_url: coverPath,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", playlistId)
+      .eq("user_id", currentUser.id);
+
+    if (error) {
+      console.error("PLAYLIST COVER SAVE ERROR:", error);
+      alert("Could not save playlist cover.");
+      return;
+    }
+
+    await loadMemberPlaylists();
+  });
+
+  input.click();
+}
 async function loadMemberPlaylists() {
   const grid = document.getElementById("profilePlaylists");
   if (!grid || !window.supabaseClient) return;
@@ -1045,7 +1128,7 @@ async function loadMemberPlaylists() {
 
     grid.innerHTML = "";
 
-    data.forEach((playlist) => {
+    for (const playlist of data) {
       const card = document.createElement("div");
       card.className = "playlist-card";
 
@@ -1058,19 +1141,20 @@ async function loadMemberPlaylists() {
         <div>
           <h3>${escapeHtml(playlist.title || "Untitled playlist")}</h3>
           <p>${escapeHtml(count)} songs · ${escapeHtml(typeLabel)}${viewingOwnProfile ? " · " + escapeHtml(visibility) : ""}</p>
+          ${viewingOwnProfile ? `<button type="button" class="secondary-btn playlist-cover-btn" data-playlist-cover="${playlist.id}">Upload Cover</button>` : ""}
         </div>
       `;
 
       const thumb = card.querySelector(".playlist-thumb");
-      if (thumb && playlist.cover_url) {
-        thumb.style.backgroundImage = `url("${playlist.cover_url}")`;
-        thumb.style.backgroundSize = "cover";
+      const coverUrl = await getPlaylistCoverDisplayUrl(playlist.cover_url);
+      if (thumb && coverUrl) {
+        thumb.style.backgroundImage = `url("${coverUrl}")`;
         thumb.style.backgroundPosition = "center";
         thumb.style.borderStyle = "solid";
       }
 
       grid.appendChild(card);
-    });
+    }
   } catch (err) {
     console.error("PLAYLIST LOAD ERROR:", err);
     grid.innerHTML = `
@@ -1201,6 +1285,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (event.target.closest("[data-close-create-playlist]")) {
       closeCreatePlaylistModal();
+
+    const playlistCoverBtn = event.target.closest("[data-playlist-cover]");
+    if (playlistCoverBtn) {
+      handlePlaylistCoverUpload(playlistCoverBtn.dataset.playlistCover);
+      return;
+    }
       return;
     }
 
