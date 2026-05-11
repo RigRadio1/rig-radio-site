@@ -1192,7 +1192,7 @@ async function loadMemberPlaylists() {
         <div>
           <h3>${escapeHtml(playlist.title || "Untitled playlist")}</h3>
           <p>${escapeHtml(count)} songs · ${escapeHtml(typeLabel)}${viewingOwnProfile ? " · " + escapeHtml(visibility) : ""}</p>
-          ${viewingOwnProfile ? `<button type="button" class="secondary-btn playlist-cover-btn" data-playlist-cover="${playlist.id}">Upload Cover</button>` : ""}
+          ${viewingOwnProfile ? `<div class="playlist-card-actions"><button type="button" class="secondary-btn playlist-cover-btn" data-playlist-cover="${playlist.id}">Upload Cover</button><button type="button" class="secondary-btn" data-edit-playlist-title="${playlist.id}">Edit Title</button><button type="button" class="secondary-btn playlist-delete-btn" data-delete-playlist="${playlist.id}">Delete Playlist</button></div>` : ""}
         </div>
       `;
 
@@ -1200,6 +1200,8 @@ async function loadMemberPlaylists() {
       const coverUrl = await getPlaylistCoverDisplayUrl(playlist.cover_url);
       if (thumb && coverUrl) {
         thumb.style.backgroundImage = `url("${coverUrl}")`;
+        thumb.style.backgroundSize = "cover";
+        thumb.style.backgroundRepeat = "no-repeat";
         thumb.style.backgroundPosition = "center";
         thumb.style.borderStyle = "solid";
       }
@@ -1218,6 +1220,79 @@ async function loadMemberPlaylists() {
       </div>
     `;
   }
+}
+
+async function editPlaylistTitle(playlistId) {
+  if (!window.supabaseClient || !playlistId) return;
+
+  const { data: playlist, error: fetchError } = await window.supabaseClient
+    .from("playlists")
+    .select("id,title,user_id")
+    .eq("id", playlistId)
+    .single();
+
+  if (fetchError) {
+    console.error("FETCH PLAYLIST TITLE ERROR:", fetchError);
+    alert("Could not load playlist title.");
+    return;
+  }
+
+  const nextTitle = prompt("Playlist title", playlist?.title || "");
+  if (!nextTitle || !nextTitle.trim()) return;
+
+  const { error } = await window.supabaseClient
+    .from("playlists")
+    .update({ title: nextTitle.trim(), updated_at: new Date().toISOString() })
+    .eq("id", playlistId);
+
+  if (error) {
+    console.error("EDIT PLAYLIST TITLE ERROR:", error);
+    alert("Could not update playlist title.");
+    return;
+  }
+
+  await loadMemberPlaylists();
+
+  const detail = document.getElementById("playlistDetail");
+  if (detail && !detail.hidden) await openPlaylistDetail(playlistId);
+}
+
+async function deletePlaylist(playlistId) {
+  if (!window.supabaseClient || !playlistId) return;
+
+  if (!confirm("Delete this playlist? This removes the playlist only, not the songs from your library.")) return;
+
+  stopActiveAudio();
+
+  const { error: itemError } = await window.supabaseClient
+    .from("playlist_items")
+    .delete()
+    .eq("playlist_id", playlistId);
+
+  if (itemError) {
+    console.error("DELETE PLAYLIST ITEMS ERROR:", itemError);
+    alert("Could not delete playlist songs.");
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from("playlists")
+    .delete()
+    .eq("id", playlistId);
+
+  if (error) {
+    console.error("DELETE PLAYLIST ERROR:", error);
+    alert("Could not delete playlist.");
+    return;
+  }
+
+  const detail = document.getElementById("playlistDetail");
+  if (detail) {
+    detail.hidden = true;
+    detail.innerHTML = "";
+  }
+
+  await loadMemberPlaylists();
 }
 
 async function openPlaylistDetail(playlistId) {
@@ -1482,6 +1557,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (event.target.closest("[data-close-create-playlist]")) {
       closeCreatePlaylistModal();
+      return;
+    }
+
+    const editPlaylistTitleBtn = event.target.closest("[data-edit-playlist-title]");
+    if (editPlaylistTitleBtn) {
+      editPlaylistTitle(editPlaylistTitleBtn.dataset.editPlaylistTitle);
+      return;
+    }
+
+    const deletePlaylistBtn = event.target.closest("[data-delete-playlist]");
+    if (deletePlaylistBtn) {
+      deletePlaylist(deletePlaylistBtn.dataset.deletePlaylist);
       return;
     }
 

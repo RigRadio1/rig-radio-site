@@ -1115,3 +1115,22 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
   border-color: rgba(255, 106, 43, 0.95);
   background: rgba(255, 106, 43, 0.18);
 }
+
+
+/* Playlist card actions */
+.playlist-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.playlist-card-actions .secondary-btn {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
+.playlist-card-actions .playlist-delete-btn {
+  border-color: rgba(255, 106, 43, 0.65);
+}
