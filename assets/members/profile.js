@@ -130,6 +130,54 @@ async function getSignedAudio(row) {
   return audio;
 }
 
+function formatTrackTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+function setPlayButtonText(button, text) {
+  if (!button) return;
+  const label = button.querySelector(".playlist-play-label");
+  if (label) {
+    label.textContent = text;
+    return;
+  }
+  button.textContent = text;
+}
+
+function updatePlayButtonProgress(button, audio) {
+  if (!button || !audio) return;
+
+  const time = button.querySelector(".playlist-play-time");
+  const fill = button.querySelector(".playlist-play-fill");
+
+  const current = audio.currentTime || 0;
+  const duration = audio.duration || 0;
+
+  if (time) {
+    time.textContent = `${formatTrackTime(current)} / ${formatTrackTime(duration)}`;
+  }
+
+  if (fill) {
+    const percent = duration ? Math.min(100, Math.max(0, (current / duration) * 100)) : 0;
+    fill.style.width = `${percent}%`;
+  }
+}
+
+function resetPlayButtonProgress(button) {
+  if (!button) return;
+
+  setPlayButtonText(button, button.dataset.defaultText || "Play");
+
+  const time = button.querySelector(".playlist-play-time");
+  if (time) time.textContent = "0:00 / 0:00";
+
+  const fill = button.querySelector(".playlist-play-fill");
+  if (fill) fill.style.width = "0%";
+}
+
 function stopActiveAudio() {
   if (activeAudio) {
     activeAudio.pause();
@@ -166,7 +214,7 @@ async function playTrackFromButton(button, row = null) {
   }
 
   const oldText = button.dataset.defaultText || "Play";
-  button.textContent = "Loading...";
+  setPlayButtonText(button, "Loading...");
 
   const audioUrl = await getSignedAudio(track);
 
@@ -184,11 +232,13 @@ async function playTrackFromButton(button, row = null) {
   activeButton = button;
   activeRow = row;
 
+  activeAudio.addEventListener("loadedmetadata", () => updatePlayButtonProgress(button, activeAudio));
+  activeAudio.addEventListener("timeupdate", () => updatePlayButtonProgress(button, activeAudio));
   activeAudio.addEventListener("ended", stopActiveAudio);
 
   activeAudio.play()
     .then(() => {
-      button.textContent = "Pause";
+      setPlayButtonText(button, "Pause");
       if (row) row.classList.add("is-playing");
     })
     .catch((err) => {
@@ -1262,9 +1312,11 @@ async function openPlaylistDetail(playlistId) {
           <p>${escapeHtml(sub)}</p>
         </div>
         <button class="song-play-btn playlist-playbar" type="button">
-          <span class="playlist-play-icon">PLAY</span>
-          <span class="playlist-play-label">Play Track</span>
-          <span class="playlist-play-line"></span>
+          <span class="playlist-play-label">Play</span>
+          <span class="playlist-play-time">0:00 / 0:00</span>
+          <span class="playlist-play-track">
+            <span class="playlist-play-fill"></span>
+          </span>
         </button>
       `;
 
