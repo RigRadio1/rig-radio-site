@@ -998,7 +998,7 @@ async function uploadPlaylistCoverFile(file, playlistId) {
   }
 
   const ext = file.type === "image/png" ? "png" : "jpg";
-  const path = `playlists/${currentUser.id}/${playlistId}-${Date.now()}.${ext}`;
+  const path = `${currentUser.id}/playlist-${playlistId}-${Date.now()}.${ext}`;
 
   const { error } = await window.supabaseClient.storage
     .from("profiles")
