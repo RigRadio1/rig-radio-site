@@ -322,48 +322,124 @@ document.querySelectorAll('.page-btn').forEach(btn=>{
         })();
         list.innerHTML = view.map(rowHTML).join("");
         requestAnimationFrame(function(){ list.classList.remove("updating"); });
-// --- Local playlist (safe, no backend changes) ---
-const PL_KEY = "rr_playlist_ids";
-const getPL = () => {
-  try { return JSON.parse(localStorage.getItem(PL_KEY) || "[]"); }
-  catch { return []; }
-};
-const setPL = (arr) => localStorage.setItem(PL_KEY, JSON.stringify(arr));
-const inPL  = (id) => getPL().includes(id);
+// --- Supabase playlist picker ---
+async function getMyPlaylists(){
+  if (!session?.user?.id) return [];
 
-const togglePL = (id) => {
-  let arr = getPL();
-  const i = arr.indexOf(id);
+  const { data, error } = await _client
+    .from("playlists")
+    .select("id,title,is_public,playlist_type")
+    .eq("user_id", session.user.id)
+    .order("created_at", { ascending: false });
 
-  if (i > -1) {
-    // If already in playlist → remove
-    arr.splice(i, 1);
-  } else {
-    // Add new, but cap at 20
-    if (arr.length >= 20) {
-      alert("Free accounts can only have 20 songs in their playlist.");
-      return arr;
-    }
-    arr.push(id);
+  if (error) {
+    console.error("LOAD PLAYLISTS ERROR:", error);
+    alert("Could not load your playlists.");
+    return [];
   }
 
-  setPL(arr);
-  return arr;
-};
+  return data || [];
+}
 
+function closePlaylistPicker(){
+  document.getElementById("addToPlaylistModal")?.remove();
+}
+
+async function addTrackToPlaylist(track, playlistId){
+  const { data: existingItems, error: countError } = await _client
+    .from("playlist_items")
+    .select("id")
+    .eq("playlist_id", playlistId);
+
+  if (countError) {
+    console.error("PLAYLIST COUNT ERROR:", countError);
+  }
+
+  const position = (existingItems?.length || 0) + 1;
+
+  const { error } = await _client
+    .from("playlist_items")
+    .insert({
+      playlist_id: playlistId,
+      track_id: track.id,
+      title: track.title || "(untitled)",
+      artist: track.artist || "(unknown)",
+      suno_url: track.suno_url || null,
+      position
+    });
+
+  if (error) {
+    console.error("ADD TO PLAYLIST ERROR:", error);
+    alert("Could not add this song to the playlist.");
+    return;
+  }
+
+  closePlaylistPicker();
+  alert("Song added to playlist.");
+}
+
+async function openPlaylistPicker(track){
+  if (!session?.user) {
+    alert("Please log in to add songs to a playlist.");
+    return;
+  }
+
+  const playlists = await getMyPlaylists();
+
+  if (!playlists.length) {
+    alert("No playlists found. Create a playlist on your member profile first.");
+    return;
+  }
+
+  closePlaylistPicker();
+
+  const modal = document.createElement("section");
+  modal.id = "addToPlaylistModal";
+  modal.style.cssText = "position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);";
+
+  modal.innerHTML = `
+    <div style="width:min(520px,100%);border:1px solid rgba(255,122,24,.35);border-radius:22px;background:#120b08;color:#fff;padding:22px;box-shadow:0 22px 70px rgba(0,0,0,.55);">
+      <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px;">
+        <div>
+          <div style="color:#ff7a18;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem;">Add to Playlist</div>
+          <h2 style="margin:4px 0 0;font-size:1.35rem;">${track.title || "Selected Song"}</h2>
+        </div>
+        <button type="button" data-close-add-playlist="1" style="width:38px;height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;">X</button>
+      </div>
+
+      <div style="display:grid;gap:10px;">
+        ${playlists.map((p) => `
+          <button type="button" class="playlist-pick-btn" data-playlist-id="${p.id}" style="text-align:left;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;">
+            <strong>${p.title || "Untitled Playlist"}</strong>
+            <div style="opacity:.7;font-size:.85rem;">${p.is_public ? "Public" : "Private"}</div>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", async (event) => {
+    if (event.target.closest("[data-close-add-playlist]") || event.target === modal) {
+      closePlaylistPicker();
+      return;
+    }
+
+    const pick = event.target.closest(".playlist-pick-btn");
+    if (!pick) return;
+
+    await addTrackToPlaylist(track, pick.dataset.playlistId);
+  });
+}
 
 // Initialize buttons
 
 for (const r of view){
   const btn = document.querySelector(`button.plbtn[data-pl="${r.id}"]`);
   if (!btn) continue;
-  const render = () => {
-    const on = inPL(r.id);
-    btn.classList.toggle("in", on);
-    btn.textContent = on ? "In My Playlist - Remove" : "Add to Playlist";
-  };
-  render();
-  btn.addEventListener("click", () => { togglePL(r.id); render(); });
+  btn.textContent = "Add to Playlist";
+  btn.addEventListener("click", () => openPlaylistPicker(r));
 }
 
 
