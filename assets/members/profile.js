@@ -1220,6 +1220,7 @@ async function openPlaylistDetail(playlistId) {
         <div>
           <h3>${escapeHtml(playlist.title || "Untitled playlist")}</h3>
           <p>${escapeHtml(count)} songs &middot; ${escapeHtml(visibility)}</p>
+          <button class="secondary-btn" type="button" id="closePlaylistDetail">Close Playlist</button>
         </div>
       </div>
       <div class="playlist-detail-songs" id="playlistDetailSongs"></div>
@@ -1406,6 +1407,17 @@ document.addEventListener("DOMContentLoaded", () => {
       handlePlaylistCoverUpload(playlistCoverBtn.dataset.playlistCover);
       return;
     }
+    const closePlaylistDetailBtn = event.target.closest("#closePlaylistDetail");
+    if (closePlaylistDetailBtn) {
+      stopActiveAudio();
+      const detail = document.getElementById("playlistDetail");
+      if (detail) {
+        detail.hidden = true;
+        detail.innerHTML = "";
+      }
+      return;
+    }
+
     const playlistCard = event.target.closest("[data-playlist-detail]");
     if (playlistCard) {
       openPlaylistDetail(playlistCard.dataset.playlistDetail);
