@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-20" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-21" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -79,7 +79,22 @@
     <div class="section-heading">
       <h2>Top Playlists</h2>
     </div>
-    <div id="homeTopPlaylists" class="rr-home-update-list"><p class="rr-home-muted">Loading top playlists...</p></div>
+    <div id="homePlaylistTiles" class="rr-playlist-strip">
+      <button class="rr-playlist-tile is-active" type="button" data-playlist-box="01"><span>01</span><strong>DJ Drops</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="02"><span>02</span><strong>Discord Picks</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="03"><span>03</span><strong>New Heat</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="04"><span>04</span><strong>Truck Stop</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="05"><span>05</span><strong>Late Night</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="06"><span>06</span><strong>Creator Mix</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="07"><span>07</span><strong>Weekend</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="08"><span>08</span><strong>Wildcard</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="09"><span>09</span><strong>Staff Stack</strong></button>
+      <button class="rr-playlist-tile" type="button" data-playlist-box="10"><span>10</span><strong>Open Slot</strong></button>
+    </div>
+    <div id="homePlaylistComingSoon" class="rr-playlist-coming-soon">
+      <strong>Playlist system coming soon</strong>
+      <span>Discord and DJ Suno-link playlists will live here once that feature is built.</span>
+    </div>
   </article>
 
   <article class="rr-home-card">

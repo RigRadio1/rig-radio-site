@@ -316,3 +316,22 @@ document.addEventListener("click", function (event) {
 
   if (label) label.textContent = isClosed ? "Open List" : "Close List";
 });
+
+/* TOP PLAYLIST PLACEHOLDER TILE ACTIVE STATE */
+document.addEventListener("click", function (event) {
+  const btn = event.target.closest(".rr-playlist-tile");
+  if (!btn) return;
+
+  document.querySelectorAll(".rr-playlist-tile").forEach((tile) => {
+    tile.classList.toggle("is-active", tile === btn);
+  });
+
+  const panel = document.getElementById("homePlaylistComingSoon");
+  if (panel) {
+    const label = btn.querySelector("strong")?.textContent || "Playlist";
+    panel.innerHTML = `
+      <strong>${label} coming soon</strong>
+      <span>Discord and DJ Suno-link playlists will live here once that feature is built.</span>
+    `;
+  }
+});
