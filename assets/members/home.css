@@ -834,3 +834,20 @@
 .rr-home-page .rr-home-left-column .rr-genre-results {
   margin-bottom: 0 !important;
 }
+
+/* FORCE TRENDING CLOSED HEIGHT */
+.rr-home-card-large {
+  min-height: unset !important;
+}
+
+.rr-home-card-large:has(#homeGenreSongs.rr-is-collapsed),
+.rr-home-card-large:has(.rr-genre-results #homeGenreSongs.rr-is-collapsed) {
+  height: auto !important;
+  min-height: 0 !important;
+  padding-bottom: 22px !important;
+}
+
+.rr-home-card-large:has(#homeGenreSongs.rr-is-collapsed) .rr-genre-results {
+  margin-top: 4px !important;
+  margin-bottom: 0 !important;
+}
