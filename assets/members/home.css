@@ -863,3 +863,15 @@
   top: -190px !important;
   margin-bottom: -190px !important;
 }
+
+/* CONTEST SIGNUP LINK */
+.rr-contest-signup-link {
+  border-color: rgba(255, 106, 42, 0.65) !important;
+  background: linear-gradient(135deg, rgba(255, 106, 42, 0.22), rgba(217, 47, 36, 0.12)) !important;
+}
+
+.rr-contest-signup-link strong {
+  color: #ff7a2f !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

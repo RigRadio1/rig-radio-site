@@ -27,7 +27,8 @@
       },
       {
         title: "Sign Up In Discord",
-        text: "Go to the contest channel for rules, team signup, and official updates."
+        text: "Go to the contest channel for rules, team signup, and official updates.",
+        url: "https://discord.com/channels/1261735312950820985/1499888886493483018"
       }
     ]
   };
@@ -47,12 +48,18 @@
     const oldList = card.querySelector(".rr-home-update-list");
     if (!oldList) return;
 
-    oldList.innerHTML = items.map((item) => `
-      <div class="rr-home-update">
+    oldList.innerHTML = items.map((item) => {
+      const tag = item.url ? "a" : "div";
+      const href = item.url ? ` href="${esc(item.url)}" target="_blank" rel="noopener"` : "";
+      const extraClass = item.url ? " rr-home-update-link rr-contest-signup-link" : "";
+
+      return `
+      <${tag} class="rr-home-update${extraClass}"${href}>
         <strong>${esc(item.title)}</strong>
         <span>${esc(item.text)}</span>
-      </div>
-    `).join("");
+      </${tag}>
+    `;
+    }).join("");
   };
 
   Object.entries(updates).forEach(([heading, items]) => renderSection(heading, items));
