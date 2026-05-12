@@ -264,7 +264,7 @@
         if (byPlays !== 0) return byPlays;
         return scoreLikes(b) - scoreLikes(a);
       })
-      .slice(0, 5);
+      .slice(0, 10);
 
     await renderSongList(client, topEl, top);
     await renderSongList(client, picksEl, top.slice(0, 3));
