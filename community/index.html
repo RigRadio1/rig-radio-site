@@ -231,11 +231,11 @@
         try {
           if (stream.paused) {
             await stream.play();
-            btn.textContent = "??";
+            btn.textContent = "STOP";
             if (status) status.textContent = "Rig-Radio is playing live";
           } else {
             stream.pause();
-            btn.textContent = "?";
+            btn.textContent = "PLAY";
             if (status) status.textContent = "Stream paused";
           }
         } catch (err) {
