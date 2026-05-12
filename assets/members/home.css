@@ -536,3 +536,12 @@
 .rr-home-card:has(#homeTopSongs.rr-is-collapsed) {
   min-height: 130px !important;
 }
+
+/* TOP SONGS COLLAPSE GRID FIX */
+.rr-home-top-songs-card {
+  align-self: start !important;
+}
+
+.rr-home-top-songs-card:has(#homeTopSongs.rr-is-collapsed) {
+  min-height: 130px !important;
+}
