@@ -701,7 +701,9 @@ async function loadMemberNotifications() {
   const list = document.getElementById("memberNotificationsList");
   const markReadBtn = document.getElementById("markNotificationsRead");
 
-  if (!box || !list || !window.supabaseClient) return;
+  const notifyClient = window.supabaseClient || window._sb;
+
+  if (!box || !list || !notifyClient) return;
 
   const params = new URLSearchParams(window.location.search);
   const requestedHandle = (params.get("handle") || "").trim();
@@ -709,7 +711,7 @@ async function loadMemberNotifications() {
   let sessionUser = currentUser || null;
 
   try {
-    const { data } = await window.supabaseClient.auth.getSession();
+    const { data } = await notifyClient.auth.getSession();
     sessionUser = data?.session?.user || sessionUser;
   } catch (err) {
     console.warn("NOTIFICATION SESSION ERROR:", err);
@@ -723,7 +725,7 @@ async function loadMemberNotifications() {
   box.hidden = false;
   list.innerHTML = "<p>Loading notifications...</p>";
 
-  const { data: notifications, error } = await window.supabaseClient
+  const { data: notifications, error } = await notifyClient
     .from("member_notifications")
     .select("id, actor_id, track_id, type, message, is_read, created_at")
     .eq("recipient_id", sessionUser.id)
@@ -745,7 +747,7 @@ async function loadMemberNotifications() {
   let profilesById = new Map();
 
   if (actorIds.length) {
-    const { data: profiles } = await window.supabaseClient
+    const { data: profiles } = await notifyClient
       .from("member_profiles")
       .select("id, display_name, handle")
       .in("id", actorIds);
