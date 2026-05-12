@@ -1,0 +1,138 @@
+/* RIG-RADIO MEMBER HOME / COMMAND CENTER */
+
+.rr-home-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 10px 0 26px;
+  padding: 42px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(255, 106, 42, 0.35), transparent 34%),
+    linear-gradient(135deg, rgba(255, 106, 42, 0.18), rgba(217, 47, 36, 0.08)),
+    rgba(10, 10, 10, 0.94);
+  border: 1px solid rgba(255, 106, 42, 0.42);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+}
+
+.rr-home-hero::after {
+  content: "COMMAND CENTER";
+  position: absolute;
+  right: -18px;
+  bottom: 12px;
+  color: rgba(255, 255, 255, 0.035);
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 1000;
+  letter-spacing: -0.08em;
+  pointer-events: none;
+}
+
+.rr-home-hero h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 12px;
+  color: #fff;
+  font-size: clamp(2.8rem, 6vw, 6.2rem);
+  line-height: 0.88;
+  letter-spacing: -0.07em;
+}
+
+.rr-home-hero p:last-child {
+  position: relative;
+  z-index: 1;
+  max-width: 820px;
+  margin: 0;
+  color: rgba(244, 241, 234, 0.84);
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+.rr-home-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.rr-home-card {
+  min-height: 210px;
+  padding: 24px;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.025)),
+    rgba(12, 12, 12, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.38);
+}
+
+.rr-home-card-large {
+  grid-row: span 2;
+  min-height: 440px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 106, 42, 0.22), transparent 38%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025)),
+    rgba(12, 12, 12, 0.95);
+}
+
+.rr-home-card .section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+}
+
+.rr-home-card h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.rr-home-card p {
+  margin: 0;
+  color: rgba(244, 241, 234, 0.76);
+  line-height: 1.6;
+}
+
+.rr-home-card a {
+  color: #ff7a2f;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.rr-home-card::before {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 4px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff6a2a, #d92f24);
+}
+
+@media (max-width: 1000px) {
+  .rr-home-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .rr-home-card-large {
+    grid-column: span 2;
+    grid-row: auto;
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 700px) {
+  .rr-home-hero {
+    padding: 30px 22px;
+  }
+
+  .rr-home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rr-home-card-large {
+    grid-column: auto;
+  }
+}
