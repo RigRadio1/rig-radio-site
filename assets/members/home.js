@@ -143,7 +143,7 @@
       resultsEl.innerHTML = `
         <div class="rr-genre-results-head">
           <h3>Top 10 ${esc(genre)}</h3>
-          <a href="/library.html?genre=${encodeURIComponent(genre)}">Open Genre</a>
+          <button type="button" class="rr-genre-list-toggle" data-genre-list-toggle="homeGenreSongs"><span>Close List</span></button>
         </div>
         <div id="homeGenreSongs" class="rr-home-song-list">
           <p class="rr-home-muted">Loading ${esc(genre)} songs...</p>
@@ -301,4 +301,18 @@ document.addEventListener("click", function (event) {
   const label = btn.querySelector("span");
 
   if (label) label.textContent = isCollapsed ? "Open" : "Close";
+});
+
+/* TRENDING GENRE LIST OPEN / CLOSE */
+document.addEventListener("click", function (event) {
+  const btn = event.target.closest("[data-genre-list-toggle]");
+  if (!btn) return;
+
+  const target = document.getElementById(btn.dataset.genreListToggle);
+  if (!target) return;
+
+  const isClosed = target.classList.toggle("rr-is-collapsed");
+  const label = btn.querySelector("span");
+
+  if (label) label.textContent = isClosed ? "Open List" : "Close List";
 });

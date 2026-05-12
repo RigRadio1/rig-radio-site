@@ -545,3 +545,21 @@
 .rr-home-top-songs-card:has(#homeTopSongs.rr-is-collapsed) {
   min-height: 130px !important;
 }
+
+/* TRENDING GENRE OPEN/CLOSE BUTTON */
+.rr-genre-list-toggle {
+  border: 0;
+  background: transparent;
+  color: #ff7a2f;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rr-genre-list-toggle:hover {
+  color: #ff9b5c;
+}
