@@ -875,3 +875,13 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+/* CONTEST BANNER */
+.rr-contest-banner {
+  display: block;
+  width: 100%;
+  margin: 0 0 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 106, 42, 0.35);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+}
