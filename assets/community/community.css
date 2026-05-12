@@ -1668,3 +1668,31 @@ body {
 .hero h1 {
   max-width: 760px;
 }
+
+/* COMMUNITY HERO IMAGE POLISH */
+.hero {
+  overflow: hidden;
+  background-position: center 42%;
+}
+
+.hero .live-pill,
+.live-pill {
+  display: inline-flex;
+  width: fit-content;
+  max-width: max-content;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  margin-bottom: 22px;
+  border-radius: 999px;
+}
+
+.hero h1 {
+  max-width: 720px;
+  font-size: clamp(42px, 4.6vw, 64px);
+  line-height: 1.02;
+}
+
+.hero p {
+  max-width: 520px;
+}
