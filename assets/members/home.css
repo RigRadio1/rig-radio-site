@@ -663,3 +663,21 @@
   color: rgba(244, 241, 234, 0.74);
   line-height: 1.45;
 }
+
+/* TOP PLAYLISTS SCROLL CONTAINMENT FIX */
+.rr-home-card {
+  min-width: 0;
+}
+
+.rr-playlist-strip {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+  box-sizing: border-box;
+}
+
+.rr-playlist-tile {
+  flex: 0 0 150px !important;
+}
