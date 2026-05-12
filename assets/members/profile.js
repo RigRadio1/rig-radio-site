@@ -703,7 +703,9 @@ async function loadMemberNotifications() {
 
   if (!box || !list || !window.supabaseClient) return;
 
-  if (!currentUser || !viewingOwnProfile) {
+  const isOwnProfile = !!currentUser && (viewingOwnProfile || profileOwnerId === currentUser.id);
+
+  if (!isOwnProfile) {
     box.hidden = true;
     return;
   }
