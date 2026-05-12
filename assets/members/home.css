@@ -856,3 +856,10 @@
 .rr-home-playlists-card {
   margin-top: -180px !important;
 }
+
+/* FORCE TOP PLAYLISTS DIRECTLY UNDER TRENDING */
+.rr-home-playlists-card {
+  position: relative !important;
+  top: -190px !important;
+  margin-bottom: -190px !important;
+}
