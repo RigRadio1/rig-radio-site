@@ -221,12 +221,22 @@
 
     if (!input || !postBtn || !list) return;
 
+    let replyingTo = null;
+
+    const esc = (value) => String(value || "").replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
+
     const renderComments = async () => {
       list.innerHTML = '<p class="song-muted">Loading comments...</p>';
 
       const { data: comments, error } = await client
         .from("song_comments")
-        .select("id, body, user_id, created_at")
+        .select("id, body, user_id, parent_comment_id, created_at")
         .eq("track_id", trackId)
         .order("created_at", { ascending: true });
 
@@ -242,39 +252,67 @@
       }
 
       const userIds = [...new Set(comments.map((c) => c.user_id).filter(Boolean))];
-
       let profilesById = new Map();
+      let avatarsById = new Map();
 
       if (userIds.length) {
         const { data: profiles } = await client
           .from("member_profiles")
-          .select("id, display_name, handle")
+          .select("id, display_name, handle, avatar_path")
           .in("id", userIds);
 
         profilesById = new Map((profiles || []).map((p) => [p.id, p]));
+
+        const avatarPairs = await Promise.all((profiles || []).map(async (p) => {
+          if (!p.avatar_path) return [p.id, "/banner.png"];
+
+          try {
+            const { data } = await client.storage
+              .from("profiles")
+              .createSignedUrl(p.avatar_path, 3600);
+
+            return [p.id, data?.signedUrl || "/banner.png"];
+          } catch (_) {
+            return [p.id, "/banner.png"];
+          }
+        }));
+
+        avatarsById = new Map(avatarPairs);
       }
 
-      list.innerHTML = comments.map((comment) => {
+      const childrenByParent = new Map();
+
+      comments.forEach((comment) => {
+        const parentId = comment.parent_comment_id || "root";
+        if (!childrenByParent.has(parentId)) childrenByParent.set(parentId, []);
+        childrenByParent.get(parentId).push(comment);
+      });
+
+      const renderOne = (comment, isReply = false) => {
         const profile = profilesById.get(comment.user_id);
         const name = profile?.display_name || profile?.handle || "Rig-Radio Member";
         const date = new Date(comment.created_at).toLocaleDateString();
+        const avatar = avatarsById.get(comment.user_id) || "/banner.png";
+        const replies = childrenByParent.get(comment.id) || [];
 
         return `
-          <div class="song-comment">
-            <div class="song-comment-head">
-              <strong>${name}</strong>
-              <span>${date}</span>
+          <div class="song-comment ${isReply ? "song-comment-reply" : ""}" data-comment-id="${comment.id}" data-comment-user="${comment.user_id}">
+            <img class="song-comment-avatar" src="${avatar}" alt="" />
+            <div class="song-comment-body">
+              <div class="song-comment-head">
+                <strong>${esc(name)}</strong>
+                <span>${esc(date)}</span>
+              </div>
+              <p>${esc(comment.body)}</p>
+              ${currentUser ? '<button class="song-comment-reply-btn" type="button" data-reply-comment="' + comment.id + '">Reply</button>' : ''}
+              ${replies.length ? '<div class="song-comment-replies">' + replies.map((reply) => renderOne(reply, true)).join("") + '</div>' : ''}
             </div>
-            <p>${String(comment.body || "").replace(/[&<>"']/g, (m) => ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#039;"
-            }[m]))}</p>
           </div>
         `;
-      }).join("");
+      };
+
+      const rootComments = childrenByParent.get("root") || [];
+      list.innerHTML = rootComments.map((comment) => renderOne(comment, false)).join("");
     };
 
     document.querySelectorAll("[data-emoji]").forEach((btn) => {
@@ -296,34 +334,66 @@
       return;
     }
 
+    list.addEventListener("click", (event) => {
+      const replyBtn = event.target.closest("[data-reply-comment]");
+      if (!replyBtn) return;
+
+      const commentEl = replyBtn.closest(".song-comment");
+      const name = commentEl?.querySelector(".song-comment-head strong")?.textContent || "comment";
+
+      replyingTo = {
+        id: replyBtn.dataset.replyComment,
+        userId: commentEl?.dataset.commentUser || ""
+      };
+
+      input.placeholder = "Replying to " + name + "...";
+      input.focus();
+    });
+
     postBtn.addEventListener("click", async () => {
       const body = input.value.trim();
 
       if (!body) return;
 
       postBtn.disabled = true;
-      postBtn.textContent = "Posting...";
+      postBtn.textContent = replyingTo ? "Replying..." : "Posting...";
 
       try {
+        const insertRow = {
+          track_id: trackId,
+          user_id: currentUser.id,
+          body
+        };
+
+        if (replyingTo?.id) insertRow.parent_comment_id = replyingTo.id;
+
         const { error } = await client
           .from("song_comments")
-          .insert({
-            track_id: trackId,
-            user_id: currentUser.id,
-            body
-          });
+          .insert(insertRow);
 
         if (error) throw error;
 
-        input.value = "";
+        if (replyingTo?.userId) {
+          await createNotification(client, {
+            recipientId: replyingTo.userId,
+            actorId: currentUser.id,
+            trackId,
+            type: "comment_reply",
+            message: "replied to your comment"
+          });
+        } else {
+          await createNotification(client, {
+            recipientId: currentTrack?.user_id,
+            actorId: currentUser.id,
+            trackId,
+            type: "song_comment",
+            message: "commented on your song"
+          });
+        }
 
-        await createNotification(client, {
-          recipientId: currentTrack?.user_id,
-          actorId: currentUser?.id,
-          trackId,
-          type: "song_comment",
-          message: "commented on your song"
-        });
+        input.value = "";
+        input.placeholder = "Leave a comment...";
+        replyingTo = null;
 
         await renderComments();
       } catch (err) {

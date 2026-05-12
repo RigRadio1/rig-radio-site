@@ -528,3 +528,48 @@ body .rr-topbar-right .rr-link:hover{
 .comments-list::-webkit-scrollbar-thumb:hover{
   background:rgba(255,106,42,.9);
 }
+
+/* COMMENT REPLIES + AVATARS */
+.song-comment{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+
+.song-comment-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+  flex:0 0 42px;
+  border:1px solid rgba(255,106,42,.55);
+  background:#111;
+}
+
+.song-comment-body{
+  flex:1;
+  min-width:0;
+}
+
+.song-comment-replies{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+  padding-left:16px;
+  border-left:2px solid rgba(255,106,42,.35);
+}
+
+.song-comment-reply{
+  background:rgba(255,255,255,.035);
+}
+
+.song-comment-reply-btn{
+  margin-top:8px;
+  border:1px solid rgba(255,106,42,.48);
+  background:rgba(255,106,42,.10);
+  color:#fff;
+  border-radius:999px;
+  padding:6px 12px;
+  font-weight:900;
+  cursor:pointer;
+}
