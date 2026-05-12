@@ -40,12 +40,11 @@ body {
   color: #f1f1f1;
   text-decoration: none;
 }
-
- {
+.hero {
   padding: 110px 60px;
   background:
     radial-gradient(circle at top right, rgba(255, 59, 59, 0.28), transparent 35%),
-    l.heroinear-gradient(135deg, #111116, #181820);
+    linear-gradient(135deg, #111116, #181820);
 
   border-bottom: 1px solid #2a2a33;
   position: relative;
