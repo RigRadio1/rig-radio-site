@@ -2135,3 +2135,27 @@ body {
   border-color: rgba(255, 255, 255, 0.35);
   box-shadow: 0 0 30px rgba(255, 106, 42, 0.42);
 }
+
+/* LIVE NAV BUTTON FIX */
+.top-nav .main-nav a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 118px !important;
+  padding: 12px 22px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 106, 42, 0.75) !important;
+  background: linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  box-shadow: 0 0 22px rgba(255, 106, 42, 0.22) !important;
+}
+
+.top-nav .main-nav a:hover {
+  background: linear-gradient(135deg, #ff7a3a, #ff3b3b) !important;
+  transform: translateY(-1px);
+}
