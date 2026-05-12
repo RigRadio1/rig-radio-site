@@ -307,3 +307,23 @@
   font-weight: 800;
   margin-top: 3px;
 }
+
+/* NEW MEMBERS LOCATION FIX */
+.rr-home-page .rr-home-card:nth-child(8) {
+  grid-column: span 3;
+  min-height: 150px;
+}
+
+.rr-home-page .rr-home-card:nth-child(8) .rr-home-member-list {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1000px) {
+  .rr-home-page .rr-home-card:nth-child(8) {
+    grid-column: auto;
+  }
+
+  .rr-home-page .rr-home-card:nth-child(8) .rr-home-member-list {
+    grid-template-columns: 1fr;
+  }
+}
