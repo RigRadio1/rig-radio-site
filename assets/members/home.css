@@ -407,3 +407,23 @@
   text-decoration: none;
   white-space: nowrap;
 }
+
+/* NEW MEMBERS TOP PLACEMENT */
+.rr-home-page .rr-home-new-members {
+  grid-column: span 3;
+  min-height: 150px;
+}
+
+.rr-home-page .rr-home-new-members .rr-home-member-list {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1000px) {
+  .rr-home-page .rr-home-new-members {
+    grid-column: auto;
+  }
+
+  .rr-home-page .rr-home-new-members .rr-home-member-list {
+    grid-template-columns: 1fr;
+  }
+}
