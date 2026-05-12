@@ -1409,3 +1409,18 @@
   border:1px solid rgba(255,106,42,.55);
   background:#111;
 }
+
+/* MEMBER SONG TITLE LINKS */
+.member-song-title-link{
+  color:#fff;
+  text-decoration:none;
+}
+
+.member-song-title-link:hover{
+  color:#ff7a2f;
+  text-decoration:none;
+}
+
+.featured-title-link{
+  color:#ff5a2a;
+}

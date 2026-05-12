@@ -652,7 +652,9 @@ async function updateFeaturedTrack(row) {
   const cover = await getSignedCover(row);
 
   if (kickerEl) kickerEl.textContent = "Featured Track";
-  if (titleEl) titleEl.textContent = title;
+  if (titleEl) titleEl.innerHTML = row.id
+    ? `<a class="member-song-title-link featured-title-link" href="/song.html?id=${encodeURIComponent(row.id)}">${escapeHtml(title)}</a>`
+    : escapeHtml(title);
   if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
 
   if (coverEl && cover) {
