@@ -66,8 +66,13 @@
       <h2>Rig-Radio Live</h2>
 
       <div class="radio-live-layout">
-        <div class="radio-embed-wrap">
-          <script src="https://embed.radio.co/player/cfe62f9.js"></script>
+        <div class="radio-embed-wrap rr-custom-radio">
+          <div class="rr-radio-art">RR</div>
+          <div class="rr-radio-info">
+            <strong>Rig-Radio Live</strong>
+            <span id="rr-radio-status">Click play to start the stream</span>
+          </div>
+          <button class="rr-radio-play" id="rr-radio-play" type="button">?</button>
         </div>
 
         <div class="radio-extra-widgets">
@@ -213,5 +218,31 @@
   <script src="/assets/community/community.js"></script>
   </div>
   <script src="/assets/community/community-live-data.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const btn = document.getElementById("rr-radio-play");
+      const status = document.getElementById("rr-radio-status");
+      if (!btn) return;
+
+      const stream = new Audio("https://streaming.radio.co/sf54b83b42/listen");
+      stream.preload = "none";
+
+      btn.addEventListener("click", async function () {
+        try {
+          if (stream.paused) {
+            await stream.play();
+            btn.textContent = "??";
+            if (status) status.textContent = "Rig-Radio is playing live";
+          } else {
+            stream.pause();
+            btn.textContent = "?";
+            if (status) status.textContent = "Stream paused";
+          }
+        } catch (err) {
+          if (status) status.textContent = "Stream could not start. Try again.";
+        }
+      });
+    });
+  </script>
 </body>
 </html>
