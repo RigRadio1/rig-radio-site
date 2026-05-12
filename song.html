@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function(){
+      var want = 'www.rig-radio.ai';
+      if (location.hostname && location.hostname !== want && location.protocol !== 'file:') {
+        location.replace('https://' + want + location.pathname + location.search + location.hash);
+      }
+    })();
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Song | Rig-Radio</title>
+
+  <link rel="stylesheet" href="/rr.css?v=ROLLBACK" />
+  <link rel="stylesheet" href="/assets/song/song.css?v=1" />
+</head>
+
+<body class="rr-bg">
+  <div id="bg"></div>
+
+  <header class="rr-topbar">
+    <div class="rr-topbar-left">SONG CARD</div>
+    <nav class="rr-topbar-right">
+      <a class="rr-link" href="/members/home.html">HOME</a>
+      <a class="rr-link" href="/members/">My Profile</a>
+      <a class="rr-link" href="/library.html">Library</a>
+    </nav>
+  </header>
+
+  <main class="song-page">
+    <section class="song-hero">
+      <div class="song-art-wrap">
+        <img id="songCover" class="song-art" src="/banner.png" alt="Song artwork" />
+      </div>
+
+      <div class="song-main">
+        <p class="song-kicker" id="songGenre">Genre</p>
+        <h1 id="songTitle">Loading song...</h1>
+
+        <div class="song-creator">
+          <img id="creatorAvatar" src="/banner.png" alt="Creator avatar" />
+          <div>
+            <strong id="songArtist">Unknown Artist</strong>
+            <span id="creatorHandle">@creator</span>
+          </div>
+          <button id="followCreatorBtn" class="song-pill-btn" type="button">Follow</button>
+        </div>
+
+        <div class="song-player-card">
+          <audio id="songPlayer" controls preload="none" controlsList="nodownload noplaybackrate"></audio>
+        </div>
+
+        <div class="song-actions">
+          <button id="likeSongBtn" class="song-main-btn" type="button">? Like</button>
+          <button id="editSongBtn" class="song-ghost-btn" type="button" hidden>Edit Song</button>
+          <span id="songStats">0 plays · 0 likes</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="song-grid">
+      <article class="song-panel">
+        <h2>Lyrics / Notes</h2>
+        <div id="songLyrics" class="song-lyrics">No lyrics added yet.</div>
+      </article>
+
+      <article class="song-panel">
+        <h2>Comments</h2>
+
+        <div class="comment-box">
+          <textarea id="commentInput" placeholder="Leave a comment..."></textarea>
+          <button id="postCommentBtn" class="song-main-btn" type="button">Post Comment</button>
+        </div>
+
+        <div id="commentsList" class="comments-list">
+          <p class="song-muted">Comments coming soon.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js" defer></script>
+  <script src="/assets/song/song.js?v=1" defer></script>
+</body>
+</html>
