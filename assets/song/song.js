@@ -251,6 +251,19 @@
         return;
       }
 
+      const commentIds = comments.map((c) => c.id);
+      let likedCommentIds = new Set();
+
+      if (currentUser && commentIds.length) {
+        const { data: likedRows } = await client
+          .from("song_comment_likes")
+          .select("comment_id")
+          .eq("user_id", currentUser.id)
+          .in("comment_id", commentIds);
+
+        likedCommentIds = new Set((likedRows || []).map((row) => row.comment_id));
+      }
+
       const userIds = [...new Set(comments.map((c) => c.user_id).filter(Boolean))];
       let profilesById = new Map();
       let avatarsById = new Map();
@@ -295,6 +308,20 @@
         const avatar = avatarsById.get(comment.user_id) || "/banner.png";
         const replies = childrenByParent.get(comment.id) || [];
 
+        const canCreatorReply =
+          currentUser &&
+          !isReply &&
+          currentTrack?.user_id === currentUser.id &&
+          comment.user_id !== currentUser.id &&
+          replies.length === 0;
+
+        const canHeartReply =
+          currentUser &&
+          isReply &&
+          comment.user_id !== currentUser.id;
+
+        const isLiked = likedCommentIds.has(comment.id);
+
         return `
           <div class="song-comment ${isReply ? "song-comment-reply" : ""}" data-comment-id="${comment.id}" data-comment-user="${comment.user_id}">
             <img class="song-comment-avatar" src="${avatar}" alt="" />
@@ -303,8 +330,13 @@
                 <strong>${esc(name)}</strong>
                 <span>${esc(date)}</span>
               </div>
-              <p>${esc(comment.body)}</p>
-              ${currentUser ? '<button class="song-comment-reply-btn" type="button" data-reply-comment="' + comment.id + '">Reply</button>' : ''}
+
+              <div class="song-comment-text-row">
+                <p>${esc(comment.body)}</p>
+                ${canHeartReply ? '<button class="song-comment-heart ' + (isLiked ? 'is-liked' : '') + '" type="button" data-comment-like="' + comment.id + '">' + (isLiked ? '?' : '?') + '</button>' : ''}
+              </div>
+
+              ${canCreatorReply ? '<button class="song-comment-reply-btn" type="button" data-reply-comment="' + comment.id + '">Reply</button>' : ''}
               ${replies.length ? '<div class="song-comment-replies">' + replies.map((reply) => renderOne(reply, true)).join("") + '</div>' : ''}
             </div>
           </div>
@@ -334,7 +366,45 @@
       return;
     }
 
-    list.addEventListener("click", (event) => {
+    list.addEventListener("click", async (event) => {
+      const heartBtn = event.target.closest("[data-comment-like]");
+      if (heartBtn) {
+        const commentId = heartBtn.dataset.commentLike;
+        const isLiked = heartBtn.classList.contains("is-liked");
+
+        heartBtn.disabled = true;
+
+        try {
+          if (isLiked) {
+            const { error } = await client
+              .from("song_comment_likes")
+              .delete()
+              .eq("comment_id", commentId)
+              .eq("user_id", currentUser.id);
+
+            if (error) throw error;
+          } else {
+            const { error } = await client
+              .from("song_comment_likes")
+              .insert({
+                comment_id: commentId,
+                user_id: currentUser.id
+              });
+
+            if (error) throw error;
+          }
+
+          await renderComments();
+        } catch (err) {
+          console.error("COMMENT LIKE ERROR:", err);
+          alert("Could not update heart.");
+        } finally {
+          heartBtn.disabled = false;
+        }
+
+        return;
+      }
+
       const replyBtn = event.target.closest("[data-reply-comment]");
       if (!replyBtn) return;
 

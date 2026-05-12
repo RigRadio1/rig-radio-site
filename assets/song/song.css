@@ -573,3 +573,28 @@ body .rr-topbar-right .rr-link:hover{
   font-weight:900;
   cursor:pointer;
 }
+
+/* ONE-REPLY COMMENT HEART */
+.song-comment-text-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.song-comment-heart{
+  border:0;
+  background:transparent;
+  color:rgba(255,255,255,.75);
+  font-size:1.45rem;
+  line-height:1;
+  cursor:pointer;
+  padding:0 2px;
+  flex:0 0 auto;
+}
+
+.song-comment-heart:hover,
+.song-comment-heart.is-liked{
+  color:#ff3b3b;
+  transform:scale(1.08);
+}
