@@ -2106,3 +2106,11 @@ body {
   border-color: rgba(255, 255, 255, 0.35);
   box-shadow: 0 0 30px rgba(255, 106, 42, 0.42);
 }
+
+/* COMMUNITY LANDING HERO CTA */
+.hero-buttons a.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
