@@ -1986,3 +1986,23 @@ body {
   text-decoration: none;
   letter-spacing: 0.06em;
 }
+
+/* COMMUNITY CARD ALIGNMENT FIX */
+.layout {
+  align-items: stretch;
+}
+
+.card.uploads,
+.uploads {
+  height: 100%;
+  align-self: stretch;
+}
+
+.card.uploads {
+  display: flex;
+  flex-direction: column;
+}
+
+.card.uploads .community-join-card {
+  margin-top: auto;
+}
