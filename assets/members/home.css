@@ -136,3 +136,62 @@
     grid-column: auto;
   }
 }
+.rr-home-song-list {
+  display: grid;
+  gap: 12px;
+}
+
+.rr-home-song {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  color: #fff;
+  text-decoration: none;
+}
+
+.rr-home-song:hover {
+  border-color: rgba(255, 106, 42, 0.55);
+  background: rgba(255, 106, 42, 0.10);
+}
+
+.rr-home-song img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #111;
+}
+
+.rr-home-song strong,
+.rr-home-song span,
+.rr-home-song em {
+  display: block;
+}
+
+.rr-home-song strong {
+  color: #fff;
+  font-size: 0.96rem;
+}
+
+.rr-home-song span {
+  color: rgba(244, 241, 234, 0.78);
+  font-size: 0.86rem;
+  margin-top: 2px;
+}
+
+.rr-home-song em {
+  color: #ff7a2f;
+  font-style: normal;
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin-top: 5px;
+}
+
+.rr-home-muted {
+  color: rgba(244, 241, 234, 0.7);
+}

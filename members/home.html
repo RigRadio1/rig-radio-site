@@ -42,14 +42,14 @@
       <h2>Trending Songs</h2>
       <a href="/library.html">View Library</a>
     </div>
-    <p>Coming soon: songs getting the most attention across Rig-Radio.</p>
+    <div id="homeLatestSongs" class="rr-home-song-list"><p class="rr-home-muted">Loading latest songs...</p></div>
   </article>
 
   <article class="rr-home-card">
     <div class="section-heading">
       <h2>Top Songs</h2>
     </div>
-    <p>Coming soon: top-performing tracks from the community.</p>
+    <div id="homeTopSongs" class="rr-home-song-list"><p class="rr-home-muted">Loading top songs...</p></div>
   </article>
 
   <article class="rr-home-card">
@@ -92,6 +92,7 @@
 </main>
 
 <script src="/auth.js"></script>
+<script src="/assets/members/home.js?v=home-data-1"></script>
 <script>
   document.getElementById("memberLogoutBtn")?.addEventListener("click", function () {
     localStorage.clear();
