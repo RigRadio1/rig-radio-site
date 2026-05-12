@@ -714,3 +714,26 @@ body .rr-topbar-right .rr-link:hover{
   object-fit:contain !important;
   background:#000;
 }
+
+/* FIX IMAGE / MP4 ARTWORK STACKING */
+.song-art-wrap{
+  position:relative;
+  overflow:hidden;
+}
+
+.song-art-wrap > #songCover,
+.song-art-wrap > #songCoverVideo{
+  width:100%;
+  height:100%;
+}
+
+#songCover[hidden],
+#songCoverVideo[hidden]{
+  display:none !important;
+}
+
+#songCoverVideo{
+  display:block;
+  object-fit:contain !important;
+  background:#000;
+}
