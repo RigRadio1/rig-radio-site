@@ -1496,3 +1496,26 @@
 .song-list .song-row h3:hover{
   color:#ff7a2f !important;
 }
+
+/* DELETE TRACK BUTTON */
+.song-row-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.song-delete-btn{
+  border:1px solid rgba(255,70,70,.5);
+  background:rgba(255,70,70,.08);
+  color:#fff;
+  border-radius:999px;
+  padding:8px 14px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.song-delete-btn:hover{
+  background:rgba(255,70,70,.22);
+  border-color:rgba(255,70,70,.85);
+}
