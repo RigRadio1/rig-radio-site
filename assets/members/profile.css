@@ -1392,3 +1392,20 @@
   font-weight:1000;
   cursor:pointer;
 }
+
+/* NOTIFICATION AVATARS */
+.member-notification{
+  display:flex !important;
+  align-items:center;
+  gap:12px;
+}
+
+.member-notification-avatar{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  object-fit:cover;
+  flex:0 0 44px;
+  border:1px solid rgba(255,106,42,.55);
+  background:#111;
+}

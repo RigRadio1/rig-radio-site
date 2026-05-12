@@ -763,10 +763,25 @@ async function loadMemberNotifications() {
     if (actorIds.length) {
       const { data: profiles } = await notifyClient
         .from("member_profiles")
-        .select("id, display_name, handle")
+        .select("id, display_name, handle, avatar_path")
         .in("id", actorIds);
 
       profilesById = new Map((profiles || []).map((p) => [p.id, p]));
+
+      const avatarPairs = await Promise.all((profiles || []).map(async (p) => {
+        if (!p.avatar_path) return [p.id, ""];
+        try {
+          const { data } = await notifyClient.storage
+            .from("profiles")
+            .createSignedUrl(p.avatar_path, 3600);
+
+          return [p.id, data?.signedUrl || ""];
+        } catch (_) {
+          return [p.id, ""];
+        }
+      }));
+
+      window.memberNotificationAvatars = new Map(avatarPairs);
     }
 
     list.innerHTML = notes.map((note) => {
@@ -775,9 +790,11 @@ async function loadMemberNotifications() {
       const date = new Date(note.created_at).toLocaleString();
       const statusClass = note.is_read ? "is-read" : "is-unread";
       const label = note.type === "song_comment" ? "commented on" : "liked";
+      const avatarUrl = window.memberNotificationAvatars?.get(note.actor_id) || "/banner.png";
 
       return `
         <a class="member-notification ${statusClass}" href="/song.html?id=${encodeURIComponent(note.track_id || "")}">
+          <img class="member-notification-avatar" src="${avatarUrl}" alt="" />
           <div>
             <strong>${actorName}</strong> ${label} your song.
             <span>${date}</span>
