@@ -575,5 +575,5 @@
 
 /* RIGHT COLUMN COLLAPSE GAP FIX */
 .rr-home-grid:has(#homeTopSongs.rr-is-collapsed) .rr-home-picks-card {
-  margin-top: -220px !important;
+  margin-top: -95px !important;
 }
