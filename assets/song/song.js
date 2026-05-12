@@ -50,11 +50,30 @@
     if (video && (forceVideo || isVideoArtwork(url))) {
       img.hidden = true;
       video.hidden = false;
-      video.src = url;
+
       video.muted = true;
+      video.defaultMuted = true;
       video.loop = true;
+      video.autoplay = true;
       video.playsInline = true;
-      video.play().catch(() => {});
+      video.setAttribute("muted", "");
+      video.setAttribute("autoplay", "");
+      video.setAttribute("loop", "");
+      video.setAttribute("playsinline", "");
+
+      if (video.src !== url) {
+        video.src = url;
+        video.load();
+      }
+
+      const tryPlay = () => {
+        video.play().catch((err) => console.warn("ARTWORK VIDEO PLAY ERROR:", err));
+      };
+
+      video.addEventListener("loadeddata", tryPlay, { once: true });
+      video.addEventListener("canplay", tryPlay, { once: true });
+      setTimeout(tryPlay, 250);
+
       return;
     }
 
