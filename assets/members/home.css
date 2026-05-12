@@ -721,3 +721,68 @@
     grid-column: auto !important;
   }
 }
+
+/* CLEAN HOME COLUMN LAYOUT */
+.rr-home-clean-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 0.85fr) !important;
+  gap: 22px !important;
+  align-items: start !important;
+}
+
+.rr-home-left-column,
+.rr-home-right-column {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+
+.rr-home-left-column {
+  grid-column: 1;
+}
+
+.rr-home-right-column {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.rr-home-left-column-bottom {
+  grid-column: 1;
+}
+
+.rr-home-bottom-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  min-width: 0;
+}
+
+.rr-home-clean-grid .rr-home-card,
+.rr-home-clean-grid .rr-home-card-large,
+.rr-home-clean-grid .rr-home-playlists-card,
+.rr-home-clean-grid .rr-home-top-songs-card,
+.rr-home-clean-grid .rr-home-picks-card,
+.rr-home-clean-grid .rr-home-news-card {
+  grid-column: auto !important;
+  margin-top: 0 !important;
+  align-self: start !important;
+}
+
+@media (max-width: 1000px) {
+  .rr-home-clean-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .rr-home-left-column,
+  .rr-home-right-column,
+  .rr-home-left-column-bottom,
+  .rr-home-bottom-row {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .rr-home-bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
