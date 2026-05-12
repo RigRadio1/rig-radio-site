@@ -1742,3 +1742,27 @@ body {
   box-shadow: 0 0 18px rgba(255, 106, 42, 0.22);
   transform: translateY(-1px);
 }
+
+/* COMMUNITY RADIO CLICK-TO-START */
+.radio-start-btn {
+  width: 100%;
+  min-height: 86px;
+  border: 1px solid rgba(255, 106, 42, 0.45);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.22), transparent 34%),
+    linear-gradient(135deg, rgba(255, 106, 42, 0.20), rgba(217, 47, 36, 0.16));
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 22px rgba(255, 106, 42, 0.18);
+}
+
+.radio-start-btn:hover {
+  border-color: rgba(255, 106, 42, 0.75);
+  box-shadow: 0 0 30px rgba(255, 106, 42, 0.28);
+  transform: translateY(-1px);
+}

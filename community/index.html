@@ -66,9 +66,11 @@
       <h2>Rig-Radio Live</h2>
 
       <div class="radio-live-layout">
-        <div class="radio-embed-wrap">
-          <script src="https://embed.radio.co/player/cfe62f9.js"></script>
-        </div>
+        <div class="radio-embed-wrap" id="rr-radio-player-wrap">
+            <button class="radio-start-btn" id="rr-start-radio" type="button">
+              ? Start Rig-Radio Live
+            </button>
+          </div>
 
         <div class="radio-extra-widgets">
           <div class="radio-widget">
@@ -213,5 +215,19 @@
   <script src="/assets/community/community.js"></script>
   </div>
   <script src="/assets/community/community-live-data.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const btn = document.getElementById("rr-start-radio");
+      const wrap = document.getElementById("rr-radio-player-wrap");
+      if (!btn || !wrap) return;
+
+      btn.addEventListener("click", function () {
+        wrap.innerHTML = "";
+        const script = document.createElement("script");
+        script.src = "https://embed.radio.co/player/cfe62f9.js";
+        wrap.appendChild(script);
+      });
+    });
+  </script>
 </body>
 </html>
