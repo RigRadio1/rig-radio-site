@@ -789,14 +789,17 @@ async function loadMemberNotifications() {
       const actorName = actor?.display_name || actor?.handle || "A Rig-Radio member";
       const date = new Date(note.created_at).toLocaleString();
       const statusClass = note.is_read ? "is-read" : "is-unread";
-      const label = note.type === "song_comment" ? "commented on" : "liked";
+      const label =
+        note.type === "song_comment" ? "commented on" :
+        note.type === "comment_reply" ? "replied to" :
+        "liked";
       const avatarUrl = window.memberNotificationAvatars?.get(note.actor_id) || "/banner.png";
 
       return `
         <a class="member-notification ${statusClass}" href="/song.html?id=${encodeURIComponent(note.track_id || "")}">
           <img class="member-notification-avatar" src="${avatarUrl}" alt="" />
           <div>
-            <strong>${actorName}</strong> ${label} your song.
+            <strong>${actorName}</strong> ${label} ${note.type === "comment_reply" ? "your comment." : "your song."}
             <span>${date}</span>
           </div>
         </a>
