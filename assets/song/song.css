@@ -738,11 +738,26 @@ body .rr-topbar-right .rr-link:hover{
   background:#000;
 }
 
-/* REMOVE BIG GREY SOUND CARD WATERMARK */
-.song-hero::before,
-.song-hero::after,
-.song-main::before,
-.song-main::after{
-  content:none !important;
+
+
+/* RESTORE HERO WATERMARK, REMOVE TOPBAR LABEL */
+.song-hero::after{
+  content:"SOUND CARD" !important;
+  position:absolute;
+  right:-18px;
+  bottom:10px;
+  color:rgba(255,255,255,.035);
+  font-size:clamp(3rem, 10vw, 8rem);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  z-index:0;
+  pointer-events:none;
+}
+
+.rr-topbar-left{
   display:none !important;
+}
+
+body .rr-topbar{
+  justify-content:flex-end !important;
 }
