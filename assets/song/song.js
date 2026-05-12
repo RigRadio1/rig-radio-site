@@ -36,6 +36,39 @@
     return raw.replace(/^tracks\//, "").replace(/^\/+/, "");
   };
 
+  const isVideoArtwork = (url = "") => {
+    const clean = String(url).split("?")[0].toLowerCase();
+    return clean.endsWith(".mp4") || clean.includes(".mp4");
+  };
+
+  const setArtworkMedia = (url) => {
+    const img = $("songCover");
+    const video = $("songCoverVideo");
+
+    if (!img) return;
+
+    if (video && isVideoArtwork(url)) {
+      img.hidden = true;
+      video.hidden = false;
+      video.src = url;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.play().catch(() => {});
+      return;
+    }
+
+    if (video) {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+      video.hidden = true;
+    }
+
+    img.hidden = false;
+    img.src = url || "/banner.png";
+  };
+
   const signTrackKey = async (client, key) => {
     const cleanKey = cleanStorageKey(key);
     if (!client || !cleanKey) return "";
@@ -274,6 +307,23 @@
         };
 
         if (coverFile) {
+          const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "video/mp4"];
+          const maxBytes = 10 * 1024 * 1024;
+
+          if (!allowedTypes.includes(coverFile.type)) {
+            alert("Artwork must be JPG, PNG, WEBP, GIF, or MP4.");
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Changes";
+            return;
+          }
+
+          if (coverFile.size > maxBytes) {
+            alert("Artwork video/image must be 10 MB or smaller.");
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Changes";
+            return;
+          }
+
           const ext = (coverFile.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
           const coverPath = `${currentUser.id}/song-covers/${track.id}-${Date.now()}.${ext || "jpg"}`;
 
@@ -310,7 +360,7 @@
 
         if (updates.cover_path) {
           const newCoverUrl = await signTrackKey(client, updates.cover_path);
-          if (newCoverUrl) $("songCover").src = newCoverUrl;
+          if (newCoverUrl) setArtworkMedia(newCoverUrl);
         }
 
         closeModal();
@@ -733,7 +783,7 @@
       track.artwork_url ||
       "/banner.png";
 
-    $("songCover").src = coverUrl || "/banner.png";
+    setArtworkMedia(coverUrl || "/banner.png");
 
     const audioUrl =
       await signTrackKey(client, track.track_path) ||
