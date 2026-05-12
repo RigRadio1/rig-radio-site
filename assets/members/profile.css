@@ -1172,3 +1172,33 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
   border-color: rgba(255, 255, 255, 0.35);
   box-shadow: 0 0 26px rgba(255, 106, 42, 0.32);
 }
+
+/* MEMBER TOP NAV FINAL POSITION + BUTTON STYLE */
+.member-top-nav {
+  justify-content: flex-end !important;
+  max-width: 1180px;
+  margin: 22px auto 18px !important;
+  padding: 0 28px;
+}
+
+.member-top-links {
+  gap: 12px !important;
+}
+
+.member-top-links a,
+.member-top-links button {
+  min-width: 118px;
+  padding: 11px 18px !important;
+  border: 1px solid rgba(255, 106, 42, 0.75) !important;
+  background: linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+  color: #ffffff !important;
+  text-align: center;
+  line-height: 1;
+  box-shadow: 0 0 22px rgba(255, 106, 42, 0.22) !important;
+}
+
+.member-top-links a:hover,
+.member-top-links button:hover {
+  background: linear-gradient(135deg, #ff7a3a, #ff3b3b) !important;
+  transform: translateY(-1px);
+}
