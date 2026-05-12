@@ -1134,3 +1134,41 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 .playlist-card-actions .playlist-delete-btn {
   border-color: rgba(255, 106, 43, 0.65);
 }
+
+/* MEMBER TOP NAV POLISH */
+.member-top-nav {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 26px;
+}
+
+.member-top-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.member-top-links a,
+.member-top-links button {
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 106, 42, 0.55);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(255, 106, 42, 0.14);
+}
+
+.member-top-links a:hover,
+.member-top-links button:hover {
+  background: linear-gradient(135deg, #ff6a2a, #d92f24);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 26px rgba(255, 106, 42, 0.32);
+}
