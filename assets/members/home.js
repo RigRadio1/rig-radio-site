@@ -101,10 +101,32 @@
     el.innerHTML = cards.join("");
   };
 
+  const renderPlaylists = (el, rows) => {
+    if (!el) return;
+
+    if (!rows || !rows.length) {
+      el.innerHTML = `
+        <div class="rr-home-update">
+          <strong>Playlists Coming</strong>
+          <span>Public playlists will show here once members start publishing them.</span>
+        </div>
+      `;
+      return;
+    }
+
+    el.innerHTML = rows.map((p) => `
+      <a class="rr-home-update rr-home-update-link" href="/members/">
+        <strong>${esc(p.title || "Untitled Playlist")}</strong>
+        <span>${esc(p.description || p.playlist_type || "Public member playlist")}</span>
+      </a>
+    `).join("");
+  };
+
   const start = async () => {
     const latestEl = document.getElementById("homeLatestSongs");
     const topEl = document.getElementById("homeTopSongs");
     const picksEl = document.getElementById("homeRigPicks");
+    const playlistsEl = document.getElementById("homeTopPlaylists");
 
     const client = await waitForClient();
 
@@ -129,6 +151,15 @@
     await renderSongList(client, latestEl, latest || []);
     await renderSongList(client, topEl, top || []);
     await renderSongList(client, picksEl, (top || []).slice(0, 3));
+
+    const { data: playlists } = await client
+      .from("playlists")
+      .select("id,title,description,playlist_type,is_public,likes_count,created_at")
+      .eq("is_public", true)
+      .order("likes_count", { ascending: false })
+      .limit(4);
+
+    renderPlaylists(playlistsEl, playlists || []);
   };
 
   start();

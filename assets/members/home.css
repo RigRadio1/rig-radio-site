@@ -249,3 +249,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+.rr-home-update-link {
+  display: block;
+  text-decoration: none;
+}
+
+.rr-home-update-link:hover {
+  border-color: rgba(255, 106, 42, 0.55);
+  background: rgba(255, 106, 42, 0.10);
+}

@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-4" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-5" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -63,10 +63,7 @@
     <div class="section-heading">
       <h2>Top Playlists</h2>
     </div>
-    <div class="rr-home-update-list">
-      <div class="rr-home-update"><strong>Playlist Rankings</strong><span>Top public playlists will show here once the ranking logic is finished.</span></div>
-      <div class="rr-home-update"><strong>Build Your List</strong><span>Create playlists from your profile and start organizing songs.</span></div>
-    </div>
+    <div id="homeTopPlaylists" class="rr-home-update-list"><p class="rr-home-muted">Loading top playlists...</p></div>
   </article>
 
   <article class="rr-home-card">
@@ -104,7 +101,7 @@
 </main>
 
 <script src="/auth.js"></script>
-<script src="/assets/members/home.js?v=home-data-4"></script>
+<script src="/assets/members/home.js?v=home-data-5"></script>
 <script>
   document.getElementById("memberLogoutBtn")?.addEventListener("click", function () {
     localStorage.clear();
