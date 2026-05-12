@@ -681,3 +681,12 @@
 .rr-playlist-tile {
   flex: 0 0 150px !important;
 }
+
+/* LATEST NEWS COLLAPSE + RIGHT COLUMN PLACEMENT */
+.rr-home-news-card {
+  align-self: start !important;
+}
+
+.rr-home-news-card:has(#homeLatestNews.rr-is-collapsed) {
+  min-height: 130px !important;
+}

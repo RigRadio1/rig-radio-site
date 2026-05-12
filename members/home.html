@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-22" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-23" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -75,6 +75,17 @@
     <div id="homeRigPicks" class="rr-home-song-list rr-is-collapsed"><p class="rr-home-muted">Loading Rig-Radio picks...</p></div>
   </article>
 
+
+  <article class="rr-home-card rr-home-news-card">
+    <div class="section-heading">
+      <button type="button" class="rr-collapse-toggle" data-toggle-target="homeLatestNews">Latest News <span>Open</span></button>
+    </div>
+    <div id="homeLatestNews" class="rr-home-update-list rr-is-collapsed">
+      <div class="rr-home-update"><strong>Member Profiles Are Live</strong><span>Members can now customize accounts, covers, playlists, and public profiles.</span></div>
+      <div class="rr-home-update"><strong>Home Page Started</strong><span>The new Command Center is now being built section by section.</span></div>
+    </div>
+  </article>
+
   <article class="rr-home-card">
     <div class="section-heading">
       <h2>Top Playlists</h2>
@@ -94,16 +105,6 @@
     <div id="homePlaylistComingSoon" class="rr-playlist-coming-soon">
       <strong>Playlist system coming soon</strong>
       <span>Discord and DJ Suno-link playlists will live here once that feature is built.</span>
-    </div>
-  </article>
-
-  <article class="rr-home-card">
-    <div class="section-heading">
-      <h2>Latest News</h2>
-    </div>
-    <div class="rr-home-update-list">
-      <div class="rr-home-update"><strong>Member Profiles Are Live</strong><span>Members can now customize accounts, covers, playlists, and public profiles.</span></div>
-      <div class="rr-home-update"><strong>Home Page Started</strong><span>The new Command Center is now being built section by section.</span></div>
     </div>
   </article>
 
