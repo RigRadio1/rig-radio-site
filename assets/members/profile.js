@@ -1591,6 +1591,73 @@ async function deletePlaylistItem(itemId, playlistId) {
   await openPlaylistDetail(playlistId);
 }
 
+async function deleteMemberTrack(trackId) {
+  if (!window.supabaseClient || !currentUser || !trackId) return;
+
+  const yes = confirm("Delete this track from Rig-Radio? This removes it from your profile, the library, playlists, comments, notifications, and the song card.");
+  if (!yes) return;
+
+  try {
+    const { data: track, error: fetchError } = await window.supabaseClient
+      .from("tracks")
+      .select("*")
+      .eq("id", trackId)
+      .eq("user_id", currentUser.id)
+      .single();
+
+    if (fetchError || !track) {
+      console.error("DELETE TRACK FETCH ERROR:", fetchError);
+      alert("Could not load this track for delete.");
+      return;
+    }
+
+    await window.supabaseClient
+      .from("playlist_items")
+      .delete()
+      .eq("track_id", trackId);
+
+    await window.supabaseClient
+      .from("member_notifications")
+      .delete()
+      .eq("track_id", trackId);
+
+    await window.supabaseClient
+      .from("song_comments")
+      .delete()
+      .eq("track_id", trackId);
+
+    const storagePaths = [
+      track.track_path,
+      track.audio_path,
+      track.cover_path
+    ].filter(Boolean);
+
+    if (storagePaths.length) {
+      const { error: storageError } = await window.supabaseClient
+        .storage
+        .from("tracks")
+        .remove(storagePaths);
+
+      if (storageError) console.warn("TRACK STORAGE DELETE WARNING:", storageError);
+    }
+
+    const { error: deleteError } = await window.supabaseClient
+      .from("tracks")
+      .delete()
+      .eq("id", trackId)
+      .eq("user_id", currentUser.id);
+
+    if (deleteError) throw deleteError;
+
+    alert("Track deleted.");
+    await loadMemberSongs(false);
+    await loadMemberPlaylists();
+  } catch (err) {
+    console.error("DELETE TRACK ERROR:", err);
+    alert("Could not delete track.");
+  }
+}
+
 async function loadMemberSongs(showAll = false) {
   const list = document.querySelector(".song-list");
   const stats = document.querySelector(".profile-stats span:first-child");
@@ -1661,7 +1728,10 @@ async function loadMemberSongs(showAll = false) {
           <h3>${escapeHtml(title)}</h3>
           <p>${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}</p>
         </div>
-        <button class="song-play-btn" type="button">Play</button>
+        <div class="song-row-actions">
+          <button class="song-play-btn" type="button">Play</button>
+          ${viewingOwnProfile ? `<button class="song-delete-btn" type="button" data-delete-track="${escapeHtml(trackId)}">Delete</button>` : ""}
+        </div>
       `;
 
       if (cover) {
@@ -1722,6 +1792,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (event.target.closest("[data-close-create-playlist]")) {
       closeCreatePlaylistModal();
+      return;
+    }
+
+    const deleteTrackBtn = event.target.closest("[data-delete-track]");
+    if (deleteTrackBtn) {
+      deleteMemberTrack(deleteTrackBtn.dataset.deleteTrack);
       return;
     }
 
