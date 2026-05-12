@@ -1937,3 +1937,52 @@ body {
 .layout {
   align-items: start;
 }
+
+/* COMMUNITY JOIN CTA INSIDE RECENT UPLOADS */
+.community-join-card {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 106, 42, 0.35);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 42, 0.18), transparent 36%),
+    linear-gradient(135deg, rgba(255, 106, 42, 0.12), rgba(10, 10, 14, 0.96));
+}
+
+.community-join-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: #ff6a2a;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.community-join-card strong {
+  display: block;
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.community-join-card p {
+  color: #b8bec8;
+  font-size: 14px;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.community-join-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff6a2a, #d92f24);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+  letter-spacing: 0.06em;
+}
