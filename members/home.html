@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-10" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-11" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -52,7 +52,12 @@
       <h2>Trending</h2>
       <a href="/library.html">View Library</a>
     </div>
-    <div id="homeGenreTiles" class="rr-genre-strip"><p class="rr-home-muted">Loading genres...</p></div>
+    <div class="rr-genre-wrap">
+      <button type="button" class="rr-genre-arrow" id="genreScrollLeft">‹</button>
+      <div id="homeGenreTiles" class="rr-genre-strip"><p class="rr-home-muted">Loading genres...</p></div>
+    </div>
+      <button type="button" class="rr-genre-arrow" id="genreScrollRight">›</button>
+    </div>
     <div id="homeGenreTopSongs" class="rr-genre-results"></div>
   </article>
 
@@ -112,7 +117,7 @@
 </main>
 
 <script src="/auth.js"></script>
-<script src="/assets/members/home.js?v=home-data-7"></script>
+<script src="/assets/members/home.js?v=home-data-8"></script>
 <script src="/assets/members/home-updates.js?v=updates-2"></script>
 <script>
   document.getElementById("memberLogoutBtn")?.addEventListener("click", function () {

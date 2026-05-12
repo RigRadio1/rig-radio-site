@@ -437,3 +437,31 @@
 .rr-genre-strip::-webkit-scrollbar {
   display: none;
 }
+
+/* TRENDING GENRE ARROWS */
+.rr-genre-wrap {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  gap: 10px;
+  align-items: center;
+}
+
+.rr-genre-arrow {
+  width: 42px;
+  height: 72px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 106, 42, 0.55);
+  background: rgba(255, 106, 42, 0.12);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.rr-genre-arrow:hover {
+  background: linear-gradient(135deg, #ff6a2a, #d92f24);
+}
+
+.rr-genre-wrap .rr-genre-strip {
+  min-width: 0;
+}
