@@ -6,6 +6,8 @@
   const waitForClient = async () => {
     for (let i = 0; i < 40; i++) {
       if (window.supabaseClient) return window.supabaseClient;
+      if (window._sb) return window._sb;
+      if (window.rigSupabase) return window.rigSupabase;
       await new Promise((r) => setTimeout(r, 125));
     }
     return null;
