@@ -465,3 +465,34 @@
 .rr-genre-wrap .rr-genre-strip {
   min-width: 0;
 }
+
+/* HIDE BAD GENRE ARROWS + RESTORE CLEAN SCROLL */
+.rr-genre-arrow {
+  display: none !important;
+}
+
+.rr-genre-wrap {
+  display: block !important;
+}
+
+.rr-genre-wrap .rr-genre-strip,
+.rr-genre-strip {
+  overflow-x: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 106, 42, 0.85) rgba(255, 255, 255, 0.08) !important;
+}
+
+.rr-genre-strip::-webkit-scrollbar {
+  display: block !important;
+  height: 8px !important;
+}
+
+.rr-genre-strip::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 999px !important;
+}
+
+.rr-genre-strip::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #ff6a2a, #d92f24) !important;
+  border-radius: 999px !important;
+}
