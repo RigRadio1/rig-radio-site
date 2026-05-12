@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-3" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-4" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -56,10 +56,7 @@
     <div class="section-heading">
       <h2>Rig-Radio Picks</h2>
     </div>
-    <div class="rr-home-update-list">
-      <div class="rr-home-update"><strong>Staff Picks Coming</strong><span>We will use this area for songs Rig-Radio wants to spotlight.</span></div>
-      <div class="rr-home-update"><strong>Creator Spotlight</strong><span>Featured artists, members, and playlist builders will show here.</span></div>
-    </div>
+    <div id="homeRigPicks" class="rr-home-song-list"><p class="rr-home-muted">Loading Rig-Radio picks...</p></div>
   </article>
 
   <article class="rr-home-card">
@@ -107,7 +104,7 @@
 </main>
 
 <script src="/auth.js"></script>
-<script src="/assets/members/home.js?v=home-data-3"></script>
+<script src="/assets/members/home.js?v=home-data-4"></script>
 <script>
   document.getElementById("memberLogoutBtn")?.addEventListener("click", function () {
     localStorage.clear();

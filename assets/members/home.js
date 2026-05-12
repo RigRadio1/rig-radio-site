@@ -104,6 +104,7 @@
   const start = async () => {
     const latestEl = document.getElementById("homeLatestSongs");
     const topEl = document.getElementById("homeTopSongs");
+    const picksEl = document.getElementById("homeRigPicks");
 
     const client = await waitForClient();
 
@@ -127,6 +128,7 @@
 
     await renderSongList(client, latestEl, latest || []);
     await renderSongList(client, topEl, top || []);
+    await renderSongList(client, picksEl, (top || []).slice(0, 3));
   };
 
   start();
