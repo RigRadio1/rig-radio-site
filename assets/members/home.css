@@ -427,3 +427,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* TRENDING SCROLLBAR CLEANUP */
+.rr-genre-strip {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.rr-genre-strip::-webkit-scrollbar {
+  display: none;
+}
