@@ -58,6 +58,15 @@
     return null;
   };
 
+  const getCurrentUser = async (client) => {
+    try {
+      const { data } = await client.auth.getSession();
+      return data?.session?.user || null;
+    } catch (_) {
+      return null;
+    }
+  };
+
   const incPlay = async (client, trackId) => {
     try {
       const { data, error } = await client.rpc("inc_play", { p_track_id: trackId });
@@ -176,6 +185,75 @@
     });
   };
 
+  const bindFollow = async (client, creatorId, currentUser) => {
+    const btn = $("followCreatorBtn");
+    if (!btn || !creatorId) return;
+
+    if (currentUser?.id && currentUser.id === creatorId) {
+      btn.hidden = true;
+      return;
+    }
+
+    btn.hidden = false;
+
+    if (!currentUser) {
+      btn.textContent = "Log in to Follow";
+      btn.addEventListener("click", () => {
+        const returnTo = window.location.pathname + window.location.search;
+        window.location.href = "/login.html?redirect=" + encodeURIComponent(returnTo);
+      });
+      return;
+    }
+
+    const refreshButton = async () => {
+      const { data } = await client
+        .from("member_follows")
+        .select("follower_id")
+        .eq("follower_id", currentUser.id)
+        .eq("following_id", creatorId)
+        .maybeSingle();
+
+      btn.dataset.following = data ? "1" : "0";
+      btn.textContent = data ? "Following" : "Follow";
+    };
+
+    await refreshButton();
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+
+      try {
+        const isFollowing = btn.dataset.following === "1";
+
+        if (isFollowing) {
+          const { error } = await client
+            .from("member_follows")
+            .delete()
+            .eq("follower_id", currentUser.id)
+            .eq("following_id", creatorId);
+
+          if (error) throw error;
+        } else {
+          const { error } = await client
+            .from("member_follows")
+            .insert({
+              follower_id: currentUser.id,
+              following_id: creatorId
+            });
+
+          if (error) throw error;
+        }
+
+        await refreshButton();
+      } catch (err) {
+        console.error("SONG FOLLOW ERROR:", err);
+        alert("Could not update follow.");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  };
+
   const loadCreator = async (client, userId) => {
     const { data: profile } = await client
       .from("member_profiles")
@@ -214,6 +292,8 @@
       $("songLyrics").textContent = "Could not connect to Supabase.";
       return;
     }
+
+    const currentUser = await getCurrentUser(client);
 
     const { data: track, error } = await client
       .from("tracks")
@@ -264,7 +344,10 @@
     bindPlayer(client, track);
     bindLike(client, track);
 
-    if (track.user_id) loadCreator(client, track.user_id);
+    if (track.user_id) {
+      await loadCreator(client, track.user_id);
+      await bindFollow(client, track.user_id, currentUser);
+    }
   };
 
   document.addEventListener("DOMContentLoaded", loadSong);
