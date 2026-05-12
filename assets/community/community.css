@@ -1696,3 +1696,20 @@ body {
 .hero p {
   max-width: 520px;
 }
+
+/* COMMUNITY HERO FINAL SIZE TUNE */
+.hero {
+  min-height: 300px;
+  padding-top: 34px;
+  padding-bottom: 34px;
+  background-position: center 48%;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 4.1vw, 56px);
+  max-width: 690px;
+}
+
+.hero p {
+  font-size: 17px;
+}
