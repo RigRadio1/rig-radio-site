@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home | Rig-Radio Members</title>
+  <link rel="stylesheet" href="/assets/community/community.css" />
+  <link rel="stylesheet" href="/assets/members/profile.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="member-profile-page">
+<main class="profile-shell">
+
+<!-- MEMBER TOP NAV -->
+<div class="member-top-nav">
+  <nav class="member-top-links" aria-label="Main navigation">
+    <a href="/members/home.html">HOME</a>
+    <a href="/members/">My Profile</a>
+    <a href="/live/">LIVE</a>
+    <a href="/library.html">Library</a>
+    <a href="/submit.html">Submit Song</a>
+    <button type="button" id="memberLogoutBtn">Log Out</button>
+  </nav>
+</div>
+<!-- END MEMBER TOP NAV -->
+
+<section class="rr-home-hero">
+  <p class="profile-kicker">MEMBER COMMAND CENTER</p>
+  <h1>Rig-Radio Home</h1>
+  <p>
+    Your hub for trending songs, top tracks, Rig-Radio picks, playlists,
+    news, server updates, contest drops, and community movement.
+  </p>
+</section>
+
+<section class="rr-home-grid">
+
+  <article class="rr-home-card rr-home-card-large">
+    <div class="section-heading">
+      <h2>Trending Songs</h2>
+      <a href="/library.html">View Library</a>
+    </div>
+    <p>Coming soon: songs getting the most attention across Rig-Radio.</p>
+  </article>
+
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>Top Songs</h2>
+    </div>
+    <p>Coming soon: top-performing tracks from the community.</p>
+  </article>
+
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>Rig-Radio Picks</h2>
+    </div>
+    <p>Hand-picked tracks and creators we want members to hear.</p>
+  </article>
+
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>Top Playlists</h2>
+    </div>
+    <p>Coming soon after playlist rankings are wired up.</p>
+  </article>
+
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>Latest News</h2>
+    </div>
+    <p>Station news, creator updates, drops, and announcements.</p>
+  </article>
+
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>Server Updates</h2>
+    </div>
+    <p>What changed, what shipped, and what is being worked on.</p>
+  </article>
+
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>Contest Updates</h2>
+    </div>
+    <p>Upcoming contests, prize updates, voting windows, and winners.</p>
+  </article>
+
+</section>
+
+</main>
+
+<script src="/auth.js"></script>
+<script>
+  document.getElementById("memberLogoutBtn")?.addEventListener("click", function () {
+    localStorage.clear();
+    window.location.href = "/login.html";
+  });
+</script>
+</body>
+</html>

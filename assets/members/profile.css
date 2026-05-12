@@ -682,20 +682,6 @@
   border-color: rgba(255, 122, 47, 0.6);
 }
 
-$cssPath = "assets/members/profile.css"
-$css = Get-Content $cssPath -Raw
-
-$css = [regex]::Replace(
-  $css,
-  "(?s)\r?\n?/\* PROFILE NAV BUTTONS \*/.*?/\* END PROFILE NAV BUTTONS \*/\r?\n?",
-  ""
-)
-
-$cssPatch = @'
-
-'@
-
-Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 
 /* MEMBER TOP NAV */
 .member-top-nav {
@@ -1201,4 +1187,75 @@ Set-Content $cssPath ($css.TrimEnd() + "`r`n" + $cssPatch + "`r`n")
 .member-top-links button:hover {
   background: linear-gradient(135deg, #ff7a3a, #ff3b3b) !important;
   transform: translateY(-1px);
+}
+
+/* MEMBER HOME / COMMAND CENTER */
+.rr-home-hero {
+  margin: 0 0 22px;
+  padding: 34px;
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 106, 42, 0.20), rgba(217, 47, 36, 0.12)),
+    rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(255, 106, 42, 0.32);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+}
+
+.rr-home-hero h1 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.rr-home-hero p:last-child {
+  max-width: 760px;
+  margin: 0;
+  color: rgba(244, 241, 234, 0.78);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.rr-home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.rr-home-card {
+  min-height: 190px;
+  padding: 24px;
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+    rgba(9, 9, 9, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.28);
+}
+
+.rr-home-card-large {
+  grid-column: span 2;
+}
+
+.rr-home-card h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+.rr-home-card p {
+  margin: 14px 0 0;
+  color: rgba(244, 241, 234, 0.74);
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .rr-home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rr-home-card-large {
+    grid-column: auto;
+  }
 }
