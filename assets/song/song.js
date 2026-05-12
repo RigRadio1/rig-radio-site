@@ -175,7 +175,7 @@
     });
   };
 
-  const bindLike = (client, track) => {
+  const bindLike = (client, track, currentUser) => {
     const likeBtn = $("likeSongBtn");
     const likeKey = `song-liked:${track.id}`;
 
@@ -493,7 +493,7 @@
     if (audioUrl) $("songPlayer").src = audioUrl;
 
     bindPlayer(client, track);
-    bindLike(client, track);
+    bindLike(client, track, currentUser);
     await bindComments(client, track.id, currentUser);
 
     if (track.user_id) {
