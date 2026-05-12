@@ -1646,3 +1646,25 @@ body {
 .sidebar-player iframe {
   max-width: 100%;
 }
+/* COMMUNITY HERO IMAGE OVERRIDE */
+.hero {
+  min-height: 340px;
+  padding: 48px clamp(24px, 5vw, 72px) 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    linear-gradient(90deg, rgba(5,5,7,0.92) 0%, rgba(5,5,7,0.76) 38%, rgba(5,5,7,0.28) 68%, rgba(5,5,7,0.08) 100%),
+    url("/assets/community/rig-radio-community-hero.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.hero-glow {
+  display: none;
+}
+
+.hero h1 {
+  max-width: 760px;
+}
