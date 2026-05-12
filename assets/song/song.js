@@ -75,18 +75,33 @@
         video.play().catch(() => {});
       };
 
+      video.ontimeupdate = () => {
+        if (video.duration && video.currentTime >= video.duration - 0.12) {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        }
+      };
+
       video.addEventListener("loadeddata", tryPlay, { once: true });
       video.addEventListener("canplay", tryPlay, { once: true });
 
       setTimeout(tryPlay, 250);
+      setTimeout(tryPlay, 1000);
 
       clearInterval(window.songArtworkLoopWatch);
       window.songArtworkLoopWatch = setInterval(() => {
-        if (!video.hidden && video.paused) {
+        if (video.hidden) return;
+
+        if (video.duration && video.currentTime >= video.duration - 0.12) {
           video.currentTime = 0;
           video.play().catch(() => {});
+          return;
         }
-      }, 1000);
+
+        if (video.paused) {
+          video.play().catch(() => {});
+        }
+      }, 500);
 
       return;
     }
