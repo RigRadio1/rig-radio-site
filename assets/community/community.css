@@ -686,7 +686,7 @@ body {
 }
 /* PHASE 1 — tighten hero height */
 .hero {
-  padding: 42px 0 34px;
+  padding: 42px clamp(24px, 5vw, 72px) 34px;
 }
 
 .hero h1 {
