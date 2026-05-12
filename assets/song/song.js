@@ -70,9 +70,23 @@
         video.play().catch((err) => console.warn("ARTWORK VIDEO PLAY ERROR:", err));
       };
 
+      video.onended = () => {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      };
+
       video.addEventListener("loadeddata", tryPlay, { once: true });
       video.addEventListener("canplay", tryPlay, { once: true });
+
       setTimeout(tryPlay, 250);
+
+      clearInterval(window.songArtworkLoopWatch);
+      window.songArtworkLoopWatch = setInterval(() => {
+        if (!video.hidden && video.paused) {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        }
+      }, 1000);
 
       return;
     }
