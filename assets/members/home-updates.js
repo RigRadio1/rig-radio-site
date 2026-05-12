@@ -22,12 +22,12 @@
     ],
     "Contest Updates": [
       {
-        title: "Contest Center Coming",
-        text: "This area will show open contests, voting dates, prizes, and winners."
+        title: "BUILD OR BE FORGOTTEN: THE 30-DAY BUILD",
+        text: "Sign up as a team in Discord, read the rules, and get locked in by May 30th."
       },
       {
-        title: "Member Voting",
-        text: "Future contests can tie into likes, plays, playlists, and community picks."
+        title: "Sign Up In Discord",
+        text: "Go to the contest channel for rules, team signup, and official updates."
       }
     ]
   };
