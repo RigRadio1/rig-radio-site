@@ -1766,3 +1766,15 @@ body {
   box-shadow: 0 0 30px rgba(255, 106, 42, 0.28);
   transform: translateY(-1px);
 }
+
+/* COMMUNITY NATIVE RADIO PLAYER FIX */
+.rr-native-radio {
+  width: 100%;
+}
+
+.rr-native-radio audio {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+  background: #050507;
+}
