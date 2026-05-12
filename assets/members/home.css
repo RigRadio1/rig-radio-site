@@ -572,3 +572,8 @@
 .rr-home-picks-card:has(#homeRigPicks.rr-is-collapsed) {
   min-height: 130px !important;
 }
+
+/* RIGHT COLUMN COLLAPSE GAP FIX */
+.rr-home-grid:has(#homeTopSongs.rr-is-collapsed) .rr-home-picks-card {
+  margin-top: -220px !important;
+}
