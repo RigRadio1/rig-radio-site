@@ -87,7 +87,7 @@ function rowHTML(r){
     <article class="row" data-id="${r.id}">
       <div class="t"><img class="thumb" src="/banner.png" alt="cover"/></div>
       <div class="meta">
-        <div class="title">${esc(r.title)||"(untitled)"}</div>
+        <div class="title"><a href="/song.html?id=${encodeURIComponent(r.id)}">${esc(r.title)||"(untitled)"}</a></div>
         <div>${esc(r.artist)||"(unknown)"} — <span class="pill">${esc(r.genre)||"—"}</span></div>
         ${r.notes ? `<div style="opacity:.75">${esc(r.notes)}</div>` : ``}
 
