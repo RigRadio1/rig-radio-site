@@ -158,7 +158,15 @@
       if (!btn) return;
       openGenre(btn.dataset.genre);
     });
-});
+
+    
+    document.getElementById("genreScrollLeft")?.addEventListener("click", () => {
+      tilesEl.scrollBy({ left: -360, behavior: "smooth" });
+    });
+
+    document.getElementById("genreScrollRight")?.addEventListener("click", () => {
+      tilesEl.scrollBy({ left: 360, behavior: "smooth" });
+    });
 
     openGenre(genres[0]);
   };
