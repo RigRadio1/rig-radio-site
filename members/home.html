@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-5" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-6" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -96,13 +96,22 @@
     </div>
   </article>
 
+  <article class="rr-home-card">
+    <div class="section-heading">
+      <h2>New Members</h2>
+    </div>
+    <div id="homeNewMembers" class="rr-home-member-list">
+      <p class="rr-home-muted">Loading new members...</p>
+    </div>
+  </article>
+
 </section>
 
 </main>
 
 <script src="/auth.js"></script>
-<script src="/assets/members/home.js?v=home-data-5"></script>
-<script src="/assets/members/home-updates.js?v=updates-1"></script>
+<script src="/assets/members/home.js?v=home-data-6"></script>
+<script src="/assets/members/home-updates.js?v=updates-2"></script>
 <script>
   document.getElementById("memberLogoutBtn")?.addEventListener("click", function () {
     localStorage.clear();

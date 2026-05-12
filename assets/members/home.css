@@ -259,3 +259,51 @@
   border-color: rgba(255, 106, 42, 0.55);
   background: rgba(255, 106, 42, 0.10);
 }
+
+.rr-home-member-list {
+  display: grid;
+  gap: 12px;
+}
+
+.rr-home-member {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 11px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  color: #fff;
+  text-decoration: none;
+}
+
+.rr-home-member:hover {
+  border-color: rgba(255, 106, 42, 0.55);
+  background: rgba(255, 106, 42, 0.10);
+}
+
+.rr-home-member img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 999px;
+  background: #111;
+}
+
+.rr-home-member strong,
+.rr-home-member span {
+  display: block;
+}
+
+.rr-home-member strong {
+  color: #fff;
+  font-size: 0.94rem;
+}
+
+.rr-home-member span {
+  color: #ff7a2f;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-top: 3px;
+}

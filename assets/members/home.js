@@ -101,6 +101,49 @@
     el.innerHTML = cards.join("");
   };
 
+  const signProfileKey = async (client, key) => {
+    if (!key) return "/banner.png";
+    const cleanKey = String(key).replace(/^profiles\//, "").replace(/^\/+/, "");
+
+    try {
+      const { data, error } = await client.storage
+        .from("profiles")
+        .createSignedUrl(cleanKey, 3600);
+
+      if (error || !data?.signedUrl) return "/banner.png";
+      return data.signedUrl;
+    } catch {
+      return "/banner.png";
+    }
+  };
+
+  const renderMembers = async (client, el, rows) => {
+    if (!el) return;
+
+    if (!rows || !rows.length) {
+      el.innerHTML = '<p class="rr-home-muted">No member profiles found yet.</p>';
+      return;
+    }
+
+    const cards = await Promise.all(rows.map(async (m) => {
+      const name = esc(m.display_name || m.handle || "Rig-Radio Member");
+      const handle = esc(String(m.handle || "member").replace(/^@/, ""));
+      const avatar = await signProfileKey(client, m.avatar_path);
+
+      return `
+        <a class="rr-home-member" href="/members/?handle=${handle}">
+          <img src="${esc(avatar)}" alt="${name}" onerror="this.src=''/banner.png''">
+          <div>
+            <strong>${name}</strong>
+            <span>@${handle}</span>
+          </div>
+        </a>
+      `;
+    }));
+
+    el.innerHTML = cards.join("");
+  };
+
   const renderPlaylists = (el, rows) => {
     if (!el) return;
 
@@ -127,6 +170,7 @@
     const topEl = document.getElementById("homeTopSongs");
     const picksEl = document.getElementById("homeRigPicks");
     const playlistsEl = document.getElementById("homeTopPlaylists");
+    const membersEl = document.getElementById("homeNewMembers");
 
     const client = await waitForClient();
 
@@ -160,6 +204,14 @@
       .limit(4);
 
     renderPlaylists(playlistsEl, playlists || []);
+
+    const { data: members } = await client
+      .from("member_profiles")
+      .select("display_name,handle,avatar_path,updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(5);
+
+    await renderMembers(client, membersEl, members || []);
   };
 
   start();
