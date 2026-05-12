@@ -708,3 +708,9 @@ body .rr-topbar-right .rr-link:hover{
 .song-cover-video[hidden]{
   display:none;
 }
+
+/* MP4 artwork should show full video, not crop like album art */
+.song-cover-video{
+  object-fit:contain !important;
+  background:#000;
+}
