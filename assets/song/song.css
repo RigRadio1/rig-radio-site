@@ -737,3 +737,12 @@ body .rr-topbar-right .rr-link:hover{
   object-fit:contain !important;
   background:#000;
 }
+
+/* REMOVE BIG GREY SOUND CARD WATERMARK */
+.song-hero::before,
+.song-hero::after,
+.song-main::before,
+.song-main::after{
+  content:none !important;
+  display:none !important;
+}
