@@ -84,6 +84,27 @@
     }
   };
 
+  const createNotification = async (client, { recipientId, actorId, trackId, type, message }) => {
+    if (!recipientId || !actorId || !trackId) return;
+    if (recipientId === actorId) return;
+
+    try {
+      const { error } = await client
+        .from("member_notifications")
+        .insert({
+          recipient_id: recipientId,
+          actor_id: actorId,
+          track_id: trackId,
+          type,
+          message
+        });
+
+      if (error) console.warn("NOTIFICATION ERROR:", error);
+    } catch (err) {
+      console.warn("NOTIFICATION ERROR:", err);
+    }
+  };
+
   const incLike = async (client, trackId) => {
     try {
       const { data, error } = await client.rpc("inc_like", { p_track_id: trackId });
@@ -178,6 +199,14 @@
         localStorage.setItem(likeKey, "1");
         likeBtn.textContent = "Liked";
         updateStats();
+
+        await createNotification(client, {
+          recipientId: track.user_id,
+          actorId: currentUser?.id,
+          trackId: track.id,
+          type: "song_like",
+          message: "liked your song"
+        });
       } else {
         likeBtn.disabled = false;
         likeBtn.textContent = "Like";
@@ -287,6 +316,15 @@
         if (error) throw error;
 
         input.value = "";
+
+        await createNotification(client, {
+          recipientId: currentTrack?.user_id,
+          actorId: currentUser?.id,
+          trackId,
+          type: "song_comment",
+          message: "commented on your song"
+        });
+
         await renderComments();
       } catch (err) {
         console.error("COMMENT POST ERROR:", err);
