@@ -334,7 +334,7 @@
 
               <div class="song-comment-text-row">
                 <p>${esc(comment.body)}</p>
-                ${showHeartReply ? '<button class="song-comment-heart ' + (isLiked ? 'is-liked' : '') + '" type="button" ' + (canHeartReply ? 'data-comment-like="' + comment.id + '"' : 'disabled') + '>' + (isLiked ? '?' : '?') + '</button>' : ''}
+                ${showHeartReply ? '<button class="song-comment-heart ' + (isLiked ? 'is-liked' : '') + '" type="button" ' + (canHeartReply ? 'data-comment-like="' + comment.id + '"' : 'disabled') + '>' + (isLiked ? '?' : '&#9825;') + '</button>' : ''}
               </div>
 
               ${canCreatorReply ? '<button class="song-comment-reply-btn" type="button" data-reply-comment="' + comment.id + '">Reply</button>' : ''}
