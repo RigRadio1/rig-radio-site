@@ -315,6 +315,7 @@
           comment.user_id !== currentUser.id &&
           replies.length === 0;
 
+        const showHeartReply = isReply;
         const canHeartReply =
           currentUser &&
           isReply &&
@@ -333,7 +334,7 @@
 
               <div class="song-comment-text-row">
                 <p>${esc(comment.body)}</p>
-                ${canHeartReply ? '<button class="song-comment-heart ' + (isLiked ? 'is-liked' : '') + '" type="button" data-comment-like="' + comment.id + '">' + (isLiked ? '?' : '?') + '</button>' : ''}
+                ${showHeartReply ? '<button class="song-comment-heart ' + (isLiked ? 'is-liked' : '') + '" type="button" ' + (canHeartReply ? 'data-comment-like="' + comment.id + '"' : 'disabled') + '>' + (isLiked ? '?' : '?') + '</button>' : ''}
               </div>
 
               ${canCreatorReply ? '<button class="song-comment-reply-btn" type="button" data-reply-comment="' + comment.id + '">Reply</button>' : ''}

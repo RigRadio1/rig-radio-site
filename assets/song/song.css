@@ -598,3 +598,12 @@ body .rr-topbar-right .rr-link:hover{
   color:#ff3b3b;
   transform:scale(1.08);
 }
+
+.song-comment-heart:disabled{
+  opacity:.7;
+  cursor:default;
+}
+
+.song-comment-heart:disabled:hover{
+  transform:none;
+}
