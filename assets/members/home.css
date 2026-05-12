@@ -531,3 +531,8 @@
 .rr-is-collapsed {
   display: none !important;
 }
+
+/* COLLAPSED TOP SONGS CARD HEIGHT FIX */
+.rr-home-card:has(#homeTopSongs.rr-is-collapsed) {
+  min-height: 130px !important;
+}
