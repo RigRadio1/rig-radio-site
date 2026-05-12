@@ -2086,3 +2086,23 @@ body {
   font-size: 13px !important;
   margin-bottom: 10px !important;
 }
+
+/* COMMUNITY LOGIN BUTTON MAKE VISIBLE */
+.top-nav .main-nav a[href="/login.html"] {
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 106, 42, 0.75);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff6a2a, #d92f24);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 0 22px rgba(255, 106, 42, 0.28);
+}
+
+.top-nav .main-nav a[href="/login.html"]:hover {
+  background: linear-gradient(135deg, #ff7a3a, #ff3b3b);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 30px rgba(255, 106, 42, 0.42);
+}
