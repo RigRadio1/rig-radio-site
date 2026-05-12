@@ -418,3 +418,57 @@ body .rr-topbar-right .rr-link:hover{
   font-size:.86rem;
   white-space:nowrap;
 }
+
+/* SONG COMMENTS */
+.comment-box{
+  display:grid;
+  gap:10px;
+}
+
+.comment-box textarea{
+  min-height:92px;
+  resize:vertical;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  background:rgba(0,0,0,.42);
+  color:#fff;
+  padding:14px;
+  font:inherit;
+  outline:none;
+}
+
+.comment-box textarea:focus{
+  border-color:rgba(255,106,42,.72);
+}
+
+.comments-list{
+  display:grid;
+  gap:12px;
+  margin-top:16px;
+}
+
+.song-comment{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  background:rgba(0,0,0,.32);
+  padding:14px;
+}
+
+.song-comment-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:#fff;
+  margin-bottom:8px;
+}
+
+.song-comment-head span{
+  color:rgba(244,241,234,.62);
+  font-size:.82rem;
+}
+
+.song-comment p{
+  margin:0;
+  color:rgba(244,241,234,.84);
+  line-height:1.45;
+}

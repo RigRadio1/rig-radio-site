@@ -185,6 +185,111 @@
     });
   };
 
+  const bindComments = async (client, trackId, currentUser) => {
+    const input = $("commentInput");
+    const postBtn = $("postCommentBtn");
+    const list = $("commentsList");
+
+    if (!input || !postBtn || !list) return;
+
+    const renderComments = async () => {
+      list.innerHTML = '<p class="song-muted">Loading comments...</p>';
+
+      const { data: comments, error } = await client
+        .from("song_comments")
+        .select("id, body, user_id, created_at")
+        .eq("track_id", trackId)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.warn("COMMENTS LOAD ERROR:", error);
+        list.innerHTML = '<p class="song-muted">Could not load comments.</p>';
+        return;
+      }
+
+      if (!comments || comments.length === 0) {
+        list.innerHTML = '<p class="song-muted">No comments yet. Be the first.</p>';
+        return;
+      }
+
+      const userIds = [...new Set(comments.map((c) => c.user_id).filter(Boolean))];
+
+      let profilesById = new Map();
+
+      if (userIds.length) {
+        const { data: profiles } = await client
+          .from("member_profiles")
+          .select("id, display_name, handle")
+          .in("id", userIds);
+
+        profilesById = new Map((profiles || []).map((p) => [p.id, p]));
+      }
+
+      list.innerHTML = comments.map((comment) => {
+        const profile = profilesById.get(comment.user_id);
+        const name = profile?.display_name || profile?.handle || "Rig-Radio Member";
+        const date = new Date(comment.created_at).toLocaleDateString();
+
+        return `
+          <div class="song-comment">
+            <div class="song-comment-head">
+              <strong>${name}</strong>
+              <span>${date}</span>
+            </div>
+            <p>${String(comment.body || "").replace(/[&<>"']/g, (m) => ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;"
+            }[m]))}</p>
+          </div>
+        `;
+      }).join("");
+    };
+
+    await renderComments();
+
+    if (!currentUser) {
+      postBtn.textContent = "Log in to Comment";
+      postBtn.addEventListener("click", () => {
+        const returnTo = window.location.pathname + window.location.search;
+        window.location.href = "/login.html?redirect=" + encodeURIComponent(returnTo);
+      });
+      return;
+    }
+
+    postBtn.addEventListener("click", async () => {
+      const body = input.value.trim();
+
+      if (!body) return;
+
+      postBtn.disabled = true;
+      postBtn.textContent = "Posting...";
+
+      try {
+        const { error } = await client
+          .from("song_comments")
+          .insert({
+            track_id: trackId,
+            user_id: currentUser.id,
+            body
+          });
+
+        if (error) throw error;
+
+        input.value = "";
+        await renderComments();
+      } catch (err) {
+        console.error("COMMENT POST ERROR:", err);
+        alert("Could not post comment.");
+      } finally {
+        postBtn.disabled = false;
+        postBtn.textContent = "Post Comment";
+      }
+    });
+  };
+
   const bindFollow = async (client, creatorId, currentUser) => {
     const btn = $("followCreatorBtn");
     if (!btn || !creatorId) return;
@@ -343,6 +448,7 @@
 
     bindPlayer(client, track);
     bindLike(client, track);
+    await bindComments(client, track.id, currentUser);
 
     if (track.user_id) {
       await loadCreator(client, track.user_id);
