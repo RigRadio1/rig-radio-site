@@ -2114,3 +2114,24 @@ body {
   justify-content: center;
   text-decoration: none;
 }
+
+/* LIVE RADIO PROFILE BUTTON */
+.top-nav .main-nav a[href="/members/"] {
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 106, 42, 0.75);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff6a2a, #d92f24);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 0 22px rgba(255, 106, 42, 0.28);
+}
+
+.top-nav .main-nav a[href="/members/"]:hover {
+  background: linear-gradient(135deg, #ff7a3a, #ff3b3b);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 30px rgba(255, 106, 42, 0.42);
+}
