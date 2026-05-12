@@ -289,3 +289,16 @@
 
   start();
 })();
+/* COLLAPSE / EXPAND SECTIONS */
+document.addEventListener("click", function (event) {
+  const btn = event.target.closest("[data-toggle-target]");
+  if (!btn) return;
+
+  const target = document.getElementById(btn.dataset.toggleTarget);
+  if (!target) return;
+
+  const isCollapsed = target.classList.toggle("rr-is-collapsed");
+  const label = btn.querySelector("span");
+
+  if (label) label.textContent = isCollapsed ? "Open" : "Close";
+});

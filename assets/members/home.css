@@ -496,3 +496,38 @@
   background: linear-gradient(90deg, #ff6a2a, #d92f24) !important;
   border-radius: 999px !important;
 }
+
+/* TOP SONGS COLLAPSE BUTTON */
+.rr-collapse-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  padding: 0;
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rr-collapse-toggle span {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 106, 42, 0.14);
+  border: 1px solid rgba(255, 106, 42, 0.45);
+  color: #ff7a2f;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rr-is-collapsed {
+  display: none !important;
+}
