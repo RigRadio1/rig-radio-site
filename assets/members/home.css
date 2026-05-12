@@ -800,3 +800,19 @@
 .rr-home-server-card:has(#homeServerUpdates.rr-is-collapsed) {
   min-height: 130px !important;
 }
+
+/* FIX NEW MEMBERS / TRENDING SPACING */
+.rr-home-page .rr-home-grid {
+  margin-top: 22px !important;
+}
+
+/* LET TRENDING SHRINK WHEN LIST IS CLOSED */
+.rr-home-clean-grid .rr-home-card-large {
+  min-height: auto !important;
+}
+
+/* TIGHTEN LEFT COLUMN STACK */
+.rr-home-left-column,
+.rr-home-left-column-bottom {
+  gap: 18px !important;
+}
