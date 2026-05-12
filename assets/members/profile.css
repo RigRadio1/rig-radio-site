@@ -1452,3 +1452,24 @@
   color:#ff7a2f !important;
   text-decoration:none !important;
 }
+
+/* MEMBER SONG TITLE LINKS - LIBRARY STYLE */
+.song-list h3 a.member-song-title-link,
+.playlist-detail-songs h3 a.member-song-title-link,
+.featured-track-info h2 a.member-song-title-link,
+.member-song-title-link,
+.member-song-title-link:visited,
+.member-song-title-link:active{
+  color:#ffffff !important;
+  text-decoration:none !important;
+  border:0 !important;
+  outline:none !important;
+}
+
+.song-list h3 a.member-song-title-link:hover,
+.playlist-detail-songs h3 a.member-song-title-link:hover,
+.featured-track-info h2 a.member-song-title-link:hover,
+.member-song-title-link:hover{
+  color:#ff7a2f !important;
+  text-decoration:none !important;
+}
