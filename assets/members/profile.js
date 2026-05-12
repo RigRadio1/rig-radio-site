@@ -1676,12 +1676,27 @@ async function loadMemberSongs(showAll = false) {
       if (btn) btn.dataset.trackId = trackId;
 
       bindSongRowPlayback(item);
+      openMemberSongCardFromTitle(item, trackId);
       list.appendChild(item);
     }
   } catch (err) {
     console.error("MEMBER SONG LOAD ERROR:", err);
     list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>Could not load songs</h3><p>Check console or Supabase permissions.</p></div></div>`;
   }
+}
+
+function openMemberSongCardFromTitle(row, trackId) {
+  const titleEl = row?.querySelector("h3");
+  if (!titleEl || !trackId) return;
+
+  titleEl.style.cursor = "pointer";
+  titleEl.title = "Open Sound Card";
+
+  titleEl.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    window.location.href = "/song.html?id=" + encodeURIComponent(trackId);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

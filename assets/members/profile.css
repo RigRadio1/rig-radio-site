@@ -1487,3 +1487,12 @@
   color:#ff7a2f !important;
   text-decoration:none !important;
 }
+
+/* MAKE MEMBER SONG TITLES FEEL CLICKABLE */
+.song-list .song-row h3{
+  cursor:pointer !important;
+}
+
+.song-list .song-row h3:hover{
+  color:#ff7a2f !important;
+}
