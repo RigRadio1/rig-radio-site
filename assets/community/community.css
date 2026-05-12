@@ -1916,3 +1916,24 @@ body {
 .card.uploads {
   padding-bottom: 18px;
 }
+
+/* COMMUNITY RECENT UPLOADS REMOVE DEAD SPACE */
+.card.uploads,
+.uploads {
+  align-self: start;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.card.uploads {
+  padding: 22px;
+}
+
+.card.uploads .upload-list {
+  margin-top: 14px;
+}
+
+.layout {
+  align-items: start;
+}
