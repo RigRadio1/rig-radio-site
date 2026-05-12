@@ -1473,3 +1473,17 @@
   color:#ff7a2f !important;
   text-decoration:none !important;
 }
+
+/* FORCE MEMBER SONG LIST TITLE LINKS */
+.song-list .song-row h3 a.member-song-title-link,
+.song-list .song-row h3 a.member-song-title-link:visited,
+.song-list .song-row h3 a.member-song-title-link:active{
+  color:#ffffff !important;
+  text-decoration:none !important;
+  cursor:pointer !important;
+}
+
+.song-list .song-row h3 a.member-song-title-link:hover{
+  color:#ff7a2f !important;
+  text-decoration:none !important;
+}
