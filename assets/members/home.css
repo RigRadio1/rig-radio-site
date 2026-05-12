@@ -195,3 +195,29 @@
 .rr-home-muted {
   color: rgba(244, 241, 234, 0.7);
 }
+
+.rr-home-update-list {
+  display: grid;
+  gap: 12px;
+}
+
+.rr-home-update {
+  padding: 13px 14px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.rr-home-update strong {
+  display: block;
+  color: #fff;
+  font-size: 0.94rem;
+  margin-bottom: 5px;
+}
+
+.rr-home-update span {
+  display: block;
+  color: rgba(244, 241, 234, 0.74);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
