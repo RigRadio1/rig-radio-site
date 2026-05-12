@@ -607,3 +607,90 @@ body .rr-topbar-right .rr-link:hover{
 .song-comment-heart:disabled:hover{
   transform:none;
 }
+
+
+/* EDIT SONG MODAL */
+.edit-song-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,.76);
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+
+.edit-song-modal[hidden]{
+  display:none;
+}
+
+.edit-song-card{
+  width:min(680px, 96vw);
+  max-height:88vh;
+  overflow:auto;
+  border:1px solid rgba(255,106,42,.45);
+  border-radius:26px;
+  background:#101010;
+  box-shadow:0 30px 90px rgba(0,0,0,.75);
+  padding:20px;
+}
+
+.edit-song-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.edit-song-head h2{
+  margin:0;
+  color:#fff;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.edit-song-head button{
+  border:1px solid rgba(255,106,42,.65);
+  background:rgba(255,106,42,.15);
+  color:#fff;
+  border-radius:999px;
+  padding:8px 13px;
+  font-weight:1000;
+  cursor:pointer;
+}
+
+.edit-song-body{
+  display:grid;
+  gap:16px;
+}
+
+.edit-song-body label{
+  display:grid;
+  gap:8px;
+  color:#fff;
+  font-weight:900;
+}
+
+.edit-song-body input[type="text"],
+.edit-song-body input[type="file"],
+.edit-song-body textarea{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  background:rgba(0,0,0,.42);
+  color:#fff;
+  padding:13px 14px;
+  font:inherit;
+  outline:none;
+}
+
+.edit-song-body textarea{
+  resize:vertical;
+}
+
+.edit-song-body input:focus,
+.edit-song-body textarea:focus{
+  border-color:rgba(255,106,42,.75);
+}

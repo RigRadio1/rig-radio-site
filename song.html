@@ -95,10 +95,37 @@
         </div>
       </article>
     </section>
+    <div id="editSongModal" class="edit-song-modal" hidden>
+      <div class="edit-song-card">
+        <div class="edit-song-head">
+          <h2>Edit Song</h2>
+          <button id="closeEditSong" type="button">X</button>
+        </div>
+
+        <div class="edit-song-body">
+          <label>
+            Song Title
+            <input id="editSongTitle" type="text" maxlength="120" />
+          </label>
+
+          <label>
+            Artwork / Cover Image
+            <input id="editSongCover" type="file" accept="image/*" />
+          </label>
+
+          <label>
+            Lyrics
+            <textarea id="editSongLyrics" rows="9" maxlength="8000"></textarea>
+          </label>
+
+          <button id="saveEditSong" class="song-main-btn" type="button">Save Changes</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js" defer></script>
-  <script src="/assets/song/song.js?v=REPLY-HEARTS-3" defer></script>
+  <script src="/assets/song/song.js?v=EDIT-SONG-1" defer></script>
 </body>
 </html>

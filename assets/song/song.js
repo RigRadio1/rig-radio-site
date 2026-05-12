@@ -214,6 +214,116 @@
     });
   };
 
+  const bindEditSong = (client, track, currentUser) => {
+    const editBtn = $("editSongBtn");
+    const modal = $("editSongModal");
+    const closeBtn = $("closeEditSong");
+    const saveBtn = $("saveEditSong");
+    const titleInput = $("editSongTitle");
+    const coverInput = $("editSongCover");
+    const lyricsInput = $("editSongLyrics");
+
+    if (!editBtn || !modal || !closeBtn || !saveBtn || !titleInput || !coverInput || !lyricsInput) return;
+
+    const isOwner = currentUser?.id && track?.user_id && currentUser.id === track.user_id;
+
+    if (!isOwner) {
+      editBtn.hidden = true;
+      editBtn.style.display = "none";
+      return;
+    }
+
+    editBtn.hidden = false;
+    editBtn.style.display = "";
+
+    const openModal = () => {
+      titleInput.value = track.title || "";
+      lyricsInput.value = track.lyrics || track.notes || track.description || "";
+      coverInput.value = "";
+      modal.hidden = false;
+    };
+
+    const closeModal = () => {
+      modal.hidden = true;
+    };
+
+    editBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeModal();
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      const newTitle = titleInput.value.trim();
+      const newLyrics = lyricsInput.value.trim();
+      const coverFile = coverInput.files && coverInput.files[0];
+
+      if (!newTitle) {
+        alert("Song title is required.");
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving...";
+
+      try {
+        const updates = {
+          title: newTitle,
+          lyrics: newLyrics
+        };
+
+        if (coverFile) {
+          const ext = (coverFile.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+          const coverPath = `${currentUser.id}/song-covers/${track.id}-${Date.now()}.${ext || "jpg"}`;
+
+          const { error: uploadError } = await client.storage
+            .from("tracks")
+            .upload(coverPath, coverFile, {
+              cacheControl: "3600",
+              upsert: true
+            });
+
+          if (uploadError) throw uploadError;
+
+          updates.cover_path = coverPath;
+        }
+
+        const { data: updatedTrack, error: updateError } = await client
+          .from("tracks")
+          .update(updates)
+          .eq("id", track.id)
+          .eq("user_id", currentUser.id)
+          .select("*")
+          .single();
+
+        if (updateError) throw updateError;
+
+        currentTrack = updatedTrack;
+        track.title = updatedTrack.title;
+        track.lyrics = updatedTrack.lyrics;
+        track.cover_path = updatedTrack.cover_path || track.cover_path;
+
+        $("songTitle").textContent = updatedTrack.title || "Untitled Song";
+        $("songLyrics").textContent = updatedTrack.lyrics || "No lyrics added yet.";
+        document.title = `${updatedTrack.title || "Untitled Song"} | Rig-Radio`;
+
+        if (updates.cover_path) {
+          const newCoverUrl = await signTrackKey(client, updates.cover_path);
+          if (newCoverUrl) $("songCover").src = newCoverUrl;
+        }
+
+        closeModal();
+      } catch (err) {
+        console.error("EDIT SONG ERROR:", err);
+        alert("Could not save song changes.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Changes";
+      }
+    });
+  };
+
   const bindComments = async (client, trackId, currentUser) => {
     const input = $("commentInput");
     const postBtn = $("postCommentBtn");
@@ -635,6 +745,7 @@
 
     bindPlayer(client, track);
     bindLike(client, track, currentUser);
+    bindEditSong(client, track, currentUser);
     await bindComments(client, track.id, currentUser);
 
     if (track.user_id) {
