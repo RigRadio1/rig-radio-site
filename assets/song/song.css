@@ -384,3 +384,37 @@ body .rr-topbar-right .rr-link:hover{
   border-color:rgba(255,255,255,.5) !important;
   color:#fff !important;
 }
+
+/* CUSTOM SONG PLAYER */
+.song-player-card audio{
+  display:none;
+}
+
+.custom-player{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:14px;
+  align-items:center;
+}
+
+.player-toggle{
+  border:1px solid rgba(255,255,255,.35);
+  background:linear-gradient(135deg, #ff6a2a, #d92f24);
+  color:#fff;
+  border-radius:999px;
+  padding:10px 18px;
+  font-weight:1000;
+  cursor:pointer;
+}
+
+.player-seek{
+  width:100%;
+  accent-color:#ff6a2a;
+}
+
+.player-time{
+  color:rgba(244,241,234,.78);
+  font-weight:800;
+  font-size:.86rem;
+  white-space:nowrap;
+}

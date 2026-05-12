@@ -50,7 +50,13 @@
         </div>
 
         <div class="song-player-card">
-          <audio id="songPlayer" controls preload="none" controlsList="nodownload noplaybackrate"></audio>
+          <audio id="songPlayer" preload="none" controlsList="nodownload noplaybackrate"></audio>
+
+          <div class="custom-player">
+            <button id="playerToggle" class="player-toggle" type="button">Play</button>
+            <input id="playerSeek" class="player-seek" type="range" min="0" max="100" value="0" />
+            <span id="playerTime" class="player-time">0:00 / 0:00</span>
+          </div>
         </div>
 
         <div class="song-actions">
@@ -84,6 +90,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js" defer></script>
-  <script src="/assets/song/song.js?v=PLAYCOUNT-1" defer></script>
+  <script src="/assets/song/song.js?v=PLAYER-FIX-1" defer></script>
 </body>
 </html>
