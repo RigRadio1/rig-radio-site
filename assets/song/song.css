@@ -497,3 +497,9 @@ body .rr-topbar-right .rr-link:hover{
   border-color:rgba(255,106,42,.75);
   background:rgba(255,106,42,.14);
 }
+
+/* EMOJI FONT FIX */
+.emoji-row button{
+  font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",system-ui,sans-serif;
+  line-height:1;
+}
