@@ -1880,3 +1880,39 @@ body {
   font-size: 13px;
   letter-spacing: 0.08em;
 }
+
+/* COMMUNITY RECENT UPLOADS TIGHTEN */
+.uploads {
+  min-height: auto;
+}
+
+.upload-list {
+  gap: 12px;
+}
+
+.upload-item {
+  min-height: 66px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.upload-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex: 0 0 48px;
+}
+
+.upload-item strong {
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.upload-item p {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.card.uploads {
+  padding-bottom: 18px;
+}
