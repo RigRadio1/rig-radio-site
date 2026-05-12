@@ -1261,38 +1261,83 @@
 }
 
 
+
+
 /* MEMBER NOTIFICATIONS */
 .member-notifications{
-  margin-top:18px;
-  border:1px solid rgba(255,106,42,.28);
-  border-radius:22px;
-  background:rgba(0,0,0,.34);
-  padding:16px;
-  max-width:560px;
+  margin-top:14px;
+  max-width:300px;
 }
 
-.member-notifications-head{
+.notification-summary{
+  width:100%;
+  border:1px solid rgba(255,106,42,.55);
+  background:rgba(255,106,42,.10);
+  color:#fff;
+  border-radius:999px;
+  padding:10px 15px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:12px;
-  margin-bottom:12px;
+  cursor:pointer;
+  font-weight:900;
 }
 
-.member-notifications-head h3{
+.notification-summary.has-new{
+  background:linear-gradient(135deg, rgba(255,106,42,.38), rgba(217,47,36,.28));
+  box-shadow:0 0 22px rgba(255,106,42,.22);
+}
+
+.notification-summary strong{
+  color:#ff7a2f;
+}
+
+.notifications-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,.72);
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+
+.notifications-modal[hidden]{
+  display:none;
+}
+
+.notifications-modal-card{
+  width:min(620px, 96vw);
+  max-height:80vh;
+  overflow:hidden;
+  border:1px solid rgba(255,106,42,.42);
+  border-radius:24px;
+  background:#101010;
+  box-shadow:0 30px 90px rgba(0,0,0,.7);
+  padding:18px;
+}
+
+.notifications-modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.notifications-modal-head h3{
   margin:0;
   color:#fff;
-  font-size:1rem;
-  letter-spacing:.04em;
   text-transform:uppercase;
+  letter-spacing:.08em;
 }
 
-.member-notifications-head button{
-  border:1px solid rgba(255,106,42,.55);
-  background:rgba(255,106,42,.13);
+.notifications-modal-head button{
+  border:1px solid rgba(255,106,42,.6);
+  background:rgba(255,106,42,.14);
   color:#fff;
   border-radius:999px;
-  padding:7px 12px;
+  padding:8px 12px;
   font-weight:900;
   cursor:pointer;
 }
@@ -1300,7 +1345,7 @@
 .member-notifications-list{
   display:grid;
   gap:10px;
-  max-height:330px;
+  max-height:52vh;
   overflow-y:auto;
   padding-right:6px;
 }
@@ -1334,4 +1379,16 @@
   margin-top:4px;
   color:rgba(244,241,234,.58);
   font-size:.8rem;
+}
+
+.mark-notifications-read{
+  width:100%;
+  margin-top:14px;
+  border:0;
+  border-radius:999px;
+  padding:12px 16px;
+  background:linear-gradient(135deg, #ff6a2a, #d92f24);
+  color:#fff;
+  font-weight:1000;
+  cursor:pointer;
 }

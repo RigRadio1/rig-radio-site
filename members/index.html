@@ -57,16 +57,27 @@
             <span>0 followers</span>
             <span>0 following</span>
           </div>
-
           <section id="memberNotifications" class="member-notifications" hidden>
-            <div class="member-notifications-head">
-              <h3>Notifications</h3>
-              <button type="button" id="markNotificationsRead">Mark Read</button>
-            </div>
-            <div id="memberNotificationsList" class="member-notifications-list">
-              <p>No notifications yet.</p>
-            </div>
+            <button type="button" id="openNotificationsPanel" class="notification-summary">
+              <span>Notifications</span>
+              <strong id="notificationCount">0 new</strong>
+            </button>
           </section>
+
+          <div id="notificationsModal" class="notifications-modal" hidden>
+            <div class="notifications-modal-card">
+              <div class="notifications-modal-head">
+                <h3>Notifications</h3>
+                <button type="button" id="closeNotificationsModal">X</button>
+              </div>
+
+              <div id="memberNotificationsList" class="member-notifications-list">
+                <p>No notifications yet.</p>
+              </div>
+
+              <button type="button" id="markNotificationsRead" class="mark-notifications-read">Mark All Read</button>
+            </div>
+          </div>
         </div>
 
         <div class="profile-actions">
@@ -230,7 +241,7 @@
     </section>
 
   </main>
-  <script src="/assets/members/profile.js?v=NOTIFICATIONS-7"></script>
+  <script src="/assets/members/profile.js?v=NOTIFICATIONS-8"></script>
 </body>
 </html>
 

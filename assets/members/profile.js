@@ -698,10 +698,14 @@ function bindSongRowPlayback(rowEl) {
 
 async function loadMemberNotifications() {
   const box = document.getElementById("memberNotifications");
+  const countEl = document.getElementById("notificationCount");
+  const openBtn = document.getElementById("openNotificationsPanel");
+  const modal = document.getElementById("notificationsModal");
+  const closeBtn = document.getElementById("closeNotificationsModal");
   const list = document.getElementById("memberNotificationsList");
   const markReadBtn = document.getElementById("markNotificationsRead");
 
-  if (!box || !list) return;
+  if (!box || !countEl || !openBtn || !modal || !list) return;
 
   let notifyClient = window.supabaseClient || window._sb;
 
@@ -710,13 +714,7 @@ async function loadMemberNotifications() {
     notifyClient = window.supabaseClient || window._sb;
   }
 
-  if (!notifyClient) {
-    console.warn("NOTIFICATIONS: Supabase client not ready");
-    return;
-  }
-
-  const params = new URLSearchParams(window.location.search);
-  const requestedHandle = (params.get("handle") || "").trim();
+  if (!notifyClient) return;
 
   let sessionUser = currentUser || null;
 
@@ -727,66 +725,87 @@ async function loadMemberNotifications() {
     console.warn("NOTIFICATION SESSION ERROR:", err);
   }
 
+  const params = new URLSearchParams(window.location.search);
+  const requestedHandle = (params.get("handle") || "").trim();
+
   if (!sessionUser || requestedHandle) {
     box.hidden = true;
+    modal.hidden = true;
     return;
   }
-
-  box.hidden = false;
-  list.innerHTML = "<p>Loading notifications...</p>";
 
   const { data: notifications, error } = await notifyClient
     .from("member_notifications")
     .select("id, actor_id, track_id, type, message, is_read, created_at")
     .eq("recipient_id", sessionUser.id)
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(30);
 
   if (error) {
     console.warn("NOTIFICATIONS LOAD ERROR:", error);
-    list.innerHTML = "<p>Could not load notifications.</p>";
+    box.hidden = true;
     return;
   }
 
-  if (!notifications || notifications.length === 0) {
+  const notes = notifications || [];
+  const unreadCount = notes.filter((n) => !n.is_read).length;
+
+  box.hidden = false;
+  countEl.textContent = unreadCount === 1 ? "1 new" : `${unreadCount} new`;
+  openBtn.classList.toggle("has-new", unreadCount > 0);
+
+  if (!notes.length) {
     list.innerHTML = "<p>No notifications yet.</p>";
-    return;
+  } else {
+    const actorIds = [...new Set(notes.map((n) => n.actor_id).filter(Boolean))];
+    let profilesById = new Map();
+
+    if (actorIds.length) {
+      const { data: profiles } = await notifyClient
+        .from("member_profiles")
+        .select("id, display_name, handle")
+        .in("id", actorIds);
+
+      profilesById = new Map((profiles || []).map((p) => [p.id, p]));
+    }
+
+    list.innerHTML = notes.map((note) => {
+      const actor = profilesById.get(note.actor_id);
+      const actorName = actor?.display_name || actor?.handle || "A Rig-Radio member";
+      const date = new Date(note.created_at).toLocaleString();
+      const statusClass = note.is_read ? "is-read" : "is-unread";
+      const label = note.type === "song_comment" ? "commented on" : "liked";
+
+      return `
+        <a class="member-notification ${statusClass}" href="/song.html?id=${encodeURIComponent(note.track_id || "")}">
+          <div>
+            <strong>${actorName}</strong> ${label} your song.
+            <span>${date}</span>
+          </div>
+        </a>
+      `;
+    }).join("");
   }
 
-  const actorIds = [...new Set(notifications.map((n) => n.actor_id).filter(Boolean))];
-  let profilesById = new Map();
+  openBtn.onclick = () => {
+    modal.hidden = false;
+  };
 
-  if (actorIds.length) {
-    const { data: profiles } = await notifyClient
-      .from("member_profiles")
-      .select("id, display_name, handle")
-      .in("id", actorIds);
-
-    profilesById = new Map((profiles || []).map((p) => [p.id, p]));
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      modal.hidden = true;
+    };
   }
 
-  list.innerHTML = notifications.map((note) => {
-    const actor = profilesById.get(note.actor_id);
-    const actorName = actor?.display_name || actor?.handle || "A Rig-Radio member";
-    const date = new Date(note.created_at).toLocaleString();
-    const statusClass = note.is_read ? "is-read" : "is-unread";
-    const label = note.type === "song_comment" ? "commented on" : "liked";
-
-    return `
-      <a class="member-notification ${statusClass}" href="/song.html?id=${encodeURIComponent(note.track_id || "")}">
-        <div>
-          <strong>${actorName}</strong> ${label} your song.
-          <span>${date}</span>
-        </div>
-      </a>
-    `;
-  }).join("");
+  modal.onclick = (event) => {
+    if (event.target === modal) modal.hidden = true;
+  };
 
   if (markReadBtn) {
     markReadBtn.onclick = async () => {
       markReadBtn.disabled = true;
 
-      const { error: updateError } = await window.supabaseClient
+      const { error: updateError } = await notifyClient
         .from("member_notifications")
         .update({ is_read: true })
         .eq("recipient_id", sessionUser.id)
@@ -796,6 +815,7 @@ async function loadMemberNotifications() {
         console.warn("NOTIFICATIONS READ ERROR:", updateError);
       }
 
+      modal.hidden = true;
       await loadMemberNotifications();
       markReadBtn.disabled = false;
     };
