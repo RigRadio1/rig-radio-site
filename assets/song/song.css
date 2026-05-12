@@ -472,3 +472,28 @@ body .rr-topbar-right .rr-link:hover{
   color:rgba(244,241,234,.84);
   line-height:1.45;
 }
+
+/* COMMENT EMOJI BAR */
+.emoji-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:4px;
+}
+
+.emoji-row button{
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.07);
+  border-radius:999px;
+  width:42px;
+  height:36px;
+  font-size:1.15rem;
+  cursor:pointer;
+  transition:transform .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.emoji-row button:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,106,42,.75);
+  background:rgba(255,106,42,.14);
+}

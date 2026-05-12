@@ -248,6 +248,14 @@
       }).join("");
     };
 
+    document.querySelectorAll("[data-emoji]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const emoji = btn.dataset.emoji || "";
+        input.value = input.value ? input.value + " " + emoji : emoji;
+        input.focus();
+      });
+    });
+
     await renderComments();
 
     if (!currentUser) {

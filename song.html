@@ -62,7 +62,7 @@
         <div class="song-actions">
           <button id="likeSongBtn" class="song-main-btn" type="button">? Like</button>
           <button id="editSongBtn" class="song-ghost-btn" type="button" hidden>Edit Song</button>
-          <span id="songStats">0 plays · 0 likes</span>
+          <span id="songStats">0 plays ï¿½ 0 likes</span>
         </div>
       </div>
     </section>
@@ -77,6 +77,15 @@
         <h2>Comments</h2>
 
         <div class="comment-box">
+          <div class="emoji-row" aria-label="Quick emoji reactions">
+            <button type="button" data-emoji="??">??</button>
+            <button type="button" data-emoji="??">??</button>
+            <button type="button" data-emoji="??">??</button>
+            <button type="button" data-emoji="??">??</button>
+            <button type="button" data-emoji="??">??</button>
+            <button type="button" data-emoji="??">??</button>
+          </div>
+
           <textarea id="commentInput" placeholder="Leave a comment..."></textarea>
           <button id="postCommentBtn" class="song-main-btn" type="button">Post Comment</button>
         </div>
@@ -90,6 +99,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js" defer></script>
-  <script src="/assets/song/song.js?v=COMMENTS-1" defer></script>
+  <script src="/assets/song/song.js?v=EMOJI-1" defer></script>
 </body>
 </html>
