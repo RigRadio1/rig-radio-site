@@ -696,6 +696,88 @@ function bindSongRowPlayback(rowEl) {
 
 
 
+async function loadMemberNotifications() {
+  const box = document.getElementById("memberNotifications");
+  const list = document.getElementById("memberNotificationsList");
+  const markReadBtn = document.getElementById("markNotificationsRead");
+
+  if (!box || !list || !window.supabaseClient) return;
+
+  if (!currentUser || !viewingOwnProfile) {
+    box.hidden = true;
+    return;
+  }
+
+  box.hidden = false;
+  list.innerHTML = "<p>Loading notifications...</p>";
+
+  const { data: notifications, error } = await window.supabaseClient
+    .from("member_notifications")
+    .select("id, actor_id, track_id, type, message, is_read, created_at")
+    .eq("recipient_id", currentUser.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error) {
+    console.warn("NOTIFICATIONS LOAD ERROR:", error);
+    list.innerHTML = "<p>Could not load notifications.</p>";
+    return;
+  }
+
+  if (!notifications || notifications.length === 0) {
+    list.innerHTML = "<p>No notifications yet.</p>";
+    return;
+  }
+
+  const actorIds = [...new Set(notifications.map((n) => n.actor_id).filter(Boolean))];
+  let profilesById = new Map();
+
+  if (actorIds.length) {
+    const { data: profiles } = await window.supabaseClient
+      .from("member_profiles")
+      .select("id, display_name, handle")
+      .in("id", actorIds);
+
+    profilesById = new Map((profiles || []).map((p) => [p.id, p]));
+  }
+
+  list.innerHTML = notifications.map((note) => {
+    const actor = profilesById.get(note.actor_id);
+    const actorName = actor?.display_name || actor?.handle || "A Rig-Radio member";
+    const date = new Date(note.created_at).toLocaleString();
+    const statusClass = note.is_read ? "is-read" : "is-unread";
+    const label = note.type === "song_comment" ? "commented" : "liked";
+
+    return `
+      <a class="member-notification ${statusClass}" href="/song.html?id=${encodeURIComponent(note.track_id || "")}">
+        <div>
+          <strong>${actorName}</strong> ${label} your song.
+          <span>${date}</span>
+        </div>
+      </a>
+    `;
+  }).join("");
+
+  if (markReadBtn) {
+    markReadBtn.onclick = async () => {
+      markReadBtn.disabled = true;
+
+      const { error: updateError } = await window.supabaseClient
+        .from("member_notifications")
+        .update({ is_read: true })
+        .eq("recipient_id", currentUser.id)
+        .eq("is_read", false);
+
+      if (updateError) {
+        console.warn("NOTIFICATIONS READ ERROR:", updateError);
+      }
+
+      await loadMemberNotifications();
+      markReadBtn.disabled = false;
+    };
+  }
+}
+
 async function updateFollowStats() {
   if (!window.supabaseClient || !profileOwnerId) return;
 
@@ -853,7 +935,7 @@ async function openFeaturedPicker() {
           <p class="profile-kicker">Featured Track</p>
           <h2>Choose Featured Song</h2>
         </div>
-        <button type="button" class="featured-picker-close" data-close-featured-picker="1">×</button>
+        <button type="button" class="featured-picker-close" data-close-featured-picker="1">ï¿½</button>
       </div>
 
       <div class="featured-picker-list">
@@ -869,7 +951,7 @@ async function openFeaturedPicker() {
                   <button class="featured-picker-row" type="button" data-featured-track-id="${escapeHtml(track.id)}">
                     <span>
                       <strong>${title}</strong>
-                      <small>${plays} plays · ${sub}</small>
+                      <small>${plays} plays ï¿½ ${sub}</small>
                     </span>
                     <em>${isCurrent ? "Current" : "Choose"}</em>
                   </button>
@@ -1191,7 +1273,7 @@ async function loadMemberPlaylists() {
         <div class="playlist-thumb placeholder-thumb"></div>
         <div>
           <h3>${escapeHtml(playlist.title || "Untitled playlist")}</h3>
-          <p>${escapeHtml(count)} songs · ${escapeHtml(typeLabel)}${viewingOwnProfile ? " · " + escapeHtml(visibility) : ""}</p>
+          <p>${escapeHtml(count)} songs ï¿½ ${escapeHtml(typeLabel)}${viewingOwnProfile ? " ï¿½ " + escapeHtml(visibility) : ""}</p>
           ${viewingOwnProfile ? `<div class="playlist-card-actions"><button type="button" class="secondary-btn playlist-cover-btn" data-playlist-cover="${playlist.id}">Upload Cover</button><button type="button" class="secondary-btn" data-edit-playlist-title="${playlist.id}">Edit Title</button><button type="button" class="secondary-btn playlist-delete-btn" data-delete-playlist="${playlist.id}">Delete Playlist</button></div>` : ""}
         </div>
       `;
@@ -1730,7 +1812,7 @@ function fillSocialInputs(socials = {}) {
   });
 }
 
-/* FINAL OVERRIDE — SOCIAL LINKS AS ICONS */
+/* FINAL OVERRIDE ï¿½ SOCIAL LINKS AS ICONS */
 function renderSocialLinks(socials = {}) {
   let wrap = document.getElementById("profileSocials");
   let links = document.getElementById("socialLinks");
