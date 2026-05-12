@@ -701,9 +701,19 @@ async function loadMemberNotifications() {
   const list = document.getElementById("memberNotificationsList");
   const markReadBtn = document.getElementById("markNotificationsRead");
 
-  const notifyClient = window.supabaseClient || window._sb;
+  if (!box || !list) return;
 
-  if (!box || !list || !notifyClient) return;
+  let notifyClient = window.supabaseClient || window._sb;
+
+  for (let i = 0; i < 50 && !notifyClient; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    notifyClient = window.supabaseClient || window._sb;
+  }
+
+  if (!notifyClient) {
+    console.warn("NOTIFICATIONS: Supabase client not ready");
+    return;
+  }
 
   const params = new URLSearchParams(window.location.search);
   const requestedHandle = (params.get("handle") || "").trim();
@@ -1919,3 +1929,15 @@ function renderSocialLinks(socials = {}) {
   }
 })();
 /* END MEMBER TOP NAV LOGOUT */
+
+
+/* NOTIFICATIONS RETRY AFTER AUTH LOAD */
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    if (typeof loadMemberNotifications === "function") loadMemberNotifications();
+  }, 500);
+
+  setTimeout(() => {
+    if (typeof loadMemberNotifications === "function") loadMemberNotifications();
+  }, 1500);
+});
