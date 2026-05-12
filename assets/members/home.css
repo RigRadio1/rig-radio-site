@@ -690,3 +690,34 @@
 .rr-home-news-card:has(#homeLatestNews.rr-is-collapsed) {
   min-height: 130px !important;
 }
+
+/* HOME GRID COLUMN CONTROL */
+.rr-home-page .rr-home-card-large {
+  grid-column: 1 / span 2 !important;
+}
+
+.rr-home-page .rr-home-top-songs-card,
+.rr-home-page .rr-home-picks-card,
+.rr-home-page .rr-home-news-card {
+  grid-column: 3 !important;
+  align-self: start !important;
+}
+
+.rr-home-page .rr-home-playlists-card {
+  grid-column: 1 / span 2 !important;
+}
+
+/* Kill old pull-up spacing now that right column is controlled */
+.rr-home-grid:has(#homeTopSongs.rr-is-collapsed) .rr-home-picks-card {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 1000px) {
+  .rr-home-page .rr-home-card-large,
+  .rr-home-page .rr-home-top-songs-card,
+  .rr-home-page .rr-home-picks-card,
+  .rr-home-page .rr-home-news-card,
+  .rr-home-page .rr-home-playlists-card {
+    grid-column: auto !important;
+  }
+}
