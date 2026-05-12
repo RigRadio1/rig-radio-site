@@ -503,3 +503,28 @@ body .rr-topbar-right .rr-link:hover{
   font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",system-ui,sans-serif;
   line-height:1;
 }
+
+/* KEEP COMMENTS PANEL FROM GROWING FOREVER */
+.comments-list{
+  max-height:520px;
+  overflow-y:auto;
+  padding-right:6px;
+}
+
+.comments-list::-webkit-scrollbar{
+  width:8px;
+}
+
+.comments-list::-webkit-scrollbar-track{
+  background:rgba(255,255,255,.06);
+  border-radius:999px;
+}
+
+.comments-list::-webkit-scrollbar-thumb{
+  background:rgba(255,106,42,.65);
+  border-radius:999px;
+}
+
+.comments-list::-webkit-scrollbar-thumb:hover{
+  background:rgba(255,106,42,.9);
+}
