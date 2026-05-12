@@ -786,3 +786,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* TIGHTEN HOME TOP SPACING */
+.rr-home-page .rr-home-grid {
+  margin-top: -18px;
+}
+
+/* SERVER UPDATES RIGHT COLUMN COLLAPSE */
+.rr-home-server-card {
+  align-self: start !important;
+}
+
+.rr-home-server-card:has(#homeServerUpdates.rr-is-collapsed) {
+  min-height: 130px !important;
+}
