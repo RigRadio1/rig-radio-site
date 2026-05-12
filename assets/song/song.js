@@ -49,6 +49,21 @@
     return null;
   };
 
+  const incLike = async (client, trackId) => {
+    try {
+      const { data, error } = await client.rpc("inc_like", { p_track_id: trackId });
+      if (error) return null;
+
+      if (Array.isArray(data) && data.length > 0) return data[0].inc_like ?? data[0];
+      if (typeof data === "number") return data;
+
+      return null;
+    } catch (err) {
+      console.warn("LIKE ERROR:", err);
+      return null;
+    }
+  };
+
   const loadSong = async () => {
     const params = new URLSearchParams(window.location.search);
     const trackId = params.get("id");
@@ -93,6 +108,32 @@
     $("songGenre").textContent = genre;
     $("songLyrics").textContent = lyrics;
     $("songStats").textContent = `${plays} plays · ${likes} likes`;
+
+    const likeBtn = $("likeSongBtn");
+    const likeKey = `song-liked:${track.id}`;
+
+    if (localStorage.getItem(likeKey) === "1") {
+      likeBtn.textContent = "? Liked";
+      likeBtn.disabled = true;
+    }
+
+    likeBtn.addEventListener("click", async () => {
+      if (localStorage.getItem(likeKey) === "1") return;
+
+      likeBtn.disabled = true;
+      likeBtn.textContent = "Liking...";
+
+      const newLikes = await incLike(client, track.id);
+
+      if (newLikes !== null) {
+        localStorage.setItem(likeKey, "1");
+        likeBtn.textContent = "? Liked";
+        $("songStats").textContent = `${plays} plays · ${newLikes} likes`;
+      } else {
+        likeBtn.disabled = false;
+        likeBtn.textContent = "? Like";
+      }
+    });
 
     const coverUrl =
       await signTrackKey(client, track.cover_path) ||
