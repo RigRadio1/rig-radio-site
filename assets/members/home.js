@@ -13,20 +13,62 @@
     return null;
   };
 
-  const signedCover = async (client, row) => {
-    if (row.cover_url) return row.cover_url;
-    if (!row.cover_path) return "/banner.png";
+  const cleanStorageKey = (value) => {
+    if (!value) return "";
+    const raw = String(value).trim();
+
+    if (/^https?:\/\//i.test(raw)) {
+      try {
+        const url = new URL(raw);
+        const marker = "/storage/v1/object/public/tracks/";
+        const idx = url.pathname.indexOf(marker);
+        if (idx >= 0) return decodeURIComponent(url.pathname.slice(idx + marker.length));
+        return raw;
+      } catch {
+        return raw;
+      }
+    }
+
+    return raw.replace(/^tracks\//, "").replace(/^\/+/, "");
+  };
+
+  const signTrackKey = async (client, key) => {
+    const cleanKey = cleanStorageKey(key);
+    if (!cleanKey) return "";
+
+    if (/^https?:\/\//i.test(cleanKey)) return cleanKey;
 
     try {
       const { data, error } = await client.storage
         .from("tracks")
-        .createSignedUrl(row.cover_path, 3600);
+        .createSignedUrl(cleanKey, 3600);
 
-      if (error || !data?.signedUrl) return "/banner.png";
+      if (error || !data?.signedUrl) return "";
       return data.signedUrl;
     } catch {
-      return "/banner.png";
+      return "";
     }
+  };
+
+  const signedCover = async (client, row) => {
+    if (!row) return "/banner.png";
+
+    if (row.cover_path) {
+      const url = await signTrackKey(client, row.cover_path);
+      if (url) return url;
+    }
+
+    if (row.cover_url) {
+      const url = await signTrackKey(client, row.cover_url);
+      if (url) return url;
+    }
+
+    if (row.artwork_url) {
+      const url = await signTrackKey(client, row.artwork_url);
+      if (url) return url;
+    }
+
+    return "/banner.png";
   };
 
   const renderSongList = async (client, el, rows) => {
