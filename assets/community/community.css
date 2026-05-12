@@ -2058,3 +2058,31 @@ body {
 .stats-grid div:nth-child(4) span {
   font-size: clamp(22px, 2vw, 30px);
 }
+
+/* COMMUNITY STATS HARD TEXT FIX */
+.stats-grid div span,
+.stats-grid span,
+#community-members-total,
+#community-tracks-total {
+  font-size: 30px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.02em !important;
+  white-space: nowrap !important;
+}
+
+.stats-grid div:nth-child(3) span,
+.stats-grid div:nth-child(4) span {
+  font-size: 24px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.stats-grid div {
+  justify-content: center !important;
+  padding: 18px !important;
+}
+
+.stats-grid strong {
+  font-size: 13px !important;
+  margin-bottom: 10px !important;
+}
