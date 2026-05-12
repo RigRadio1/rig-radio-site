@@ -563,3 +563,12 @@
 .rr-genre-list-toggle:hover {
   color: #ff9b5c;
 }
+
+/* RIG-RADIO PICKS COLLAPSE FIX */
+.rr-home-picks-card {
+  align-self: start !important;
+}
+
+.rr-home-picks-card:has(#homeRigPicks.rr-is-collapsed) {
+  min-height: 130px !important;
+}

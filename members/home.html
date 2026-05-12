@@ -6,7 +6,7 @@
   <title>Home | Rig-Radio Members</title>
   <link rel="stylesheet" href="/assets/community/community.css" />
   <link rel="stylesheet" href="/assets/members/profile.css" />
-  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-17" />
+  <link rel="stylesheet" href="/assets/members/home.css?v=command-center-18" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
@@ -68,11 +68,11 @@
     <div id="homeTopSongs" class="rr-home-song-list rr-is-collapsed"><p class="rr-home-muted">Loading top songs...</p></div>
   </article>
 
-  <article class="rr-home-card">
+  <article class="rr-home-card rr-home-picks-card">
     <div class="section-heading">
-      <h2>Rig-Radio Picks</h2>
+      <button type="button" class="rr-collapse-toggle" data-toggle-target="homeRigPicks">Rig-Radio Picks <span>Open</span></button>
     </div>
-    <div id="homeRigPicks" class="rr-home-song-list"><p class="rr-home-muted">Loading Rig-Radio picks...</p></div>
+    <div id="homeRigPicks" class="rr-home-song-list rr-is-collapsed"><p class="rr-home-muted">Loading Rig-Radio picks...</p></div>
   </article>
 
   <article class="rr-home-card">
