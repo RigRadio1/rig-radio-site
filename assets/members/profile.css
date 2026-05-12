@@ -1424,3 +1424,31 @@
 .featured-title-link{
   color:#ff5a2a;
 }
+
+/* FIX MEMBER SONG TITLE LINKS - CLICKABLE BUT NOT UGLY */
+.member-song-title-link,
+.member-song-title-link:visited,
+.member-song-title-link:active{
+  color:#ffffff !important;
+  text-decoration:none !important;
+  border:0 !important;
+  outline:none !important;
+}
+
+.member-song-title-link:hover{
+  color:#ff7a2f !important;
+  text-decoration:none !important;
+}
+
+.featured-title-link,
+.featured-title-link:visited,
+.featured-title-link:active{
+  color:#ff5a2a !important;
+  text-decoration:none !important;
+  border:0 !important;
+}
+
+.featured-title-link:hover{
+  color:#ff7a2f !important;
+  text-decoration:none !important;
+}
