@@ -41,13 +41,13 @@
     return clean.endsWith(".mp4") || clean.includes(".mp4");
   };
 
-  const setArtworkMedia = (url) => {
+  const setArtworkMedia = (url, forceVideo = false) => {
     const img = $("songCover");
     const video = $("songCoverVideo");
 
     if (!img) return;
 
-    if (video && isVideoArtwork(url)) {
+    if (video && (forceVideo || isVideoArtwork(url))) {
       img.hidden = true;
       video.hidden = false;
       video.src = url;
@@ -360,7 +360,7 @@
 
         if (updates.cover_path) {
           const newCoverUrl = await signTrackKey(client, updates.cover_path);
-          if (newCoverUrl) setArtworkMedia(newCoverUrl);
+          if (newCoverUrl) setArtworkMedia(newCoverUrl, coverFile?.type === "video/mp4");
         }
 
         closeModal();
@@ -776,6 +776,9 @@
     $("songLyrics").textContent = lyrics;
     updateStats();
 
+    const coverSource = track.cover_path || track.cover_url || track.artwork_url || "";
+    const coverIsVideo = isVideoArtwork(coverSource);
+
     const coverUrl =
       await signTrackKey(client, track.cover_path) ||
       await signTrackKey(client, track.cover_url) ||
@@ -783,7 +786,7 @@
       track.artwork_url ||
       "/banner.png";
 
-    setArtworkMedia(coverUrl || "/banner.png");
+    setArtworkMedia(coverUrl || "/banner.png", coverIsVideo);
 
     const audioUrl =
       await signTrackKey(client, track.track_path) ||
