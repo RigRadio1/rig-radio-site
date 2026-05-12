@@ -851,3 +851,8 @@
   margin-top: 4px !important;
   margin-bottom: 0 !important;
 }
+
+/* TOP PLAYLISTS POSITION FIX ONLY */
+.rr-home-playlists-card {
+  margin-top: -180px !important;
+}
