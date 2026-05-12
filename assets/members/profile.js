@@ -703,9 +703,19 @@ async function loadMemberNotifications() {
 
   if (!box || !list || !window.supabaseClient) return;
 
-  const isOwnProfile = !!currentUser && (viewingOwnProfile || profileOwnerId === currentUser.id);
+  const params = new URLSearchParams(window.location.search);
+  const requestedHandle = (params.get("handle") || "").trim();
 
-  if (!isOwnProfile) {
+  let sessionUser = currentUser || null;
+
+  try {
+    const { data } = await window.supabaseClient.auth.getSession();
+    sessionUser = data?.session?.user || sessionUser;
+  } catch (err) {
+    console.warn("NOTIFICATION SESSION ERROR:", err);
+  }
+
+  if (!sessionUser || requestedHandle) {
     box.hidden = true;
     return;
   }
@@ -716,7 +726,7 @@ async function loadMemberNotifications() {
   const { data: notifications, error } = await window.supabaseClient
     .from("member_notifications")
     .select("id, actor_id, track_id, type, message, is_read, created_at")
-    .eq("recipient_id", currentUser.id)
+    .eq("recipient_id", sessionUser.id)
     .order("created_at", { ascending: false })
     .limit(20);
 
@@ -748,7 +758,7 @@ async function loadMemberNotifications() {
     const actorName = actor?.display_name || actor?.handle || "A Rig-Radio member";
     const date = new Date(note.created_at).toLocaleString();
     const statusClass = note.is_read ? "is-read" : "is-unread";
-    const label = note.type === "song_comment" ? "commented" : "liked";
+    const label = note.type === "song_comment" ? "commented on" : "liked";
 
     return `
       <a class="member-notification ${statusClass}" href="/song.html?id=${encodeURIComponent(note.track_id || "")}">
@@ -767,7 +777,7 @@ async function loadMemberNotifications() {
       const { error: updateError } = await window.supabaseClient
         .from("member_notifications")
         .update({ is_read: true })
-        .eq("recipient_id", currentUser.id)
+        .eq("recipient_id", sessionUser.id)
         .eq("is_read", false);
 
       if (updateError) {
