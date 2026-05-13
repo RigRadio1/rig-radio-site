@@ -1928,9 +1928,31 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const featuredChoice = event.target.closest("[data-featured-track-id]");
-    if (featuredChoice) {
-      saveFeaturedTrack(featuredChoice.dataset.featuredTrackId);
+    const featuredToggle = event.target.closest("[data-featured-toggle-id]");
+    if (featuredToggle) {
+      const modal = document.getElementById("featuredPickerModal");
+      const selected = modal ? [...modal.querySelectorAll(".featured-picker-row.is-selected")].map((row) => row.dataset.featuredToggleId) : [];
+
+      if (!featuredToggle.classList.contains("is-selected") && selected.length >= 5) {
+        alert("You can feature up to 5 songs.");
+        return;
+      }
+
+      featuredToggle.classList.toggle("is-selected");
+
+      const label = featuredToggle.querySelector("em");
+      if (label) label.textContent = featuredToggle.classList.contains("is-selected") ? "Selected" : "Choose";
+
+      const count = modal?.querySelector("#featuredPickCount");
+      if (count) count.textContent = modal.querySelectorAll(".featured-picker-row.is-selected").length;
+
+      return;
+    }
+
+    if (event.target.closest("[data-save-featured-tracks]")) {
+      const modal = document.getElementById("featuredPickerModal");
+      const ids = modal ? [...modal.querySelectorAll(".featured-picker-row.is-selected")].map((row) => row.dataset.featuredToggleId) : [];
+      saveFeaturedTracks(ids);
       return;
     }
 
