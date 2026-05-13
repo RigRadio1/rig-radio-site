@@ -267,11 +267,19 @@
     .library-nav{
       max-width:1280px;
       margin:0 auto;
+      display:flex !important;
+      justify-content:space-between !important;
+      align-items:center !important;
+      gap:18px !important;
     }
 
     .library-nav .rr-topbar-left{
       font-size:1rem !important;
       color:#ff7a2f !important;
+      white-space:nowrap !important;
+      letter-spacing:.03em !important;
+      word-spacing:0 !important;
+      min-width:max-content !important;
     }
 
     .library-nav .rr-topbar-right{
@@ -425,22 +433,7 @@
     }
     /* END LIBRARY HERO / NAV FIXES */
 
-  
-    /* LIBRARY NAV LOGO TIGHTEN */
-    .library-nav .rr-topbar-left{
-      white-space:nowrap !important;
-      letter-spacing:.03em !important;
-      word-spacing:0 !important;
-      min-width:max-content !important;
-    }
 
-    .library-nav{
-      display:flex !important;
-      justify-content:space-between !important;
-      align-items:center !important;
-      gap:18px !important;
-    }
-    /* END LIBRARY NAV LOGO TIGHTEN */
 
   </style>
 </head>
@@ -520,3 +513,4 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/library.js?v=SOUND-CARD-LINK-1"></script>
   <script src="/auth.js" defer></script>
+
