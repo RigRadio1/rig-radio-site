@@ -5,6 +5,216 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rig-Radio — Sign In</title>
   <link rel="stylesheet" href="/rr.css" />
+
+  <style>
+    body.auth-page{
+      min-height:100vh;
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(255,90,24,.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(255,34,34,.12), transparent 30%),
+        #070707 !important;
+      color:#f4f1ea;
+    }
+
+    .auth-topbar{
+      max-width:1280px;
+      margin:0 auto;
+      padding:18px 24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+
+    .auth-brand{
+      white-space:nowrap;
+      color:#ff7a2f;
+      text-decoration:none;
+      font-weight:1000;
+      letter-spacing:.03em;
+    }
+
+    .auth-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+    }
+
+    .auth-nav a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:0 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,106,42,.65);
+      background:rgba(255,106,42,.08);
+      color:#fff;
+      text-decoration:none;
+      font-weight:900;
+      font-size:.78rem;
+      letter-spacing:.04em;
+    }
+
+    .auth-nav a:hover{
+      background:linear-gradient(135deg, #ff6a2a, #d92f24);
+      box-shadow:0 0 22px rgba(255,106,42,.26);
+    }
+
+    main{
+      max-width:1280px;
+      margin:0 auto;
+      padding:12px 22px 46px;
+    }
+
+    .auth-layout{
+      display:grid;
+      grid-template-columns:minmax(0, 1.35fr) minmax(360px, 460px);
+      gap:22px;
+      align-items:stretch;
+    }
+
+    .auth-hero{
+      position:relative;
+      overflow:hidden;
+      min-height:520px;
+      padding:42px;
+      border-radius:30px;
+      border:1px solid rgba(255,106,42,.34);
+      background:
+        radial-gradient(circle at top left, rgba(255,106,42,.24), transparent 36%),
+        linear-gradient(135deg, rgba(255,106,42,.18), rgba(217,47,36,.09)),
+        rgba(10,10,10,.92);
+      box-shadow:0 26px 90px rgba(0,0,0,.46);
+      display:flex;
+      align-items:flex-end;
+    }
+
+    .auth-hero-ghost{
+      position:absolute;
+      right:-18px;
+      bottom:-30px;
+      color:rgba(255,255,255,.045);
+      font-size:clamp(5rem, 14vw, 12rem);
+      font-weight:1000;
+      letter-spacing:.04em;
+      line-height:.8;
+      pointer-events:none;
+      user-select:none;
+    }
+
+    .auth-hero-content{
+      position:relative;
+      z-index:2;
+      max-width:720px;
+    }
+
+    .auth-kicker{
+      margin:0 0 10px;
+      color:#ff7a2f;
+      font-size:.8rem;
+      font-weight:1000;
+      letter-spacing:.16em;
+    }
+
+    .auth-hero h1{
+      margin:0 0 10px;
+      color:#fff;
+      font-size:clamp(2.8rem, 7vw, 6rem);
+      line-height:.92;
+      letter-spacing:-.05em;
+    }
+
+    .auth-hero p{
+      margin:0;
+      color:rgba(244,241,234,.78);
+      font-size:1.05rem;
+      line-height:1.55;
+    }
+
+    .card{
+      border-radius:28px !important;
+      padding:30px !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(9,9,9,.88) !important;
+      border:1px solid rgba(255,255,255,.085) !important;
+      box-shadow:0 18px 56px rgba(0,0,0,.28) !important;
+      align-self:center;
+    }
+
+    .card h1{
+      margin-top:0;
+      color:#fff;
+      font-size:2rem;
+      letter-spacing:-.03em;
+    }
+
+    .card label{
+      display:block;
+      margin:14px 0 7px;
+      color:rgba(244,241,234,.72);
+      font-weight:800;
+      font-size:.86rem;
+    }
+
+    .card input{
+      width:100%;
+      min-height:46px;
+      box-sizing:border-box;
+      border-radius:999px;
+      border:1px solid rgba(255,106,42,.35);
+      background:rgba(255,255,255,.055);
+      color:#fff;
+      padding:0 15px;
+      outline:none;
+    }
+
+    .card input:focus{
+      border-color:rgba(255,106,42,.85);
+      box-shadow:0 0 0 3px rgba(255,106,42,.12);
+    }
+
+    .btn-primary{
+      width:100%;
+      min-height:46px;
+      margin-top:18px;
+      border-radius:999px;
+      border:1px solid rgba(255,106,42,.75);
+      background:linear-gradient(135deg, #ff6a2a, #d92f24);
+      color:#fff;
+      font-weight:1000;
+      cursor:pointer;
+    }
+
+    .btn-primary:hover{
+      background:linear-gradient(135deg, #ff7a3a, #ff3b3b);
+    }
+
+    .auth-switch{
+      text-align:center;
+      color:rgba(244,241,234,.72);
+    }
+
+    .auth-switch a{
+      color:#ff7a2f;
+      font-weight:900;
+      text-decoration:none;
+    }
+
+    @media (max-width:900px){
+      .auth-layout{
+        grid-template-columns:1fr;
+      }
+
+      .auth-hero{
+        min-height:300px;
+      }
+    }
+  </style>
+
 </head>
 
 <body class="auth-page">
