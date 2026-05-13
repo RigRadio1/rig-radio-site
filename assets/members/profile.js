@@ -501,12 +501,12 @@ async function loadProfileIdentity() {
     }
 
     currentProfile = data || null;
-    profileOwnerId = currentProfile?.id || (!requestedHandle && !requestedId ? user?.id : null) || null;
+    profileOwnerId = currentProfile?.id || requestedId || (!requestedHandle && !requestedId ? user?.id : null) || null;
     viewingOwnProfile = !!user && !!profileOwnerId && String(user.id) === String(profileOwnerId);
 
     setOwnerControls();
 
-    if (!currentProfile && (requestedHandle || requestedId)) {
+    if (!currentProfile && requestedHandle) {
       const nameEl = document.querySelector(".profile-identity h1");
       const handleEl = document.querySelector(".profile-handle");
       const aboutText = document.querySelector(".profile-about p:last-child");

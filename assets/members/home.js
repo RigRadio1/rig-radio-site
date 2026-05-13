@@ -85,7 +85,7 @@
       const cover = await signedCover(client, r);
       const title = esc(r.title || "Untitled");
       const artist = esc(r.artist || "Unknown Artist");
-      const genre = esc(r.genre || "—");
+      const genre = esc(r.genre || "ï¿½");
       const plays = scorePlays(r);
       const likes = scoreLikes(r);
 
@@ -95,7 +95,7 @@
           <div>
             <strong>${title}</strong>
             <span>${artist}</span>
-            <em>${genre} · ${plays} plays · ${likes} likes</em>
+            <em>${genre} ï¿½ ${plays} plays ï¿½ ${likes} likes</em>
           </div>
         </a>
       `;
@@ -280,8 +280,8 @@
 
     const { data: members } = await client
       .from("member_profiles")
-      .select("display_name,handle,avatar_path,updated_at")
-      .order("updated_at", { ascending: false })
+      .select("display_name,handle,avatar_path,created_at")
+      .order("created_at", { ascending: false })
       .limit(5);
 
     await renderMembers(client, membersEl, members || []);
