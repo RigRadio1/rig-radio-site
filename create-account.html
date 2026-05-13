@@ -77,11 +77,219 @@
       transition:.2s;
     }
     .cta:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* CREATE ACCOUNT NEW THEME */
+    body.auth-page{
+      min-height:100vh !important;
+      margin:0 !important;
+      background:
+        radial-gradient(circle at top left, rgba(255,90,24,.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(255,34,34,.12), transparent 30%),
+        #070707 !important;
+      color:#f4f1ea !important;
+    }
+
+    .smoke:before{
+      display:none !important;
+    }
+
+    .auth-topbar{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 24px 10px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .auth-brand{
+      color:#ff7a2f;
+      text-decoration:none;
+      font-weight:1000;
+      letter-spacing:.03em;
+      font-size:.95rem;
+    }
+
+    main{
+      max-width:980px;
+      margin:0 auto;
+      padding:14px 22px 42px;
+    }
+
+    .container{
+      height:auto !important;
+      min-height:auto !important;
+      display:grid !important;
+      grid-template-columns:1fr !important;
+      gap:18px !important;
+      justify-items:center !important;
+      align-items:start !important;
+    }
+
+    .auth-hero{
+      position:relative;
+      overflow:hidden;
+      width:100%;
+      min-height:235px;
+      padding:30px 34px;
+      border-radius:28px;
+      border:1px solid rgba(255,106,42,.34);
+      background:
+        radial-gradient(circle at top left, rgba(255,106,42,.24), transparent 36%),
+        linear-gradient(135deg, rgba(255,106,42,.18), rgba(217,47,36,.09)),
+        rgba(10,10,10,.92);
+      box-shadow:0 26px 90px rgba(0,0,0,.46);
+      display:flex;
+      align-items:center;
+    }
+
+    .auth-hero-ghost{
+      position:absolute;
+      right:-10px;
+      bottom:-16px;
+      color:rgba(255,255,255,.045);
+      font-size:clamp(4rem, 14vw, 8rem);
+      font-weight:1000;
+      letter-spacing:.04em;
+      line-height:.8;
+      pointer-events:none;
+      user-select:none;
+    }
+
+    .auth-hero-content{
+      position:relative;
+      z-index:2;
+      max-width:660px;
+    }
+
+    .auth-kicker{
+      margin:0 0 10px;
+      color:#ff7a2f;
+      font-size:.8rem;
+      font-weight:1000;
+      letter-spacing:.16em;
+    }
+
+    .auth-hero h1{
+      margin:0 0 10px;
+      color:#fff;
+      font-size:clamp(2.4rem, 6vw, 4.2rem);
+      line-height:.95;
+      letter-spacing:-.05em;
+    }
+
+    .auth-hero p{
+      margin:0;
+      color:rgba(244,241,234,.78);
+      font-size:.98rem;
+      line-height:1.55;
+    }
+
+    .card{
+      width:min(540px, 100%) !important;
+      max-width:540px !important;
+      margin:0 auto !important;
+      padding:30px !important;
+      border-radius:26px !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(9,9,9,.92) !important;
+      border:1px solid rgba(255,106,42,.24) !important;
+      box-shadow:0 20px 70px rgba(0,0,0,.42) !important;
+    }
+
+    .card h2{
+      margin:0 0 18px !important;
+      color:#fff !important;
+      text-align:center !important;
+      font-size:1.65rem !important;
+      letter-spacing:-.02em !important;
+    }
+
+    .label{
+      color:rgba(244,241,234,.78) !important;
+      font-weight:800 !important;
+      font-size:.86rem !important;
+    }
+
+    .input{
+      width:100%;
+      min-height:46px;
+      border-radius:999px !important;
+      border:1px solid rgba(255,106,42,.34) !important;
+      background:rgba(255,255,255,.06) !important;
+      color:#fff !important;
+      -webkit-text-fill-color:#fff !important;
+      padding:0 15px !important;
+      outline:none;
+    }
+
+    .input:focus{
+      border-color:rgba(255,106,42,.85) !important;
+      box-shadow:0 0 0 3px rgba(255,106,42,.12) !important;
+    }
+
+    .input:-webkit-autofill,
+    .input:-webkit-autofill:hover,
+    .input:-webkit-autofill:focus{
+      -webkit-text-fill-color:#fff !important;
+      box-shadow:0 0 0 1000px #151515 inset !important;
+      border:1px solid rgba(255,106,42,.44) !important;
+      transition:background-color 9999s ease-in-out 0s !important;
+    }
+
+    .cta{
+      min-height:46px;
+      border-radius:999px !important;
+      border:1px solid rgba(255,106,42,.8) !important;
+      background:linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+      color:#fff !important;
+      font-weight:1000 !important;
+      box-shadow:none !important;
+    }
+
+    .cta:hover{
+      background:linear-gradient(135deg, #ff7a3a, #ff3b3b) !important;
+    }
+
+    .card p{
+      text-align:center;
+      color:rgba(244,241,234,.72);
+    }
+
+    .card a{
+      color:#ff7a2f;
+      font-weight:900;
+      text-decoration:none;
+    }
+
+    @media (max-width:700px){
+      .auth-hero{
+        min-height:210px;
+        padding:26px 22px;
+      }
+    }
+    /* END CREATE ACCOUNT NEW THEME */
+
   </style>
 </head>
-<body class="smoke">
-  <div class="container">
-    <div class="card">
+<body class="smoke auth-page">
+  <header class="auth-topbar">
+    <a class="auth-brand" href="/">RIG-RADIO</a>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="auth-hero">
+        <div class="auth-hero-ghost">JOIN</div>
+        <div class="auth-hero-content">
+          <p class="auth-kicker">RIG-RADIO MEMBERS</p>
+          <h1>Create Account</h1>
+          <p>Build your member profile, upload songs, follow creators, and join the independent music network.</p>
+        </div>
+      </section>
+
+      <div class="card">
       <h2>Create Account</h2>
 
       <div class="field">
@@ -113,8 +321,9 @@
 
       <button class="cta" type="button" id="createAccountBtn">Create Account</button>
       <p style="margin-top:1rem;">Already have an account? <a href="login.html">Log in</a></p>
+        </div>
     </div>
-  </div>
+  </main>
 
   <!-- Supabase init -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
