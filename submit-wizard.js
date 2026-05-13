@@ -12,6 +12,15 @@
     });
   } catch {}
 
+
+  const submitLogout = byId("submitLogout");
+  if (submitLogout && !submitLogout.dataset.bound) {
+    submitLogout.dataset.bound = "1";
+    submitLogout.addEventListener("click", async () => {
+      try { await _client.auth.signOut(); } catch {}
+      window.location.href = "/";
+    });
+  }
   // Wizard scaffolding
   let step = 1;
   const total = 5;
