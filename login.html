@@ -215,17 +215,123 @@
     }
   </style>
 
+
+  <style>
+    /* LOGIN PAGE FINAL TIGHTEN */
+    .auth-topbar{
+      justify-content:center !important;
+      padding:18px 24px 10px !important;
+    }
+
+    .auth-brand{
+      color:#ff7a2f !important;
+      font-size:.95rem !important;
+      text-align:center !important;
+    }
+
+    main{
+      max-width:980px !important;
+      padding:14px 22px 42px !important;
+    }
+
+    .auth-layout{
+      display:grid !important;
+      grid-template-columns:1fr !important;
+      gap:18px !important;
+      align-items:start !important;
+      justify-items:center !important;
+    }
+
+    .auth-hero{
+      width:100% !important;
+      min-height:235px !important;
+      padding:30px 34px !important;
+      align-items:center !important;
+      border-radius:28px !important;
+    }
+
+    .auth-hero h1{
+      font-size:clamp(2.4rem, 6vw, 4.2rem) !important;
+      line-height:.95 !important;
+    }
+
+    .auth-hero p{
+      max-width:620px !important;
+      font-size:.98rem !important;
+    }
+
+    .auth-hero-ghost{
+      font-size:clamp(4rem, 14vw, 8rem) !important;
+      right:-10px !important;
+      bottom:-16px !important;
+    }
+
+    .card{
+      width:min(520px, 100%) !important;
+      max-width:520px !important;
+      align-self:auto !important;
+      margin:0 auto !important;
+      border-radius:26px !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(9,9,9,.92) !important;
+      border:1px solid rgba(255,106,42,.24) !important;
+      box-shadow:0 20px 70px rgba(0,0,0,.42) !important;
+    }
+
+    .card h1{
+      color:#fff !important;
+      text-align:center !important;
+      font-size:1.65rem !important;
+      letter-spacing:-.02em !important;
+    }
+
+    .card label{
+      color:rgba(244,241,234,.78) !important;
+      text-align:left !important;
+    }
+
+    .card input{
+      background:rgba(255,255,255,.06) !important;
+      border:1px solid rgba(255,106,42,.34) !important;
+      color:#fff !important;
+      -webkit-text-fill-color:#fff !important;
+      caret-color:#fff !important;
+    }
+
+    .card input:-webkit-autofill,
+    .card input:-webkit-autofill:hover,
+    .card input:-webkit-autofill:focus{
+      -webkit-text-fill-color:#fff !important;
+      box-shadow:0 0 0 1000px #151515 inset !important;
+      border:1px solid rgba(255,106,42,.44) !important;
+      transition:background-color 9999s ease-in-out 0s !important;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+      border:1px solid rgba(255,106,42,.8) !important;
+      color:#fff !important;
+    }
+
+    .auth-switch{
+      margin-bottom:0 !important;
+    }
+
+    @media (max-width:700px){
+      .auth-hero{
+        min-height:210px !important;
+        padding:26px 22px !important;
+      }
+    }
+    /* END LOGIN PAGE FINAL TIGHTEN */
+  </style>
+
 </head>
 
 <body class="auth-page">
   <header class="auth-topbar">
     <a class="auth-brand" href="/">RIG-RADIO</a>
-    <nav class="auth-nav">
-      <a href="/members/home.html">HOME</a>
-      <a href="/library.html">LIBRARY</a>
-      <a href="/submit.html">SUBMIT SONG</a>
-      <a href="/">LIVE</a>
-    </nav>
   </header>
 
   <main>
