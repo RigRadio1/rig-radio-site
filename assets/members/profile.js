@@ -633,51 +633,71 @@ async function saveProfile() {
   closeEditProfile();
 }
 
-async function updateFeaturedTrack(row) {
-  if (!row) return;
-
-  memberTracks.set("featured", row);
-
+async function updateFeaturedTracks(rows = []) {
   const card = document.querySelector(".featured-track-card");
   if (!card) return;
 
-  const kickerEl = card.querySelector(".profile-kicker");
-  const titleEl = card.querySelector(".featured-track-info h2");
-  const metaEl = card.querySelector(".featured-track-info p:not(.profile-kicker)");
-  const coverEl = card.querySelector(".featured-cover");
-  const btn = card.querySelector(".track-actions .primary-btn");
+  const featuredRows = (rows || []).filter(Boolean).slice(0, 5);
 
-  const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
-  const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
-  const plays = row.plays ?? 0;
-  const cover = await getSignedCover(row);
-
-  if (kickerEl) kickerEl.textContent = "Featured Track";
-  if (titleEl) titleEl.innerHTML = row.id
-    ? `<a class="member-song-title-link featured-title-link" href="/song.html?id=${encodeURIComponent(row.id)}">${escapeHtml(title)}</a>`
-    : escapeHtml(title);
-  if (metaEl) metaEl.innerHTML = `${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}`;
-
-  if (coverEl && cover) {
-    coverEl.innerHTML = "";
-    coverEl.style.backgroundImage = `url("${cover}")`;
-    coverEl.style.backgroundSize = "cover";
-    coverEl.style.backgroundPosition = "center";
-    coverEl.style.borderStyle = "solid";
+  if (!featuredRows.length) {
+    card.innerHTML = `
+      <div class="featured-track-info featured-track-info-wide">
+        <p class="profile-kicker">Featured Tracks</p>
+        <h2>No featured songs yet</h2>
+        <p>Choose up to 5 songs to feature.</p>
+        <div class="track-actions">
+          ${viewingOwnProfile ? '<button class="secondary-btn" id="changeFeaturedBtn" type="button">Change Featured</button>' : ''}
+        </div>
+      </div>
+    `;
+    return;
   }
 
-  if (btn) {
-    btn.dataset.trackId = "featured";
-    btn.dataset.defaultText = "Play Track";
-    btn.textContent = "Play Track";
+  const cards = await Promise.all(featuredRows.map(async (row, index) => {
+    const trackId = String(row.id);
+    memberTracks.set(trackId, row);
 
-    if (btn.dataset.bound !== "1") {
-      btn.dataset.bound = "1";
-      btn.addEventListener("click", () => {
-        playTrackFromButton(btn);
-      });
-    }
-  }
+    const title = row.title || row.name || (row.audio_filename ? row.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track");
+    const sub = row.artist || row.artist_name || row.genre || row.style || row.description || "Uploaded track";
+    const plays = row.plays ?? 0;
+    const cover = await getSignedCover(row);
+    const safeCover = cover ? cover.replace(/"/g, "%22").replace(/'/g, "%27") : "";
+
+    return `
+      <article class="featured-mini-card">
+        <a class="featured-mini-cover" href="/song.html?id=${encodeURIComponent(trackId)}" style="${safeCover ? `background-image:url('${safeCover}')` : ""}">
+          ${safeCover ? "" : "<span>Cover Art</span>"}
+        </a>
+        <div class="featured-mini-info">
+          <p class="profile-kicker">Featured #${index + 1}</p>
+          <h3><a class="member-song-title-link featured-title-link" href="/song.html?id=${encodeURIComponent(trackId)}">${escapeHtml(title)}</a></h3>
+          <p>${escapeHtml(plays)} plays &middot; ${escapeHtml(sub)}</p>
+          <button class="primary-btn featured-play-btn" type="button" data-track-id="${escapeHtml(trackId)}" data-default-text="Play">Play</button>
+        </div>
+      </article>
+    `;
+  }));
+
+  card.innerHTML = `
+    <div class="featured-track-info featured-track-info-wide">
+      <div class="featured-head-row">
+        <div>
+          <p class="profile-kicker">Featured Tracks</p>
+          <h2>Featured Songs</h2>
+        </div>
+        ${viewingOwnProfile ? '<button class="secondary-btn" id="changeFeaturedBtn" type="button">Change Featured</button>' : ''}
+      </div>
+      <div class="featured-mini-grid">
+        ${cards.join("")}
+      </div>
+    </div>
+  `;
+
+  card.querySelectorAll(".featured-play-btn").forEach((btn) => {
+    if (btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => playTrackFromButton(btn));
+  });
 }
 
 function bindSongRowPlayback(rowEl) {
@@ -1741,9 +1761,8 @@ async function loadMemberSongs(showAll = false) {
       list.innerHTML = `<div class="song-row"><div class="song-thumb placeholder-thumb"></div><div><h3>No uploads yet</h3><p>Upload songs from the dashboard.</p></div></div>`;
       return;
     }
-
-    const featuredTrack = await getFeaturedTrackForProfile(data, ownerId);
-    await updateFeaturedTrack(featuredTrack);
+    const featuredTracks = await getFeaturedTracksForProfile(data, ownerId);
+    await updateFeaturedTracks(featuredTracks);
 
     list.innerHTML = "";
 
