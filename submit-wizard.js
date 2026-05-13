@@ -215,7 +215,7 @@
       const { error } = await _client.from("tracks").insert(payload);
       if (error) throw error;
       if (publishStatus) publishStatus.textContent = "Success! Redirecting to Library…";
-      setTimeout(() => { window.location.href = "/library"; }, 900);
+      setTimeout(() => { window.location.href = "/library.html"; }, 900);
     } catch (err) {
       console.error(err);
       if (publishStatus) publishStatus.textContent = "Error: " + (err?.message || err);
@@ -381,4 +381,5 @@
     setStatus(`Selected: ${f.name}`);
   }
 })();
+
 
