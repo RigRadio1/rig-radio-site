@@ -431,11 +431,14 @@
 <div id="bg"></div>
 
 
-  <header class="rr-topbar">
-    <div class="rr-topbar-left">LIBRARY</div>
+  <header class="rr-topbar library-nav">
+    <div class="rr-topbar-left">RIG-RADIO</div>
     <nav class="rr-topbar-right">
-      <a class="rr-link" href="/dashboard">Dashboard</a>
-      <a class="rr-link" href="/submit.html">Submit</a>
+      <a class="rr-link" href="/members/home.html">HOME</a>
+      <a class="rr-link" href="/members/">MY PROFILE</a>
+      <a class="rr-link" href="/submit.html">SUBMIT SONG</a>
+      <a class="rr-link" href="/">LIVE</a>
+      <button id="libraryLogout" type="button" class="rr-link library-logout">LOG OUT</button>
     </nav>
   </header>
 
@@ -446,9 +449,15 @@
     </div>
     <div id="fatal" class="error"></div>
 <!-- Library search (artist + genre) -->
-  <div class="hero-banner">
-    <img src="/banner.png" alt="Rig-Radio Banner">
-  </div>
+  <section class="library-hero">
+    <div class="library-hero-ghost">LIBRARY</div>
+    <div class="library-hero-content">
+      <p class="library-kicker">RIG-RADIO MUSIC LIBRARY</p>
+      <h1>Discover Independent Artists</h1>
+      <p>Search the catalog, play tracks, follow creators, and jump into the Sound Cards.</p>
+      <div id="auth" class="library-profile-name"></div>
+    </div>
+  </section>
 <form id="lib-search" class="lib-search" action="" onsubmit="return false;" style="display:flex;gap:10px;align-items:center;margin:12px 0 10px 0;">
   <input id="sArtist" type="text" placeholder="Search by artist" style="flex:1;min-width:180px;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#0e0e0e;color:#fff;">
 <select id="sGenre" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#0e0e0e;color:#fff;">

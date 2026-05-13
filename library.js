@@ -83,9 +83,9 @@ async function incLike(_client, trackId){
           console.warn("profile name lookup failed:", profileErr);
         }
 
-        auth.textContent = profileName;
+        if (auth) auth.textContent = profileName;
       } else {
-        auth.textContent = "Not signed in";
+        if (auth) auth.textContent = "Not signed in";
       }
 
       const logoutBtn = document.getElementById("libraryLogout");
