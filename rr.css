@@ -1195,7 +1195,7 @@ body.dashboard-page .card.card-hero img{
   padding: 16px;
 }
 
-/* === Readability pass v1 (FIXES 7) ================================ */
+/* === Readability pass v1 ================================ */
 /* Darker, denser dashboard panels + higher contrast text */
 .dashboard-page .card.panel-match{
   background: rgba(8,8,10,0.88) !important;
@@ -1297,7 +1297,7 @@ body.dashboard-page .card.card-hero img{
     0 10px 28px rgba(0,0,0,0.50);
 }
 
-/* === Dashboard card override (FIXES 7) ============================ */
+/* === Dashboard card override ============================ */
 .dashboard-page .card{
   background: rgba(8,8,10,0.88) !important;
   backdrop-filter: blur(2px) saturate(110%);
@@ -1321,7 +1321,7 @@ body.dashboard-page .card.card-hero img{
 }
 /* ================================================================= */
 
-/* === Player controls upgrade (FIXES 7) ============================= */
+/* === Player controls upgrade ============================= */
 .dashboard-page .player-console .controls button,
 #prevBtn,#playPauseBtn,#nextBtn,#shuffleBtn{
   display:inline-flex; align-items:center; justify-content:center;
@@ -1372,7 +1372,7 @@ body.dashboard-page .card.card-hero img{
 }
 /* =================================================================== */
 
-/* === Shuffle state fix (FIXES 7) ================================ */
+/* === Shuffle state fix ================================ */
 .dashboard-page .player-console .controls button{ cursor:pointer; }
 
 /* Your JS toggles .on (not .active). Style that state. */
@@ -1388,7 +1388,7 @@ body.dashboard-page .card.card-hero img{
 }
 /* ================================================================ */
 
-/* === Help tooltip for shortcuts (FIXES 7) ========================= */
+/* === Help tooltip for shortcuts ========================= */
 .dashboard-page .player-console{ position: relative; }
 .dashboard-page .player-console .icon-btn{
   display:inline-flex; align-items:center; justify-content:center;
@@ -1415,7 +1415,7 @@ body.dashboard-page .card.card-hero img{
 .rr-tooltip[aria-hidden="false"]{ opacity:1; pointer-events:auto; }
 /* ================================================================= */
 
-/******** Shortcut info styles (FIXES 7) ********/
+/* === Shortcut info styles === */
 #my-playlist .shortcut-info{
   margin-top:12px;
   padding:10px 12px;
@@ -1438,9 +1438,9 @@ body.dashboard-page .card.card-hero img{
   font-size:.92rem;
   opacity:.92;
 }
-/******** End shortcut info styles (FIXES 7) ****/
+/* === /shortcut info styles === */
 
-/* === New Track Toast (FIXES 7) =================================== */
+/* === New Track Toast =================================== */
 #my-playlist .new-track-toast{
   margin: 10px 0 6px;
   padding: 8px 12px;
@@ -1477,7 +1477,7 @@ body.dashboard-page .card.card-hero img{
 }
 /* ================================================================ */
 
-/* === Library toolbar (FIXES 7) =================================== */
+/* === Library toolbar =================================== */
 .library-page #libraryToolbar,
 #libraryToolbar{
   display:flex; gap:12px; align-items:center; flex-wrap:wrap;
@@ -1498,15 +1498,15 @@ body.dashboard-page .card.card-hero img{
 /* ================================================================ */
 
 
-/* === Library list fade (FIXES 7) ================================ */
+/* === Library list fade ================================ */
 #list { transition: opacity 120ms ease; }
 #list.updating { opacity: 0; }
 /* =============================================================== */
 
-/* === Hide debug step line globally (FIXES 7) ===================== */
+/* === Hide debug step line globally ===================== */
 #step { display: none !important; }
 /* ================================================================ */
-/* === Library count display (FIXES 8) === */
+/* === Library count display === */
 #libCount {
   display: inline-block;
   font-size: 15px;
