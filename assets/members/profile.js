@@ -934,32 +934,57 @@ async function toggleFollowMember() {
     followBtn.disabled = false;
   }
 }
-/* CHOOSE FEATURED TRACK */
-async function getFeaturedTrackForProfile(loadedTracks = [], userId = "") {
-  const featuredId = currentProfile?.featured_track_id;
+/* CHOOSE FEATURED TRACKS */
+async function getFeaturedTracksForProfile(loadedTracks = [], userId = "") {
+  let ids = [];
 
-  if (!featuredId) {
-    return loadedTracks[0] || null;
+  if (Array.isArray(currentProfile?.featured_track_ids)) {
+    ids = currentProfile.featured_track_ids;
+  } else if (currentProfile?.featured_track_id) {
+    ids = [currentProfile.featured_track_id];
   }
 
-  const loadedMatch = loadedTracks.find((track) => String(track.id) === String(featuredId));
-  if (loadedMatch) {
-    return loadedMatch;
+  ids = [...new Set(ids.map(String).filter(Boolean))].slice(0, 5);
+
+  if (!ids.length) {
+    return loadedTracks.slice(0, 5);
   }
 
-  const { data, error } = await window.supabaseClient
-    .from("tracks")
-    .select("*")
-    .eq("id", featuredId)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const loadedById = new Map((loadedTracks || []).map((track) => [String(track.id), track]));
+  const found = ids.map((id) => loadedById.get(String(id))).filter(Boolean);
+  const missingIds = ids.filter((id) => !loadedById.has(String(id)));
 
-  if (error) {
-    console.warn("FEATURED TRACK LOAD ERROR:", error);
-    return loadedTracks[0] || null;
+  if (missingIds.length) {
+    const { data, error } = await window.supabaseClient
+      .from("tracks")
+      .select("*")
+      .in("id", missingIds)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.warn("FEATURED TRACKS LOAD ERROR:", error);
+    } else {
+      const fetchedById = new Map((data || []).map((track) => [String(track.id), track]));
+      ids.forEach((id) => {
+        const row = fetchedById.get(String(id));
+        if (row && !found.find((track) => String(track.id) === String(row.id))) found.push(row);
+      });
+    }
   }
 
-  return data || loadedTracks[0] || null;
+  return found.length ? found.slice(0, 5) : loadedTracks.slice(0, 5);
+}
+
+function getCurrentFeaturedIds() {
+  if (Array.isArray(currentProfile?.featured_track_ids)) {
+    return currentProfile.featured_track_ids.map(String).filter(Boolean).slice(0, 5);
+  }
+
+  if (currentProfile?.featured_track_id) {
+    return [String(currentProfile.featured_track_id)];
+  }
+
+  return [];
 }
 
 function closeFeaturedPicker() {
@@ -990,6 +1015,7 @@ async function openFeaturedPicker() {
   }
 
   const tracks = data || [];
+  const selectedIds = new Set(getCurrentFeaturedIds());
 
   closeFeaturedPicker();
 
@@ -1001,33 +1027,40 @@ async function openFeaturedPicker() {
     <div class="featured-picker-panel">
       <div class="featured-picker-header">
         <div>
-          <p class="profile-kicker">Featured Track</p>
-          <h2>Choose Featured Song</h2>
+          <p class="profile-kicker">Featured Tracks</p>
+          <h2>Choose Up To 5 Songs</h2>
         </div>
-        <button type="button" class="featured-picker-close" data-close-featured-picker="1">�</button>
+        <button type="button" class="featured-picker-close" data-close-featured-picker="1">&times;</button>
       </div>
 
-      <div class="featured-picker-list">
-        ${
-          tracks.length
-            ? tracks.map((track) => {
-                const title = escapeHtml(track.title || track.name || (track.audio_filename ? track.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track"));
-                const sub = escapeHtml(track.artist || track.artist_name || track.genre || track.style || track.description || "Uploaded track");
-                const plays = escapeHtml(track.plays ?? 0);
-                const isCurrent = String(track.id) === String(currentProfile?.featured_track_id || "");
+      <p class="featured-picker-count"><span id="featuredPickCount">${selectedIds.size}</span>/5 selected</p>
 
-                return `
-                  <button class="featured-picker-row" type="button" data-featured-track-id="${escapeHtml(track.id)}">
-                    <span>
-                      <strong>${title}</strong>
-                      <small>${plays} plays � ${sub}</small>
-                    </span>
-                    <em>${isCurrent ? "Current" : "Choose"}</em>
-                  </button>
-                `;
-              }).join("")
-            : `<p class="featured-picker-empty">No uploaded songs found.</p>`
+      <div class="featured-picker-list">
+        ${tracks.length
+          ? tracks.map((track) => {
+              const id = String(track.id);
+              const title = escapeHtml(track.title || track.name || (track.audio_filename ? track.audio_filename.replace(/\.[^/.]+$/, "") : "Untitled track"));
+              const sub = escapeHtml(track.artist || track.artist_name || track.genre || track.style || track.description || "Uploaded track");
+              const plays = escapeHtml(track.plays ?? 0);
+              const isSelected = selectedIds.has(id);
+
+              return `
+                <button class="featured-picker-row ${isSelected ? "is-selected" : ""}" type="button" data-featured-toggle-id="${escapeHtml(id)}">
+                  <span>
+                    <strong>${title}</strong>
+                    <small>${plays} plays &middot; ${sub}</small>
+                  </span>
+                  <em>${isSelected ? "Selected" : "Choose"}</em>
+                </button>
+              `;
+            }).join("")
+          : '<p class="featured-picker-empty">No uploaded songs found.</p>'
         }
+      </div>
+
+      <div class="featured-picker-actions">
+        <button class="secondary-btn" type="button" data-close-featured-picker="1">Cancel</button>
+        <button class="primary-btn" type="button" data-save-featured-tracks="1">Save Featured</button>
       </div>
     </div>
   `;
@@ -1035,8 +1068,10 @@ async function openFeaturedPicker() {
   document.body.appendChild(modal);
 }
 
-async function saveFeaturedTrack(trackId) {
-  if (!trackId || !window.supabaseClient) return;
+async function saveFeaturedTracks(trackIds = []) {
+  if (!window.supabaseClient) return;
+
+  const ids = [...new Set((trackIds || []).map(String).filter(Boolean))].slice(0, 5);
 
   const { data: { user } } = await window.supabaseClient.auth.getUser();
 
@@ -1050,7 +1085,8 @@ async function saveFeaturedTrack(trackId) {
     .upsert(
       {
         id: user.id,
-        featured_track_id: trackId,
+        featured_track_ids: ids,
+        featured_track_id: ids[0] || null,
         updated_at: new Date().toISOString()
       },
       { onConflict: "id" }
@@ -1059,31 +1095,29 @@ async function saveFeaturedTrack(trackId) {
     .single();
 
   if (error) {
-    console.error("FEATURED TRACK SAVE ERROR:", error);
-    alert("Could not save featured track.");
+    console.error("FEATURED TRACKS SAVE ERROR:", error);
+    alert("Could not save featured tracks.");
     return;
   }
 
   currentProfile = data;
 
-  const { data: track, error: trackError } = await window.supabaseClient
+  const { data: tracks, error: trackError } = await window.supabaseClient
     .from("tracks")
     .select("*")
-    .eq("id", trackId)
-    .eq("user_id", user.id)
-    .maybeSingle();
+    .in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"])
+    .eq("user_id", user.id);
 
   if (trackError) {
-    console.error("FEATURED TRACK REFRESH ERROR:", trackError);
+    console.error("FEATURED TRACKS REFRESH ERROR:", trackError);
   }
 
-  if (track) {
-    await updateFeaturedTrack(track);
-  }
+  const byId = new Map((tracks || []).map((track) => [String(track.id), track]));
+  await updateFeaturedTracks(ids.map((id) => byId.get(String(id))).filter(Boolean));
 
   closeFeaturedPicker();
 }
-/* END CHOOSE FEATURED TRACK */
+/* END CHOOSE FEATURED TRACKS */
 
 
 function closeCreatePlaylistModal() {
