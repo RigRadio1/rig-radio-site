@@ -517,6 +517,23 @@ async function loadProfileIdentity() {
       return;
     }
 
+    if (!currentProfile && requestedId) {
+      const { data: artistTracks } = await window.supabaseClient
+        .from("tracks")
+        .select("artist")
+        .eq("user_id", requestedId)
+        .limit(1);
+
+      const artistName = artistTracks?.[0]?.artist || "Creator Profile";
+
+      currentProfile = {
+        id: requestedId,
+        display_name: artistName,
+        handle: artistName.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, ""),
+        bio: "This creator has not set up their profile yet."
+      };
+    }
+
     applyProfileToPage(currentProfile, user);
     renderSocialLinks(currentProfile?.socials || {});
     await applyProfileImages(currentProfile);
