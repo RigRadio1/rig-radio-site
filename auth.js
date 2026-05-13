@@ -33,10 +33,10 @@
       var { data } = await sb.auth.getUser();
       var user = data && data.user;
 
-      if (!user) { el.innerHTML = '<a href="/login">Sign in</a>'; return; }
+      if (!user) { el.innerHTML = '<a href="/login.html">Sign in</a>'; return; }
 
       el.innerHTML =
-        '<a href="/dashboard" aria-label="Your account">' + safeName(user) + '</a>' +
+        '<a href="/members/" aria-label="Your account">' + safeName(user) + '</a>' +
         '<span class="sep"> | </span>' +
         '<a href="#" id="logout-link">Log out</a>';
 
@@ -44,10 +44,10 @@
       if (out) out.addEventListener('click', async function (e) {
         e.preventDefault();
         try { await sb.auth.signOut(); } catch(e){}
-        window.location.href = '/login';
+        window.location.href = '/login.html';
       });
     } catch (e) {
-      el.innerHTML = '<a href="/login">Sign in</a>';
+      el.innerHTML = '<a href="/login.html">Sign in</a>';
     }
   }
 
@@ -72,7 +72,7 @@
   async function rrRequireAuth(opts) {
     opts = opts || {};
     var redirect = opts.redirect !== false;       // default true
-    var to = opts.to || '/login';
+    var to = opts.to || '/login.html';
 
     var sb = getClient(); if (!sb) return null;
 
@@ -103,4 +103,5 @@
   window.rrShowAuthQuicklink = rrShowAuthQuicklink;
   window.rrRequireAuth = rrRequireAuth;
 })();
+
 

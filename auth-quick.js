@@ -26,19 +26,19 @@
     sb.auth.getUser().then(function (res) {
       var user = res && res.data && res.data.user;
       if (!user) {
-        el.innerHTML = '<a href="/login">Sign in</a>';
+        el.innerHTML = '<a href="/login.html">Sign in</a>';
         return;
       }
       var name = safeName(user);
       el.innerHTML =
-        '<a href="/dashboard" aria-label="Your account">' + name + '</a>' +
+        '<a href="/members/" aria-label="Your account">' + name + '</a>' +
         '<span class="sep"> | </span>' +
         '<a href="#" id="logout-link">Log out</a>';
 
       var out = document.getElementById('logout-link');
       if (out) out.addEventListener('click', function (e) {
         e.preventDefault();
-        sb.auth.signOut().then(function () { window.location.href = '/login'; });
+        sb.auth.signOut().then(function () { window.location.href = '/login.html'; });
       });
     });
   }
@@ -48,4 +48,5 @@
     loadSupabase(render);
   });
 })();
+
 

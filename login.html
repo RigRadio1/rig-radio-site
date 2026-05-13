@@ -383,7 +383,7 @@
       const redirectParam = params.get("redirect") || "";
       const safeRedirect = redirectParam.startsWith("/") && !redirectParam.startsWith("//")
         ? redirectParam
-        : "/dashboard";
+        : "/members/";
       const form = document.getElementById('login-form');
       const btn  = form?.querySelector('.btn-primary');
 
@@ -435,6 +435,7 @@
   <script src="/auth.js" defer></script>
 </body>
 </html>
+
 
 
 
