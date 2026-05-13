@@ -487,6 +487,8 @@ async function loadProfileIdentity() {
 
     if (requestedHandle) {
       query = query.or(`handle.ilike.${requestedHandle},handle.ilike.@${requestedHandle}`);
+    } else if (requestedId) {
+      query = query.eq("id", requestedId);
     } else {
       if (!user) return;
       query = query.eq("id", user.id);
