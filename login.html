@@ -218,18 +218,26 @@
 </head>
 
 <body class="auth-page">
-  <!-- Header (auth.js fills #auth-quick with Display Name, never email) -->
-  <header>
-    <a href="/">Rig-Radio</a>
-    <span id="auth-quick"></span>
+  <header class="auth-topbar">
+    <a class="auth-brand" href="/">RIG-RADIO</a>
+    <nav class="auth-nav">
+      <a href="/members/home.html">HOME</a>
+      <a href="/library.html">LIBRARY</a>
+      <a href="/submit.html">SUBMIT SONG</a>
+      <a href="/">LIVE</a>
+    </nav>
   </header>
 
   <main>
     <div class="auth-layout">
-      <!-- Banner -->
-      <div class="banner">
-        <img src="/banner.png" alt="Rig-Radio Banner" />
-      </div>
+      <section class="auth-hero">
+        <div class="auth-hero-ghost">LOGIN</div>
+        <div class="auth-hero-content">
+          <p class="auth-kicker">RIG-RADIO MEMBERS</p>
+          <h1>Welcome Back</h1>
+          <p>Sign in to manage your profile, playlists, songs, and creator tools.</p>
+        </div>
+      </section>
 
       <!-- Sign-in Card -->
       <div class="card">
