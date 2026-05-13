@@ -1024,7 +1024,7 @@ async function openFeaturedPicker() {
   const { data, error } = await window.supabaseClient
     .from("tracks")
     .select("*")
-    .eq("user_id", ownerId)
+    .eq("user_id", profileOwnerId || user.id)
     .order("created_at", { ascending: false })
     .limit(100);
 
