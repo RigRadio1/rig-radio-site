@@ -1679,3 +1679,19 @@ body.dashboard-page .card.card-hero img{
   background: rgba(255,42,42,0.12);
 }
 
+
+
+/* LIBRARY ARTIST LINKS - clickable but not ugly */
+.library-artist-link,
+.library-artist-link:visited,
+.library-artist-link:active{
+  color:rgba(255,255,255,.72) !important;
+  text-decoration:none !important;
+  border:0 !important;
+  font-weight:700;
+}
+
+.library-artist-link:hover{
+  color:#ff7a2f !important;
+  text-decoration:none !important;
+}
