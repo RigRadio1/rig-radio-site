@@ -776,38 +776,6 @@ body.auth-page > * {
 .track-item.active.playing .eq-bars { display: inline-flex; }
 /* ==== /DASHBOARD ==== */
 
-/* ==== DASHBOARD: Player Console ==== */
-.player-console {
-  margin-top: 12px;
-  padding: 12px;
-  background: rgba(20,20,20,0.7);
-  border: 1px solid rgba(255,0,0,0.4);
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(255,0,0,0.35);
-  backdrop-filter: blur(6px);
-}
-
-/* Button styling inside console */
-.player-console .controls button {
-  background: #111;
-  color: #fff;
-  border: 1px solid rgba(255,0,0,0.5);
-  border-radius: 8px;
-  padding: 6px 12px;
-  margin: 0 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.player-console .controls button:hover {
-  background: rgba(255,0,0,0.15);
-  box-shadow: 0 0 6px rgba(255,0,0,0.5);
-}
-
-/* Progress bar tweaks */
-.player-console .progress-wrap {
-  margin-top: 8px;
-}
 .player-console input[type="range"] {
   accent-color: #ff2a2a;
 }
