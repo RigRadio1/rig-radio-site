@@ -1566,10 +1566,6 @@ body.dashboard-page .card.card-hero img{
 }
 /* ================================================================ */
 
-/* === Library no-flash tweak (FIXES 7) ============================ */
-/* Hide the transient step text that flickers during sort/filter */
-.library-page #step { display: none !important; }
-/* ================================================================ */
 
 /* === Library list fade (FIXES 7) ================================ */
 #list { transition: opacity 120ms ease; }
