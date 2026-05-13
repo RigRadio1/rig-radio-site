@@ -99,6 +99,169 @@
     .title a:hover{
       color:#ff7a2f;
     }
+  
+    /* LIBRARY NEW THEME */
+    body.rr-bg{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(255,90,24,.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(255,34,34,.12), transparent 30%),
+        #070707 !important;
+      color:#f4f1ea;
+    }
+
+    .wrap{
+      max-width:1280px !important;
+      margin:24px auto 42px !important;
+      padding:0 22px !important;
+    }
+
+    .rr-topbar{
+      background:transparent !important;
+      border:0 !important;
+      box-shadow:none !important;
+      padding:18px 24px !important;
+    }
+
+    .rr-topbar-left{
+      color:#fff !important;
+      font-weight:1000 !important;
+      letter-spacing:.08em !important;
+    }
+
+    .hero-banner{
+      position:relative;
+      overflow:hidden;
+      margin:14px 0 18px !important;
+      border-radius:28px;
+      border:1px solid rgba(255,106,42,.32);
+      background:
+        linear-gradient(135deg, rgba(255,106,42,.20), rgba(217,47,36,.12)),
+        rgba(10,10,10,.92);
+      box-shadow:0 24px 80px rgba(0,0,0,.38);
+    }
+
+    .hero-banner img{
+      display:block;
+      width:100%;
+      max-height:250px;
+      object-fit:cover;
+      opacity:.88;
+    }
+
+    .top{
+      padding:14px 18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.075);
+    }
+
+    .lib-search{
+      display:grid !important;
+      grid-template-columns:1.4fr 1fr auto auto 210px auto !important;
+      gap:12px !important;
+      align-items:center !important;
+      margin:18px 0 !important;
+      padding:18px !important;
+      border-radius:22px !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(9,9,9,.88) !important;
+      border:1px solid rgba(255,255,255,.085) !important;
+      box-shadow:0 18px 56px rgba(0,0,0,.28);
+    }
+
+    .lib-search input,
+    .lib-search select{
+      width:100% !important;
+      min-height:42px !important;
+      border-radius:999px !important;
+      border:1px solid rgba(255,106,42,.35) !important;
+      background:rgba(255,255,255,.055) !important;
+      color:#fff !important;
+      padding:0 14px !important;
+      outline:none !important;
+    }
+
+    .lib-search input:focus,
+    .lib-search select:focus{
+      border-color:rgba(255,106,42,.85) !important;
+      box-shadow:0 0 0 3px rgba(255,106,42,.12) !important;
+    }
+
+    .rr-btn,
+    .lib-search button{
+      min-height:42px !important;
+      border-radius:999px !important;
+      border:1px solid rgba(255,106,42,.75) !important;
+      background:linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+      color:#fff !important;
+      font-weight:900 !important;
+      padding:0 18px !important;
+      cursor:pointer !important;
+    }
+
+    .rr-btn:hover,
+    .lib-search button:hover{
+      background:linear-gradient(135deg, #ff7a3a, #ff3b3b) !important;
+      transform:translateY(-1px);
+    }
+
+    .list{
+      grid-template-columns:repeat(auto-fit,minmax(360px,1fr)) !important;
+      gap:20px !important;
+    }
+
+    .row{
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(9,9,9,.88) !important;
+      border:1px solid rgba(255,255,255,.085) !important;
+      transition:transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .row:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,106,42,.48) !important;
+      background:
+        radial-gradient(circle at top left, rgba(255,106,42,.13), transparent 32%),
+        rgba(12,12,12,.94) !important;
+    }
+
+    .thumb{
+      border-color:rgba(255,106,42,.38) !important;
+    }
+
+    .pager{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      margin:16px 0;
+    }
+
+    #libCount{
+      margin:10px 0 14px;
+      color:rgba(244,241,234,.72);
+      font-weight:800;
+    }
+
+    @media (max-width:1000px){
+      .lib-search{
+        grid-template-columns:1fr 1fr !important;
+      }
+    }
+
+    @media (max-width:650px){
+      .lib-search{
+        grid-template-columns:1fr !important;
+      }
+      .list{
+        grid-template-columns:1fr !important;
+      }
+    }
+    /* END LIBRARY NEW THEME */
+
   </style>
 </head>
 <body class="rr-bg">
