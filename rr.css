@@ -924,10 +924,13 @@ body.auth-page > * {
 }
 .upload-item .manage .actions{
   display:flex;
-  gap:8px;
+  gap:6px;
+  flex-wrap:wrap;
 }
 .upload-item .manage .mini{
-  min-width:84px;      /* keeps Delete/Replace aligned across cards */
+  min-width:72px;
+  padding:6px 10px;
+  box-sizing:border-box;
   text-align:center;
 }
 
@@ -960,14 +963,6 @@ body.auth-page > * {
 }
 /* ==== /disabled style ==== */
 
-/* ==== DASHBOARD: Upload buttons fit inside cards ==== */
-.upload-item .manage .actions{ gap:6px; flex-wrap:wrap; }
-.upload-item .manage .mini{
-  min-width:72px;          /* was 84px */
-  padding:6px 10px;        /* slightly slimmer */
-  box-sizing:border-box;   /* avoid edge bleed */
-}
-/* ==== /fit ==== */
 
 /* ==== DASHBOARD: Fixed-height scroll for uploads ==== */
 .uploads-scroll{
