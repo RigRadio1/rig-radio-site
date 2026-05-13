@@ -98,9 +98,15 @@ async function incLike(_client, trackId){
         const profile = profilesById.get(r.user_id);
         const handle = String(profile?.handle || "").trim().replace(/^@/, "");
 
-        if (!handle) return artist;
+        if (handle) {
+          return `<a class="library-artist-link" href="/members/?handle=${encodeURIComponent(handle)}">${artist}</a>`;
+        }
 
-        return `<a class="library-artist-link" href="/members/?handle=${encodeURIComponent(handle)}">${artist}</a>`;
+        if (r.user_id) {
+          return `<a class="library-artist-link" href="/members/?id=${encodeURIComponent(r.user_id)}">${artist}</a>`;
+        }
+
+        return artist;
       }
 
       if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 5/5: Render";

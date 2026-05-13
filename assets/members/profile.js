@@ -476,6 +476,7 @@ async function loadProfileIdentity() {
   try {
     const params = new URLSearchParams(window.location.search);
     const requestedHandle = (params.get("handle") || "").trim().replace(/^@/, "").toLowerCase();
+    const requestedId = (params.get("id") || "").trim();
 
     const { data: { user } } = await window.supabaseClient.auth.getUser();
     currentUser = user || null;
@@ -498,18 +499,18 @@ async function loadProfileIdentity() {
     }
 
     currentProfile = data || null;
-    profileOwnerId = currentProfile?.id || (!requestedHandle ? user?.id : null) || null;
+    profileOwnerId = currentProfile?.id || (!requestedHandle && !requestedId ? user?.id : null) || null;
     viewingOwnProfile = !!user && !!profileOwnerId && String(user.id) === String(profileOwnerId);
 
     setOwnerControls();
 
-    if (!currentProfile && requestedHandle) {
+    if (!currentProfile && (requestedHandle || requestedId)) {
       const nameEl = document.querySelector(".profile-identity h1");
       const handleEl = document.querySelector(".profile-handle");
       const aboutText = document.querySelector(".profile-about p:last-child");
 
       if (nameEl) nameEl.textContent = "Member not found";
-      if (handleEl) handleEl.textContent = "@" + requestedHandle;
+      if (handleEl) handleEl.textContent = requestedHandle ? "@" + requestedHandle : "Profile ID: " + requestedId;
       if (aboutText) aboutText.textContent = "This profile could not be found.";
       return;
     }
@@ -730,7 +731,9 @@ async function loadMemberNotifications() {
   const params = new URLSearchParams(window.location.search);
   const requestedHandle = (params.get("handle") || "").trim();
 
-  if (!sessionUser || requestedHandle) {
+  const requestedId = (params.get("id") || "").trim();
+
+  if (!sessionUser || requestedHandle || requestedId) {
     box.hidden = true;
     modal.hidden = true;
     return;
