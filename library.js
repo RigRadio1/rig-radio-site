@@ -69,7 +69,33 @@ async function incLike(_client, trackId){
       const { data: s, error: se } = await _client.auth.getSession();
       if (se) console.warn("getSession error:", se);
       const session = s?.session || null;
-      auth.textContent = session?.user ? ("Signed in: " + (session.user.email || "user")) : "Not signed in";
+      if (session?.user) {
+        let profileName = "MY PROFILE";
+        try {
+          const { data: profile } = await _client
+            .from("member_profiles")
+            .select("display_name,handle")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
+          profileName = profile?.display_name || profile?.handle || "MY PROFILE";
+        } catch (profileErr) {
+          console.warn("profile name lookup failed:", profileErr);
+        }
+
+        auth.textContent = profileName;
+      } else {
+        auth.textContent = "Not signed in";
+      }
+
+      const logoutBtn = document.getElementById("libraryLogout");
+      if (logoutBtn && !logoutBtn.dataset.bound) {
+        logoutBtn.dataset.bound = "1";
+        logoutBtn.addEventListener("click", async () => {
+          await _client.auth.signOut();
+          window.location.href = "/";
+        });
+      }
 
       if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 4/5: Fetch";
       const { data, error } = await _client.from('tracks').select('*')

@@ -262,6 +262,169 @@
     }
     /* END LIBRARY NEW THEME */
 
+  
+    /* LIBRARY HERO / NAV FIXES */
+    .library-nav{
+      max-width:1280px;
+      margin:0 auto;
+    }
+
+    .library-nav .rr-topbar-left{
+      font-size:1rem !important;
+      color:#ff7a2f !important;
+    }
+
+    .library-nav .rr-topbar-right{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:10px !important;
+      justify-content:flex-end !important;
+      align-items:center !important;
+    }
+
+    .library-nav .rr-link,
+    .library-logout{
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      min-height:38px !important;
+      padding:0 14px !important;
+      border-radius:999px !important;
+      border:1px solid rgba(255,106,42,.65) !important;
+      background:rgba(255,106,42,.08) !important;
+      color:#fff !important;
+      text-decoration:none !important;
+      font-weight:900 !important;
+      font-size:.78rem !important;
+      letter-spacing:.04em !important;
+      cursor:pointer !important;
+    }
+
+    .library-nav .rr-link:hover,
+    .library-logout:hover{
+      background:linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+      box-shadow:0 0 22px rgba(255,106,42,.26);
+    }
+
+    .top{
+      display:none !important;
+    }
+
+    .library-hero{
+      position:relative;
+      overflow:hidden;
+      min-height:245px;
+      margin:18px 0 18px;
+      padding:38px;
+      border-radius:30px;
+      border:1px solid rgba(255,106,42,.34);
+      background:
+        radial-gradient(circle at top left, rgba(255,106,42,.24), transparent 36%),
+        linear-gradient(135deg, rgba(255,106,42,.18), rgba(217,47,36,.09)),
+        rgba(10,10,10,.92);
+      box-shadow:0 26px 90px rgba(0,0,0,.46);
+    }
+
+    .library-hero-ghost{
+      position:absolute;
+      right:-18px;
+      bottom:-30px;
+      color:rgba(255,255,255,.045);
+      font-size:clamp(4.2rem, 13vw, 11rem);
+      font-weight:1000;
+      letter-spacing:.04em;
+      line-height:.8;
+      pointer-events:none;
+      user-select:none;
+    }
+
+    .library-hero-content{
+      position:relative;
+      z-index:2;
+      max-width:760px;
+    }
+
+    .library-kicker{
+      margin:0 0 10px;
+      color:#ff7a2f;
+      font-size:.8rem;
+      font-weight:1000;
+      letter-spacing:.16em;
+    }
+
+    .library-hero h1{
+      margin:0 0 10px;
+      color:#fff;
+      font-size:clamp(2.3rem, 6vw, 5rem);
+      line-height:.95;
+      letter-spacing:-.04em;
+    }
+
+    .library-hero p{
+      margin:0;
+      color:rgba(244,241,234,.76);
+      font-size:1rem;
+      line-height:1.55;
+    }
+
+    .library-profile-name{
+      display:inline-flex;
+      margin-top:18px;
+      padding:9px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,106,42,.45);
+      background:rgba(255,106,42,.10);
+      color:#fff;
+      font-weight:900;
+      font-size:.86rem;
+    }
+
+    #libCount{
+      display:inline-flex !important;
+      align-items:center;
+      min-height:34px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,106,42,.45);
+      background:rgba(255,106,42,.10);
+      color:#fff !important;
+      font-weight:900 !important;
+    }
+
+    .page-btn{
+      border:1px solid rgba(255,106,42,.55) !important;
+      background:rgba(255,106,42,.08) !important;
+      color:#fff !important;
+      border-radius:999px !important;
+      font-weight:900 !important;
+    }
+
+    .page-btn.is-current{
+      background:linear-gradient(135deg, #ff6a2a, #d92f24) !important;
+      border-color:rgba(255,255,255,.35) !important;
+      box-shadow:0 0 22px rgba(255,106,42,.25);
+    }
+
+    .page-btn:not(:disabled):hover{
+      background:rgba(255,106,42,.20) !important;
+      border-color:rgba(255,106,42,.85) !important;
+    }
+
+    @media (max-width:760px){
+      .library-hero{
+        padding:28px 22px;
+      }
+
+      .library-nav{
+        align-items:flex-start !important;
+      }
+
+      .library-nav .rr-topbar-right{
+        justify-content:flex-start !important;
+      }
+    }
+    /* END LIBRARY HERO / NAV FIXES */
+
   </style>
 </head>
 <body class="rr-bg">
@@ -279,7 +442,7 @@
   <main class="wrap">
     <div class="top">
       <div id="step" class="status">Loading…</div>
-      <div id="auth" class="status"></div>
+
     </div>
     <div id="fatal" class="error"></div>
 <!-- Library search (artist + genre) -->
