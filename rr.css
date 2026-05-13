@@ -839,24 +839,6 @@ body.auth-page > * {
   display:flex; gap:10px; align-items:center; flex-wrap:wrap;
   margin-bottom: 8px;
 }
-.player-console .controls button {
-  background: #0f0f0f;
-  color: #fff;
-  border: 1px solid rgba(255,0,0,0.55);
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
-}
-.player-console .controls button:hover {
-  background: rgba(255,0,0,0.18);
-  box-shadow: 0 0 10px rgba(255,0,0,0.55);
-}
-.player-console .controls button:active {
-  transform: translateY(1px) scale(.98);
-}
 
 /* Progress container frame */
 .player-console .progress-wrap {
