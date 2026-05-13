@@ -532,18 +532,10 @@ body.auth-page > * {
   background: rgba(15,0,0,.6); /* subtle hover */
 }
 .pager .page-btn[disabled]:not(.is-current){
-  opacity: 0.35;              /* fade disabled Prev/Next */
+  opacity: .55;               /* dim disabled Prev/Next */
   border-color: #663;         /* muted border */
   color: #777;
   box-shadow: none;
-}
-
-}
-
-
-}
-.pager .page-btn[disabled]:not(.is-current){
-  opacity: .55;                       /* dim disabled Prev/Next */
   cursor: default;
 }
 .pager .page-gap{
