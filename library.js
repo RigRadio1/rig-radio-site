@@ -77,6 +77,32 @@ async function incLike(_client, trackId){
       .limit(2500);
       if (error){ stop("DB error: " + esc(error.message)); return; }
 
+      const userIds = [...new Set((data || []).map(r => r.user_id).filter(Boolean))];
+      let profilesById = new Map();
+
+      if (userIds.length) {
+        const { data: profiles, error: profileError } = await _client
+          .from("member_profiles")
+          .select("id, display_name, handle")
+          .in("id", userIds);
+
+        if (!profileError) {
+          profilesById = new Map((profiles || []).map(p => [p.id, p]));
+        } else {
+          console.warn("LIBRARY PROFILE LINK LOAD ERROR:", profileError);
+        }
+      }
+
+      function artistHTML(r){
+        const artist = esc(r.artist || r.artist_name || "(unknown)");
+        const profile = profilesById.get(r.user_id);
+        const handle = String(profile?.handle || "").trim().replace(/^@/, "");
+
+        if (!handle) return artist;
+
+        return `<a class="library-artist-link" href="/members/?handle=${encodeURIComponent(handle)}">${artist}</a>`;
+      }
+
       if(!window.LIB_SUPPRESS_STATUS) step.textContent = "Step 5/5: Render";
       if (!data.length){
         list.innerHTML = '<div class="status">No tracks yet. <a class="rr-link" href="/submit">Submit one</a>.</div>';
@@ -88,7 +114,7 @@ function rowHTML(r){
       <div class="t"><img class="thumb" src="/banner.png" alt="cover"/></div>
       <div class="meta">
         <div class="title"><a href="/song.html?id=${encodeURIComponent(r.id)}">${esc(r.title)||"(untitled)"}</a></div>
-        <div>${esc(r.artist)||"(unknown)"} — <span class="pill">${esc(r.genre)||"—"}</span></div>
+        <div>${artistHTML(r)} &mdash; <span class="pill">${esc(r.genre)||"&mdash;"}</span></div>
         ${r.notes ? `<div style="opacity:.75">${esc(r.notes)}</div>` : ``}
 
         <!-- Add/Remove from My Playlist (local only) -->
