@@ -332,10 +332,10 @@
       <section class="community-hero">
         <div class="community-banner">
           <div class="community-identity">
-            <div class="community-logo">RR</div>
+            <div class="community-logo" id="communityLogo">RR</div>
             <div class="community-title">
-              <h1>The Pit Room</h1>
-              <p>A Discord community for independent artists, music fans, radio supporters, and people who still believe underground music deserves a real home.</p>
+              <h1 id="communityName">The Pit Room</h1>
+              <p id="communityTagline">A Discord community for independent artists, music fans, radio supporters, and people who still believe underground music deserves a real home.</p>
             </div>
           </div>
         </div>
@@ -343,9 +343,7 @@
         <div class="community-hero-body">
           <div class="community-card">
             <h2>About This Community</h2>
-            <p>
-              The Pit Room is built for real conversation, new music discovery, live show support, artist feedback, and community-driven promotion. No dead link dumping. No fake hype. Just artists, fans, creators, and supporters helping each other move forward.
-            </p>
+            <p id="communityAbout">The Pit Room is built for real conversation, new music discovery, live show support, artist feedback, and community-driven promotion. No dead link dumping. No fake hype. Just artists, fans, creators, and supporters helping each other move forward.</p>
 
             <div class="community-actions">
               <a class="community-btn primary" href="#" target="_blank" rel="noopener">Join Discord</a>
@@ -481,5 +479,21 @@
 
     </div>
   </main>
+  <script>
+    // COMMUNITY PAGE DATA - preview only
+    const communityData = {
+      logo: "RR",
+      name: "The Pit Room",
+      tagline: "A Discord community for independent artists, music fans, radio supporters, and people who still believe underground music deserves a real home.",
+      about: "The Pit Room is built for real conversation, new music discovery, live show support, artist feedback, and community-driven promotion. No dead link dumping. No fake hype. Just artists, fans, creators, and supporters helping each other move forward."
+    };
+
+    document.getElementById("communityLogo").textContent = communityData.logo;
+    document.getElementById("communityName").textContent = communityData.name;
+    document.getElementById("communityTagline").textContent = communityData.tagline;
+    document.getElementById("communityAbout").textContent = communityData.about;
+  </script>
 </body>
 </html>
+
+
