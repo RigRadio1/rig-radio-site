@@ -23,6 +23,15 @@
     window.location.replace(loginUrl);
   };
 
+  const loadUploadAuthGate = () => {
+    if (document.querySelector('script[data-rr-profile-upload-auth="1"]')) return;
+    const script = document.createElement("script");
+    script.src = "/assets/members/profile-upload-auth-gate.js?v=PROFILE-UPLOAD-AUTH-1";
+    script.dataset.rrProfileUploadAuth = "1";
+    script.defer = true;
+    document.head.appendChild(script);
+  };
+
   try {
     if (hasPublicTarget) {
       document.documentElement.classList.add("rr-profile-public");
@@ -72,6 +81,7 @@
     }
 
     window.__RR_PROFILE_AUTH_USER_ID = finalUser.id;
+    loadUploadAuthGate();
     document.documentElement.classList.add("rr-profile-authenticated");
     document.documentElement.style.visibility = "";
   } catch (err) {
