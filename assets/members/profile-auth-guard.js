@@ -24,6 +24,14 @@
   };
 
   const loadProfileTools = () => {
+    if (!document.querySelector('link[data-rr-profile-mobile="1"]')) {
+      const mobileCss = document.createElement("link");
+      mobileCss.rel = "stylesheet";
+      mobileCss.href = "/assets/members/profile-mobile.css?v=PROFILE-MOBILE-1";
+      mobileCss.dataset.rrProfileMobile = "1";
+      document.head.appendChild(mobileCss);
+    }
+
     if (!document.querySelector('script[data-rr-profile-upload-auth="1"]')) {
       const authScript = document.createElement("script");
       authScript.src = "/assets/members/profile-upload-auth-gate.js?v=PROFILE-UPLOAD-AUTH-1";
