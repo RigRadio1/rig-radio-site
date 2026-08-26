@@ -1,0 +1,1 @@
+Profile image cropper: avatar crops square; banner crops 1280x740. Users can drag and zoom before saving. The cropper replaces the selected file in the existing form so the normal profile save/upload flow remains unchanged.
