@@ -3,15 +3,49 @@
   const byId = (id) => document.getElementById(id);
   const qa = (sel) => Array.from(document.querySelectorAll(sel));
 
-  // Expect _client from rr-supabase.js or inline on the page
-  // Signed-in badge
-  try {
-    _client?.auth.getUser().then(({ data }) => {
-      const el = byId("signed-in-email");
-      if (el) el.textContent = `Signed in as ${data?.user?.email || "guest"}`;
-    });
-  } catch {}
+  const LOGIN_RETURN = "/login.html?redirect=%2Fsubmit.html";
 
+  async function requireSubmitUser({ redirect = true } = {}) {
+    try {
+      let session = null;
+
+      const sessionResult = await _client.auth.getSession();
+      session = sessionResult?.data?.session || null;
+
+      if (!session) {
+        try {
+          const refreshed = await _client.auth.refreshSession();
+          session = refreshed?.data?.session || null;
+        } catch (_) {}
+      }
+
+      if (session?.user) {
+        const verified = await _client.auth.getUser();
+        if (verified?.data?.user) return verified.data.user;
+      }
+    } catch (err) {
+      console.warn("SUBMIT AUTH CHECK ERROR:", err);
+    }
+
+    if (redirect) {
+      alert("Your Rig-Radio login expired. Please sign in again to continue uploading.");
+      window.location.href = LOGIN_RETURN;
+    }
+
+    return null;
+  }
+
+  // Gate the submit tool itself. Public listening remains unaffected.
+  requireSubmitUser().then((user) => {
+    const el = byId("signed-in-email");
+    if (el && user) el.textContent = `Signed in as ${user.email || "member"}`;
+  });
+
+  try {
+    _client.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") window.location.href = LOGIN_RETURN;
+    });
+  } catch (_) {}
 
   const submitLogout = byId("submitLogout");
   if (submitLogout && !submitLogout.dataset.bound) {
@@ -21,6 +55,7 @@
       window.location.href = "/";
     });
   }
+
   // Wizard scaffolding
   let step = 1;
   const total = 5;
@@ -57,12 +92,10 @@
   function setHover(v){ drop && drop.classList.toggle("hover", !!v); }
   function chooseFile(){ fileInput?.click(); }
 
-  // Global: prevent browser from opening dropped file
   ["dragenter","dragover","dragleave","drop"].forEach(ev =>
     window.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); }, { passive:false })
   );
 
-  // Highlight when dragging over the dropzone only
   drop?.addEventListener("dragenter", () => setHover(true));
   drop?.addEventListener("dragover",  () => setHover(true));
   drop?.addEventListener("dragleave", () => setHover(false));
@@ -72,7 +105,6 @@
     handleAudioFile(f);
   });
 
-  // Click / keyboard focus to open file picker
   drop?.addEventListener("click", chooseFile);
   drop?.addEventListener("keypress", (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); chooseFile(); }
@@ -89,9 +121,12 @@
     if (toStep2) toStep2.disabled = false;
   }
 
-  // Upload audio on Next → (so we fail fast)
   toStep2?.addEventListener("click", async () => {
     if (!audioFile) return;
+
+    const user = await requireSubmitUser();
+    if (!user) return;
+
     try {
       setStatus("Uploading…");
       const uid = crypto.randomUUID();
@@ -106,7 +141,13 @@
       setStep(2);
     } catch (err){
       console.error(err);
-      alert("Upload failed: " + (err?.message || err));
+      const msg = err?.message || String(err);
+      if (/row-level security|jwt|auth/i.test(msg)) {
+        setStatus("Login expired.");
+        await requireSubmitUser();
+        return;
+      }
+      alert("Upload failed: " + msg);
       setStatus("Upload failed.");
     }
   });
@@ -154,6 +195,9 @@
   });
 
   toStep4?.addEventListener("click", async () => {
+    const user = await requireSubmitUser();
+    if (!user) return;
+
     if (coverLocal && !coverRemoteURL){
       try{
         const uid = crypto.randomUUID();
@@ -167,7 +211,13 @@
         coverStoragePath = coverPath;
       }catch(err){
         console.error(err);
-        alert("Cover upload failed: " + (err?.message || err)); return;
+        const msg = err?.message || String(err);
+        if (/row-level security|jwt|auth/i.test(msg)) {
+          await requireSubmitUser();
+          return;
+        }
+        alert("Cover upload failed: " + msg);
+        return;
       }
     }
     setStep(4);
@@ -205,8 +255,11 @@
     publishBtn.disabled = true;
     if (publishStatus) publishStatus.textContent = "Publishing…";
 
-    let userId = null;
-    try { const { data: auth } = await _client.auth.getUser(); userId = auth?.user?.id || null; } catch {}
+    const user = await requireSubmitUser();
+    if (!user) {
+      publishBtn.disabled = false;
+      return;
+    }
 
     const payload = {
       title:       title?.value?.trim()   || null,
@@ -215,9 +268,9 @@
       notes:      (notes?.value || "").trim() || null,
       cover_url:   coverRemoteURL         || null,
       audio_url:   audioRemoteURL         || null,
-      track_path:  audioStoragePath       || null,   // private storage key
-      cover_path:  coverStoragePath       || null,   // private storage key
-      user_id:     userId
+      track_path:  audioStoragePath       || null,
+      cover_path:  coverStoragePath       || null,
+      user_id:     user.id
     };
 
     try {
@@ -227,14 +280,17 @@
       setTimeout(() => { window.location.href = "/library.html"; }, 900);
     } catch (err) {
       console.error(err);
-      if (publishStatus) publishStatus.textContent = "Error: " + (err?.message || err);
+      const msg = err?.message || String(err);
+      if (/row-level security|jwt|auth/i.test(msg)) {
+        if (publishStatus) publishStatus.textContent = "Login expired. Redirecting…";
+        await requireSubmitUser();
+        return;
+      }
+      if (publishStatus) publishStatus.textContent = "Error: " + msg;
       publishBtn.disabled = false;
     }
   });
 
-  // Init wizard
   setStep(1);
-  // Prime validation for step 2
   (function initValidate(){ title?.dispatchEvent(new Event("input")); artist?.dispatchEvent(new Event("input")); genre?.dispatchEvent(new Event("change")); })();
 })();
-
