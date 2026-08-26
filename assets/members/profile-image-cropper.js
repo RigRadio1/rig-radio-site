@@ -20,7 +20,7 @@
     .rr-crop-cancel{background:#242424;color:#fff;border:1px solid #4b4b4b}
     .rr-crop-apply{background:linear-gradient(135deg,#ff6a2a,#e53128);color:#fff;border:1px solid #ff7a3a}
     .edit-avatar-preview.rr-has-preview{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;color:transparent!important}
-    #bannerUploadButton.rr-has-preview{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;min-height:170px!important}
+    #bannerUploadButton.rr-has-preview{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;aspect-ratio:1280/226!important;height:auto!important;min-height:0!important}
     #bannerUploadButton.rr-has-preview > span,#bannerUploadButton.rr-has-preview > p{opacity:0}
   `;
   document.head.appendChild(style);
@@ -38,7 +38,7 @@
   function makeModal(kind, file, input){
     const avatar = kind === 'avatar';
     const outW = avatar ? 800 : 1280;
-    const outH = avatar ? 800 : 740;
+    const outH = avatar ? 800 : 226;
     const viewW = avatar ? 420 : 640;
     const viewH = Math.round(viewW * outH / outW);
 
