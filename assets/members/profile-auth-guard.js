@@ -23,13 +23,22 @@
     window.location.replace(loginUrl);
   };
 
-  const loadUploadAuthGate = () => {
-    if (document.querySelector('script[data-rr-profile-upload-auth="1"]')) return;
-    const script = document.createElement("script");
-    script.src = "/assets/members/profile-upload-auth-gate.js?v=PROFILE-UPLOAD-AUTH-1";
-    script.dataset.rrProfileUploadAuth = "1";
-    script.defer = true;
-    document.head.appendChild(script);
+  const loadProfileTools = () => {
+    if (!document.querySelector('script[data-rr-profile-upload-auth="1"]')) {
+      const authScript = document.createElement("script");
+      authScript.src = "/assets/members/profile-upload-auth-gate.js?v=PROFILE-UPLOAD-AUTH-1";
+      authScript.dataset.rrProfileUploadAuth = "1";
+      authScript.defer = true;
+      document.head.appendChild(authScript);
+    }
+
+    if (!document.querySelector('script[data-rr-profile-cropper="1"]')) {
+      const cropScript = document.createElement("script");
+      cropScript.src = "/assets/members/profile-image-cropper.js?v=PROFILE-CROP-1";
+      cropScript.dataset.rrProfileCropper = "1";
+      cropScript.defer = true;
+      document.head.appendChild(cropScript);
+    }
   };
 
   try {
@@ -70,7 +79,6 @@
       return;
     }
 
-    // Recheck once after Supabase has had a moment to refresh/settle.
     await new Promise((resolve) => setTimeout(resolve, 350));
     const { data: finalUserData, error: finalUserError } = await auth.getUser();
     const finalUser = finalUserData?.user || null;
@@ -81,7 +89,7 @@
     }
 
     window.__RR_PROFILE_AUTH_USER_ID = finalUser.id;
-    loadUploadAuthGate();
+    loadProfileTools();
     document.documentElement.classList.add("rr-profile-authenticated");
     document.documentElement.style.visibility = "";
   } catch (err) {
