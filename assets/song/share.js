@@ -3,7 +3,7 @@
     const params = new URLSearchParams(window.location.search);
     const trackId = params.get("id");
     if (!trackId) return "";
-    return `https://www.rig-radio.ai/song.html?id=${encodeURIComponent(trackId)}`;
+    return `https://www.rig-radio.ai/song/${encodeURIComponent(trackId)}`;
   };
 
   const getShareTitle = () => {
