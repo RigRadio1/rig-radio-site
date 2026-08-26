@@ -1,0 +1,15 @@
+[Unit]
+Description=Rig-Radio Song Share Metadata Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/html
+ExecStart=/usr/bin/node /var/www/html/server/song-share-server.js
+Restart=always
+RestartSec=3
+Environment=NODE_ENV=production
+Environment=PORT=8788
+
+[Install]
+WantedBy=multi-user.target
