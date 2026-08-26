@@ -42,7 +42,7 @@
 
     if (!document.querySelector('script[data-rr-profile-cropper="1"]')) {
       const cropScript = document.createElement("script");
-      cropScript.src = "/assets/members/profile-image-cropper.js?v=PROFILE-CROP-1";
+      cropScript.src = "/assets/members/profile-image-cropper.js?v=PROFILE-CROP-2";
       cropScript.dataset.rrProfileCropper = "1";
       cropScript.defer = true;
       document.head.appendChild(cropScript);
