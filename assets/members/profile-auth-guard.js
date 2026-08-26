@@ -1,29 +1,81 @@
 (async function () {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const hasPublicTarget = Boolean((params.get("handle") || "").trim() || (params.get("id") || "").trim());
+  const loginUrl = "/login.html?redirect=%2Fmembers%2F";
+  const params = new URLSearchParams(window.location.search);
+  const hasPublicTarget = Boolean((params.get("handle") || "").trim() || (params.get("id") || "").trim());
 
+  const style = document.createElement("style");
+  style.id = "rr-profile-auth-lock";
+  style.textContent = `
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #openEditProfile,
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #copyPublicProfile,
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #createPlaylistBtn,
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #changeFeaturedBtn,
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #memberLogoutBtn,
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #bannerUploadButton,
+    html:not(.rr-profile-authenticated):not(.rr-profile-public) #avatarUploadButton {
+      display: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const sendToLogin = () => {
+    document.documentElement.classList.remove("rr-profile-authenticated");
+    window.location.replace(loginUrl);
+  };
+
+  try {
     if (hasPublicTarget) {
+      document.documentElement.classList.add("rr-profile-public");
       document.documentElement.style.visibility = "";
       return;
     }
 
-    if (!window.supabaseClient?.auth) {
-      window.location.replace("/login.html?redirect=%2Fmembers%2F");
+    const auth = window.supabaseClient?.auth;
+    if (!auth) {
+      sendToLogin();
       return;
     }
 
-    const { data, error } = await window.supabaseClient.auth.getUser();
-    const user = data?.user || null;
+    auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        sendToLogin();
+      }
+    });
 
-    if (error || !user) {
-      window.location.replace("/login.html?redirect=%2Fmembers%2F");
+    const [{ data: sessionData, error: sessionError }, { data: userData, error: userError }] = await Promise.all([
+      auth.getSession(),
+      auth.getUser()
+    ]);
+
+    const sessionUser = sessionData?.session?.user || null;
+    const verifiedUser = userData?.user || null;
+
+    if (
+      sessionError ||
+      userError ||
+      !sessionUser ||
+      !verifiedUser ||
+      sessionUser.id !== verifiedUser.id
+    ) {
+      sendToLogin();
       return;
     }
 
+    // Recheck once after Supabase has had a moment to refresh/settle.
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    const { data: finalUserData, error: finalUserError } = await auth.getUser();
+    const finalUser = finalUserData?.user || null;
+
+    if (finalUserError || !finalUser || finalUser.id !== verifiedUser.id) {
+      sendToLogin();
+      return;
+    }
+
+    window.__RR_PROFILE_AUTH_USER_ID = finalUser.id;
+    document.documentElement.classList.add("rr-profile-authenticated");
     document.documentElement.style.visibility = "";
   } catch (err) {
     console.error("PROFILE AUTH GUARD ERROR:", err);
-    window.location.replace("/login.html?redirect=%2Fmembers%2F");
+    sendToLogin();
   }
 })();
